@@ -788,7 +788,7 @@ class Deck {
      * Sorts the deck to a brand new deck. Values are Ascending and Suit order (Spades, Clubs, Diamonds, Hearts)
      */
     fun sortToReset() {
-        val spadesList = this[Suit.SPADES]//get(Suit.SPADES)
+        val spadesList = this[Suit.SPADES]
         val clubsList = this[Suit.CLUBS]
         val diamondsList = get(Suit.DIAMONDS)
         val heartsList = get(Suit.HEARTS)

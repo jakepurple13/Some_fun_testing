@@ -1,8 +1,10 @@
 package com.example.myapplication
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.Html
 import android.widget.ImageView
@@ -15,8 +17,6 @@ import crestron.com.deckofcards.Suit
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.inject
 import java.util.*
-import android.animation.Animator
-import android.graphics.PorterDuff
 
 
 class MainActivity : AppCompatActivity() {
