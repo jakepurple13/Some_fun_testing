@@ -1,0 +1,109 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 22
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //implementation 'com.github.jakepurple13:HelperUtils2:v1.74'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
+/*artifactory {
+    publish {
+        contextUrl = 'http://localhost:8081/artifactory'
+        repository {
+            repoKey = "libs-snapshot-local"
+            username = "jrein"
+            password = "admin"
+        }
+    }
+}*/
+
+/*
+
+publishing {
+
+    publications {
+        deckOfCards(MavenPublication) {
+            groupId 'com.crestron.aurora'
+            artifactId 'deck'
+            version '0.1'
+            artifact(sourceJar)
+            artifact("$buildDir/outputs/aar/deckofcards-release.aar")
+        }
+    }
+    repositories {
+        maven {
+            url "http://localhost:8080/$buildDir/repo"
+            credentials {
+                username "admin"
+                password "admin1"
+            }
+        }
+    }
+
+    */
+/*publications {
+
+        repositories.maven {
+            url 'http://localhost:8080/repositories/'
+            credentials {
+                username "admin"
+                password "admin1"
+            }
+        }
+
+        maven(MavenPublication) {
+            artifacts {
+                groupId 'com.crestron.aurora'
+                artifactId 'deckOfCards'
+                version '1.0'
+                artifact 'build/outputs/aar/deckofcards-release.aar'
+            }
+        }
+    }*//*
+
+
+}*/

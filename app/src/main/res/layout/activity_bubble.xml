@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/background"
+        tools:context=".BubbleActivity">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:weightSum="4"
+            android:id="@+id/rgbabars"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:min="0"
+                android:max="255"
+                android:id="@+id/redBar"/>
+
+        <SeekBar
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:min="0"
+                android:max="255"
+                android:id="@+id/greenBar"/>
+
+        <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:min="0"
+                android:max="255"
+                android:id="@+id/blueBar"/>
+
+        <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:min="0"
+                android:max="255"
+                android:id="@+id/alphaBar"/>
+    </LinearLayout>
+
+    <TextView
+            android:text="R:0"
+            android:layout_below="@id/rgbabars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/redValue"/>
+
+    <TextView
+            android:text="G:0"
+            android:layout_below="@id/redValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/greenValue"/>
+
+    <TextView
+            android:text="B:0"
+            android:layout_below="@id/greenValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/blueValue"/>
+
+    <TextView
+            android:text="A:0"
+            android:layout_below="@id/blueValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/alphaValue"/>
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cardView"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/alphaValue"
+            android:src="@drawable/b1fv"/>
+
+    <TextView
+            android:text="Card"
+            android:layout_below="@id/cardView"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/cardText"/>
+
+    <Button
+            android:text="Written Out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/writeout"/>
+
+    <Button
+            android:text="Symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/symbolout"/>
+
+    <Button
+            android:text="Unicode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/unicodeout"/>
+
+</RelativeLayout>
