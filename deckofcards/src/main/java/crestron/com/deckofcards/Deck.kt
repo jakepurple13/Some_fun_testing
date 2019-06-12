@@ -20,6 +20,21 @@ class Deck {
      */
     val size: Int
         get() = deckOfCards.size
+    /**
+     * Draws a random card from the deck.
+     *
+     * @return Card
+     */
+    val randomCard: Card
+        @Throws(CardNotFoundException::class)
+        get() {
+            try {
+                val num = CardUtil.randomNumber(0, size - 1)
+                return getCard(num)
+            } catch (e: IndexOutOfBoundsException) {
+                throw emptyDeck
+            }
+        }
 
     //builders
     class DeckBuilder {
@@ -536,24 +551,6 @@ class Deck {
     }
 
     /**
-     * Draws a random card from the deck.
-     *
-     * @return Card
-     */
-    val randomCard: Card
-        @Throws(CardNotFoundException::class)
-        get() {
-            try {
-                val num = CardUtil.randomNumber(1, size - 1)
-                val c = deckOfCards.removeAt(num)
-                deckListener?.draw(c, size)
-                return c
-            } catch (e: IndexOutOfBoundsException) {
-                throw emptyDeck
-            }
-        }
-
-    /**
      * Adds a card to the deck.
      *
      * @param c Card
@@ -835,6 +832,7 @@ class Deck {
         }
     }
 
+    //To String Methods
     /**
      * The Deck.
      *
