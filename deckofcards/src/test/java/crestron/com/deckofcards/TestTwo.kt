@@ -111,6 +111,8 @@ class TestTwo {
 
         log("$c")
 
+        log("${d6.getDeck().sumBy { it.value }}")
+
     }
 
     @Test

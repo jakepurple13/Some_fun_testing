@@ -607,9 +607,7 @@ class Deck {
      */
     infix fun addCard(c: Card) {
         deckOfCards.add(c)
-        deckListener?.cardAdded(arrayListOf<Card>().apply {
-            add(c)
-        })
+        deckListener?.cardAdded(mutableListOf(c))
     }
 
     /**
@@ -627,7 +625,7 @@ class Deck {
      */
     fun addCard(location: Int = CardUtil.randomNumber(0, size), card: Card) {
         deckOfCards.add(location, card)
-        deckListener?.cardAdded(arrayListOf<Card>().apply { add(card) })
+        deckListener?.cardAdded(mutableListOf(card))
     }
 
     /**
