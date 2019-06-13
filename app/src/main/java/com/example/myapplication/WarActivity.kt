@@ -198,4 +198,9 @@ class WarActivity : AppCompatActivity() {
         enemyCard = Card.BackCard
         playerpile.isEnabled = true
     }
+
+    override fun finish() {
+        autoswitch.isChecked = false
+        super.finish()
+    }
 }
