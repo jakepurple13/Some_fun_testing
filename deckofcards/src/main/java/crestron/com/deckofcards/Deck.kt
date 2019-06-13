@@ -10,11 +10,24 @@ import java.util.*
 class Deck {
 
     //var
+    /**
+     * the actual list of cards
+     */
     private var deckOfCards: ArrayList<Card> = ArrayList()
+
+    /**
+     * the listener for the deck
+     */
     var deckListener: DeckListener? = null
+
+    /**
+     * thrown if you try to draw from an empty deck
+     */
     private val emptyDeck = CardNotFoundException("Deck is Empty")
+
     /**
      * The size of the deck.
+     *
      * @return The size of the deck (int)
      */
     val size: Int
@@ -22,6 +35,7 @@ class Deck {
 
     /**
      * if the deck is empty
+     *
      * @return true if the deck is empty
      */
     val isEmpty: Boolean
@@ -42,12 +56,22 @@ class Deck {
             }
         }
 
+    /**
+     * the first card (equivalent to [draw] but without removing)
+     * (Also the top of the deck)
+     */
     val first: Card?
         get() = deckOfCards.firstOrNull()
 
+    /**
+     * the card directly in the middle of the deck
+     */
     val middle: Card?
         get() = deckOfCards.getOrNull(size/2)
 
+    /**
+     * the last card (bottom of the deck)
+     */
     val last: Card?
         get() = deckOfCards.lastOrNull()
 
@@ -119,7 +143,7 @@ class Deck {
         }
 
         /**
-         * Builds a deck of only [num]s
+         * Builds a deck of only [num]s in all suits
          * @return a Deck of [num]s
          */
         fun numberOnly(vararg num: Int): Deck {
@@ -156,6 +180,7 @@ class Deck {
          * Builds a deck of only [color]
          * @return a Deck of [color]
          */
+        @Throws(CardNotFoundException::class)
         fun colorOnly(color: Color): Deck {
             val d = Deck()
             when (color) {
@@ -217,23 +242,20 @@ class Deck {
         if (deck != null)
             deckOfCards.addAll(deck.deckOfCards)
 
-        this.deckListener = deckListener
-
         if (shuffler)
             shuffle(seed)
+
+        this.deckListener = deckListener
     }
 
     /**
      * A Deck of Cards, unshuffled.
+     * A blank deck with no cards at first
      */
     private constructor()
 
-    constructor(cards: Collection<Card>) {
+    constructor(cards: Collection<Card>, deckListener: DeckListener? = null) {
         deckOfCards.addAll(cards)
-    }
-
-    constructor(deck: Collection<Card>, deckListener: DeckListener? = null) {
-        deckOfCards.addAll(deck)
         this.deckListener = deckListener
     }
 
@@ -269,7 +291,6 @@ class Deck {
             shuffle()
     }
 
-
     /**
      * A Deck of Cards, shuffled.
      *
@@ -281,22 +302,7 @@ class Deck {
             shuffle()
     }
 
-    /**
-     * A Deck of Cards, shuffled.
-     *
-     * @param shuffler true if you want to shuffle, false if you do not
-     * @param seed     the seed for shuffling
-     */
-    constructor(shuffler: Boolean, seed: Long) {
-        initialize()
-        if (shuffler) {
-            shuffle(seed)
-        }
-
-    }
-
-    //methods
-
+    //operator overloading
     /**
      * checks to see if the Deck has the card c
      * @param c the card to check for
@@ -306,6 +312,8 @@ class Deck {
     operator fun contains(suit: Suit): Boolean = deckOfCards.any { it.suit == suit }
 
     operator fun contains(color: Color): Boolean = deckOfCards.any { it.color == color }
+
+    operator fun contains(num: Int): Boolean = deckOfCards.any { it.value == num }
 
     /**
      * adds card to deck
@@ -351,9 +359,7 @@ class Deck {
     /**
      * removes a card from the deck
      */
-    operator fun minusAssign(c: Card) {
-        getCard(c)
-    }
+    operator fun minus(c: Card) = getCard(c)
 
     /**
      * removes num number of cards from this deck
@@ -518,6 +524,7 @@ class Deck {
         }
     }
 
+    //methods
     /**
      * clears the deck
      */
@@ -598,7 +605,7 @@ class Deck {
      *
      * @param c Card
      */
-    fun addCard(c: Card) {
+    infix fun addCard(c: Card) {
         deckOfCards.add(c)
         deckListener?.cardAdded(arrayListOf<Card>().apply {
             add(c)
@@ -610,7 +617,7 @@ class Deck {
      *
      * @param c Card
      */
-    fun addCards(c: Collection<Card>) {
+    infix fun addCards(c: Collection<Card>) {
         deckOfCards.addAll(c)
         deckListener?.cardAdded(c)
     }
@@ -630,7 +637,7 @@ class Deck {
      * @return Card
      */
     @Throws(CardNotFoundException::class)
-    fun getCard(n: Int): Card {
+    infix fun getCard(n: Int): Card {
         try {
             val c = deckOfCards.removeAt(n)
             deckListener?.draw(c, size)

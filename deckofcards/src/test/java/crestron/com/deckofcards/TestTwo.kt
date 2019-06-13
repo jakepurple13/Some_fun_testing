@@ -91,6 +91,26 @@ class TestTwo {
 
         log("${d5.first} and ${d5.middle} and ${d5.last}")
 
+        val d6 = Deck(true, 1, 1L, null, null, object : Deck.DeckListener {
+            override fun draw(c: Card, size: Int) {
+                log("$c and $size")
+            }
+        })
+
+        log(d6.toArrayString())
+
+        d6 addCards d2.getDeck()
+
+        d6.addCard(Card.RandomCard)
+
+        d6 addCard Card.RandomCard
+
+        log(d6.toArrayString())
+
+        val c = d6 getCard 5
+
+        log("$c")
+
     }
 
     @Test
