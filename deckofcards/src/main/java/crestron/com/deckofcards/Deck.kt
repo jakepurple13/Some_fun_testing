@@ -42,6 +42,15 @@ class Deck {
             }
         }
 
+    val first: Card?
+        get() = deckOfCards.firstOrNull()
+
+    val middle: Card?
+        get() = deckOfCards.getOrNull(size/2)
+
+    val last: Card?
+        get() = deckOfCards.lastOrNull()
+
     //builders
     class DeckBuilder {
 
@@ -1030,19 +1039,6 @@ class Deck {
         val deck1 = deckOfCards.slice(0 until location)
         val deck2 = deckOfCards.slice(location until size)
         return Pair(Deck(cards = deck1), Deck(cards = deck2))
-    }
-
-    /**
-     * Deals n number of cards to hand
-     *
-     * @param h the hand
-     * @param n the number of cards to add to the hand
-     */
-    @Throws(CardNotFoundException::class)
-    fun dealHand(h: Hand, n: Int) {
-        for (i in 0 until n) {
-            h.add(draw())
-        }
     }
 
     //To String Methods

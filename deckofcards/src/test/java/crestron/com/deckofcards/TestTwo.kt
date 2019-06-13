@@ -89,7 +89,7 @@ class TestTwo {
         val (d4, d5) = Deck().splitDeck()
         log("${d4.toArrayString()} and ${d4.size}\n${d5.toArrayString()} and ${d5.size} and ${d5.isEmpty}")
 
-
+        log("${d5.first} and ${d5.middle} and ${d5.last}")
 
     }
 
@@ -286,7 +286,7 @@ class TestTwo {
         d.shuffle()
         log("New deck is: $d and the size is ${d.size}")
 
-        val hand = Hand()
+        /*val hand = Hand()
 
         infix fun Hand.deal(num: Int) {
             deck.dealHand(this, num)
@@ -294,7 +294,7 @@ class TestTwo {
 
         hand deal 5
 
-        log("$hand")
+        log("$hand")*/
 
         val cd = d.getCard(5)
         log("$cd")
