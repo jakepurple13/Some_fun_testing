@@ -77,6 +77,16 @@ class TestTwo {
                 "\n$firstCardSuit and $lastCardSuit" +
                 "\n$firstCardColor and $lastCardColor")
 
+        log("${d.removeIf { it.value == 12 }}")
+
+        log(d.toArrayString())
+
+        val d3 = Deck.numberOnly(1..5)
+        log(d3.toArrayString())
+
+        val (d4, d5) = Deck().splitDeck()
+        log("${d4.toArrayString()} and ${d4.size}\n${d5.toArrayString()} and ${d5.size}")
+
     }
 
     @Test

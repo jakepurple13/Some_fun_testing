@@ -1,8 +1,5 @@
 package crestron.com.deckofcards
 
-
-// TODO: Auto-generated Javadoc
-
 /**
  * The Enum Suit.
  */
@@ -15,7 +12,6 @@ enum class Suit
  * @param unicodeSymbol the symbol in unicode
  */
     (private val printableName: String, val symbol: String, val unicodeSymbol: String) {
-
     /**
      * Hearts.
      */
@@ -123,7 +119,6 @@ enum class Color(private val colorName: String) {
             }
         }
     }
-
 }
 
 enum class CardDescriptor {

@@ -119,6 +119,25 @@ class Deck {
         }
 
         /**
+         * Builds a deck of only [num]s
+         * @return a Deck of [num]s
+         */
+        @Throws(CardNotFoundException::class)
+        fun numberOnly(num: IntRange): Deck {
+            if(num.first<1 || num.last > 13) {
+                throw CardNotFoundException("Range is not allowed")
+            }
+            val d = Deck()
+            for (i in num) {
+                d += Card(Suit.SPADES, i)
+                d += Card(Suit.CLUBS, i)
+                d += Card(Suit.DIAMONDS, i)
+                d += Card(Suit.HEARTS, i)
+            }
+            return d
+        }
+
+        /**
          * Builds a deck of only [color]
          * @return a Deck of [color]
          */
@@ -532,6 +551,15 @@ class Deck {
         return deckOfCards.removeIf {
             it.value == num
         }
+    }
+
+    /**
+     * removes all cards with the value num
+     * @return true if any were removed
+     */
+    @TargetApi(Build.VERSION_CODES.N)
+    fun removeIf(predicate: (Card) -> Boolean): Boolean {
+        return deckOfCards.removeIf(predicate)
     }
 
     /**
@@ -953,6 +981,56 @@ class Deck {
         }
     }
 
+    /**
+     * returns the deck
+     */
+    fun getDeck(): ArrayList<Card> {
+        return deckOfCards
+    }
+
+    /**
+     * partitions a deck into two decks based off of a predicate
+     */
+    fun partition(predicate: (Card) -> Boolean): Pair<Deck, Deck> {
+        val (deck1, deck2) = deckOfCards.partition(predicate)
+        return Pair(Deck(cards = deck1), Deck(cards = deck2))
+    }
+
+    /**
+     * find cards based on a predicate
+     * @return a deck of those cards
+     */
+    fun find(predicate: (Card) -> Boolean): Deck {
+        val list = arrayListOf<Card>()
+        for (c in deckOfCards)
+            if (predicate(c)) {
+                list += c
+            }
+        return Deck(cards = list)
+    }
+
+    /**
+     * split the deck at a chosen location or midway
+     */
+    fun splitDeck(location: Int = size/2): Pair<Deck, Deck> {
+        val deck1 = deckOfCards.slice(0 until location)
+        val deck2 = deckOfCards.slice(location until size)
+        return Pair(Deck(cards = deck1), Deck(cards = deck2))
+    }
+
+    /**
+     * Deals n number of cards to hand
+     *
+     * @param h the hand
+     * @param n the number of cards to add to the hand
+     */
+    @Throws(CardNotFoundException::class)
+    fun dealHand(h: Hand, n: Int) {
+        for (i in 0 until n) {
+            h.add(draw())
+        }
+    }
+
     //To String Methods
     /**
      * The Deck.
@@ -1044,43 +1122,6 @@ class Deck {
      */
     fun toArrayPrettyString(): String {
         return "[${deckOfCards.joinToString(separator = ", ") { it.toPrettyString() }}]"
-    }
-
-    /**
-     * returns the deck
-     */
-    fun getDeck(): ArrayList<Card> {
-        return deckOfCards
-    }
-
-    /**
-     * partitions a deck into two decks based off of a predicate
-     */
-    fun partition(predicate: (Card) -> Boolean): Pair<Deck, Deck> {
-        val (deck1, deck2) = deckOfCards.partition(predicate)
-        return Pair(Deck(cards = deck1), Deck(cards = deck2))
-    }
-
-    fun find(predicate: (Card) -> Boolean): Deck {
-        val list = arrayListOf<Card>()
-        for (c in deckOfCards)
-            if (predicate(c)) {
-                list += c
-            }
-        return Deck(cards = list)
-    }
-
-    /**
-     * Deals n number of cards to hand
-     *
-     * @param h the hand
-     * @param n the number of cards to add to the hand
-     */
-    @Throws(CardNotFoundException::class)
-    fun dealHand(h: Hand, n: Int) {
-        for (i in 0 until n) {
-            h.add(draw())
-        }
     }
 
     /**

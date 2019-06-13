@@ -87,8 +87,6 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
         else -> value
     }
 
-    //add >,< and make others return something different
-
     /**
      * Gets the value ten.
      *

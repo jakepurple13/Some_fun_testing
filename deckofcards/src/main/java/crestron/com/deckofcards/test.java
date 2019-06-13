@@ -3,7 +3,6 @@ package crestron.com.deckofcards;
 public class test {
 
 	public static void main(String[] args) throws CardNotFoundException {
-		// TODO Auto-generated method stub
 		Deck d = new Deck(true, 1);
 		Deck q = new Deck(true, 2);
 		
