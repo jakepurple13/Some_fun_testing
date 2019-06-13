@@ -21,29 +21,6 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var gen = Random()
-
-    var red = 0
-        set(value) {
-            field = value
-            bgChange()
-        }
-    var green = 0
-        set(value) {
-            field = value
-            bgChange()
-        }
-    var blue = 0
-        set(value) {
-            field = value
-            bgChange()
-        }
-    var alpha = 0
-        set(value) {
-            field = value
-            bgChange()
-        }
-
     interface HelloRepo {
         fun giveHello(): String
         fun addMore(multi: Int)
@@ -109,6 +86,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     class Derived(b: Base) : Base by b
+
+    private var gen = Random()
+
+    var red = 0
+        set(value) {
+            field = value
+            bgChange()
+        }
+    var green = 0
+        set(value) {
+            field = value
+            bgChange()
+        }
+    var blue = 0
+        set(value) {
+            field = value
+            bgChange()
+        }
+    var alpha = 0
+        set(value) {
+            field = value
+            bgChange()
+        }
 
     private var holdCard: Card? = null
 

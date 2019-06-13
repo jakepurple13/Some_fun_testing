@@ -12,7 +12,7 @@ import kotlinx.coroutines.*
 class WarActivity : AppCompatActivity() {
 
     private val deck = Deck(shuffler = true)
-    var playerDeck = Deck(cards = deck[0..26])
+    var playerDeck = Deck(cards = deck[0..25])
     val playerCards = arrayListOf<Card>()
     var enemyDeck = Deck(cards = deck[26..51])
     val enemyCards = arrayListOf<Card>()
@@ -29,6 +29,8 @@ class WarActivity : AppCompatActivity() {
 
     var warCards = arrayListOf<Card>()
 
+    var stopPlaying = false
+
     @SuppressLint("SetTextI18n")
     fun ArrayList<Card>.addCard(card: Card) {
         add(card)
@@ -41,7 +43,10 @@ class WarActivity : AppCompatActivity() {
         addAll(card)
         playerInfo.text = "Cards Remaining: ${playerDeck.getDeck().size}\nCards Waiting: ${playerCards.size}"
         enemyInfo.text = "Cards Remaining: ${enemyDeck.getDeck().size}\nCards Waiting: ${enemyCards.size}"
+        stopPlaying = enemyDeck.getDeck().isEmpty() || playerDeck.getDeck().isEmpty()
     }
+
+    lateinit var dialog: AlertDialog
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,9 +55,10 @@ class WarActivity : AppCompatActivity() {
 
         background.setBackgroundColor(intent.getIntExtra("bgColor", 0))
 
-        val dialog = AlertDialog.Builder(this@WarActivity)
+        dialog = AlertDialog.Builder(this@WarActivity)
             .setTitle("Winner Decided")
-            .setPositiveButton("Okay"
+            .setPositiveButton(
+                "Okay"
             ) { _, _ -> finish() }
             .create()
 
@@ -60,12 +66,13 @@ class WarActivity : AppCompatActivity() {
             @SuppressLint("SetTextI18n")
             override fun draw(c: Card, size: Int) {
                 if (size < 1) {
-                    if(playerCards.isEmpty()) {
-                        if(!dialog.isShowing) {
+                    if (playerCards.isEmpty()) {
+                        /*if (!dialog.isShowing) {
                             dialog.setMessage("You Lose")
                             dialog.show()
                         }
-                        playerDeck+=Card.RandomCard
+                        playerDeck += Card.RandomCard*/
+                        stopPlaying = true
                     } else {
                         playerDeck += playerCards
                         playerCards.clear()
@@ -78,12 +85,13 @@ class WarActivity : AppCompatActivity() {
             @SuppressLint("SetTextI18n")
             override fun draw(c: Card, size: Int) {
                 if (size < 1) {
-                    if(enemyCards.isEmpty()) {
-                        if(!dialog.isShowing) {
+                    if (enemyCards.isEmpty()) {
+                        /*if (!dialog.isShowing) {
                             dialog.setMessage("You Win")
                             dialog.show()
                         }
-                        enemyDeck+=Card.RandomCard
+                        enemyDeck += Card.RandomCard*/
+                        stopPlaying = true
                     } else {
                         enemyDeck += enemyCards
                         enemyCards.clear()
@@ -93,74 +101,111 @@ class WarActivity : AppCompatActivity() {
             }
         }
 
-        Loged.d("$playerDeck")
-        Loged.d("$enemyDeck")
+        Loged.d("${playerDeck.toArrayString()} and ${playerDeck.size}")
+        Loged.d("${enemyDeck.toArrayString()} and ${enemyDeck.size}")
 
-        playerpile.setOnClickListener {
-            playerCard = playerDeck.draw()
-            enemyCard = enemyDeck.draw()
-            playerpile.isEnabled = false
-            collectButton.isEnabled = true
-        }
-
-        collectButton.setOnClickListener {
-            GlobalScope.launch(Dispatchers.Main) {
-                Loged.i("$playerCard and $enemyCard")
-                val playerValue = if (playerCard.value == 1) 14 else playerCard.value
-                val enemyValue = if (enemyCard.value == 1) 14 else enemyCard.value
-                Loged.i("$playerValue and $enemyValue")
-                val winner = when {
-                    playerValue > enemyValue -> {
-                        playerCards.addCard(playerCard)
-                        playerCards.addCard(enemyCard)
-                        "Player Wins with $playerCard beating $enemyCard"
-                    }
-                    enemyValue > playerValue -> {
-                        enemyCards.addCard(playerCard)
-                        enemyCards.addCard(enemyCard)
-                        "Enemy Wins with $enemyCard beating $playerCard"
-                    }
-                    else -> {
-                        for (i in 0 until playerValue) {
-                            playerCard = playerDeck.draw()
-                            enemyCard = enemyDeck.draw()
-                            if (i != playerValue) {
-                                warCards.add(playerCard)
-                                warCards.add(enemyCard)
-                            }
-                            delay(300)
-                        }
-                        when {
-                            playerValue > enemyValue -> {
-                                playerCards.addCard(playerCard)
-                                playerCards.addCard(enemyCard)
-                                playerCards.addCards(warCards)
-                                "Player Wins with $playerCard beating $enemyCard"
-                            }
-                            enemyValue > playerValue -> {
-                                enemyCards.addCard(playerCard)
-                                enemyCards.addCard(enemyCard)
-                                enemyCards.addCards(warCards)
-                                "Enemy Wins with $enemyCard beating $playerCard"
-                            }
-                            else -> {
-                                playerCards.addCard(playerCard)
-                                playerCards.addCard(enemyCard)
-                                playerCards.addCards(warCards)
-                                "Player Wins with $playerCard beating $enemyCard"
-                            }
-                        }
-                    }//war().await()
+        fun autoPlay() = GlobalScope.launch(Dispatchers.Main) {
+            Loged.i("Starting with ${autoswitch.isChecked}")
+            while (autoswitch.isChecked) {
+                val jobs = arrayListOf<Deferred<Unit>>()
+                if (playerpile.isEnabled) {
+                    //playerpile.performClick()
+                    delay(700)
+                    jobs += placeCardsDownAsync()
                 }
-                warCards.clear()
-                warinfo.text = winner
-                collectButton.isEnabled = false
-                delay(500)
-                playerCard = Card.BackCard
-                enemyCard = Card.BackCard
-                playerpile.isEnabled = true
+                if (collectButton.isEnabled) {
+                    //collectButton.performClick()
+                    jobs += collectingAsync()
+                    delay(700)
+                }
+                jobs.forEach { it.await() }
+                if (dialog.isShowing) {
+                    break
+                }
             }
         }
 
+        autoswitch.setOnCheckedChangeListener { compoundButton, b ->
+            GlobalScope.launch(Dispatchers.Main) {
+                if (autoPlay().isActive) {
+                    autoPlay().cancel()
+                } else {
+                    autoPlay().start()
+                }
+            }
+        }
+
+        playerpile.setOnClickListener {
+            placeCardsDownAsync().start()
+        }
+
+        collectButton.setOnClickListener {
+            collectingAsync().start()
+        }
+
+    }
+
+    private fun placeCardsDownAsync() = GlobalScope.async(Dispatchers.Main) {
+        playerCard = playerDeck.draw()
+        enemyCard = enemyDeck.draw()
+        playerpile.isEnabled = false
+        collectButton.isEnabled = true
+    }
+
+    private fun collectingAsync() = GlobalScope.async(Dispatchers.Main) {
+        Loged.i("$playerCard and $enemyCard")
+        val playerValue = if (playerCard.value == 1) 14 else playerCard.value
+        val enemyValue = if (enemyCard.value == 1) 14 else enemyCard.value
+        Loged.i("$playerValue and $enemyValue")
+        val winner = when {
+            playerValue > enemyValue -> {
+                playerCards.addCard(playerCard)
+                playerCards.addCard(enemyCard)
+                "Player Wins with $playerCard beating $enemyCard"
+            }
+            enemyValue > playerValue -> {
+                enemyCards.addCard(playerCard)
+                enemyCards.addCard(enemyCard)
+                "Enemy Wins with $enemyCard beating $playerCard"
+            }
+            else -> {
+                for (i in 0 until playerValue) {
+                    playerCard = playerDeck.draw()
+                    enemyCard = enemyDeck.draw()
+                    warCards.add(playerCard)
+                    warCards.add(enemyCard)
+                    delay(500)
+                    if (stopPlaying)
+                        break
+                }
+                when {
+                    playerValue > enemyValue -> {
+                        playerCards.addCards(warCards)
+                        "Player Wins with $playerCard beating $enemyCard"
+                    }
+                    enemyValue > playerValue -> {
+                        enemyCards.addCards(warCards)
+                        "Enemy Wins with $enemyCard beating $playerCard"
+                    }
+                    else -> {
+                        playerCards.addCards(warCards)
+                        "Player Wins with $playerCard beating $enemyCard"
+                    }
+                }
+            }//war().await()
+        }
+        if(stopPlaying) {
+            if (!dialog.isShowing) {
+                dialog.setMessage(if(playerDeck > enemyDeck) "You Win" else "You Lose")
+                dialog.show()
+            }
+        }
+        warCards.clear()
+        warinfo.text = winner
+        collectButton.isEnabled = false
+        delay(500)
+        playerCard = Card.BackCard
+        enemyCard = Card.BackCard
+        playerpile.isEnabled = true
     }
 }
