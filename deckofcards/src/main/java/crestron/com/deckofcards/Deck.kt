@@ -15,11 +15,18 @@ class Deck {
     private val emptyDeck = CardNotFoundException("Deck is Empty")
     /**
      * The size of the deck.
-     *
      * @return The size of the deck (int)
      */
     val size: Int
         get() = deckOfCards.size
+
+    /**
+     * if the deck is empty
+     * @return true if the deck is empty
+     */
+    val isEmpty: Boolean
+        get() = deckOfCards.isEmpty()
+
     /**
      * Draws a random card from the deck.
      *
@@ -29,8 +36,7 @@ class Deck {
         @Throws(CardNotFoundException::class)
         get() {
             try {
-                val num = CardUtil.randomNumber(0, size - 1)
-                return getCard(num)
+                return getCard(CardUtil.randomNumber(0, size - 1))
             } catch (e: IndexOutOfBoundsException) {
                 throw emptyDeck
             }
@@ -124,7 +130,7 @@ class Deck {
          */
         @Throws(CardNotFoundException::class)
         fun numberOnly(num: IntRange): Deck {
-            if(num.first<1 || num.last > 13) {
+            if (num.first < 1 || num.last > 13) {
                 throw CardNotFoundException("Range is not allowed")
             }
             val d = Deck()
@@ -601,6 +607,14 @@ class Deck {
     }
 
     /**
+     * places a card in a wanted location
+     */
+    fun addCard(location: Int = CardUtil.randomNumber(0, size), card: Card) {
+        deckOfCards.add(location, card)
+        deckListener?.cardAdded(arrayListOf<Card>().apply { add(card) })
+    }
+
+    /**
      * Draws a random card from the deck.
      *
      * @param n The place where the card is drawn
@@ -1012,7 +1026,7 @@ class Deck {
     /**
      * split the deck at a chosen location or midway
      */
-    fun splitDeck(location: Int = size/2): Pair<Deck, Deck> {
+    fun splitDeck(location: Int = size / 2): Pair<Deck, Deck> {
         val deck1 = deckOfCards.slice(0 until location)
         val deck2 = deckOfCards.slice(location until size)
         return Pair(Deck(cards = deck1), Deck(cards = deck2))

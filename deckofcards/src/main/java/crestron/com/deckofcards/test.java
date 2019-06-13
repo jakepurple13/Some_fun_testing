@@ -12,9 +12,9 @@ public class test {
 		
 		Deck j = new Deck(false);
 		j.shuffle(1L);
-		for(int i=0;i<d.getSize();i++) {
+		//for(int i=0;i<d.getSize();i++) {
 			//System.out.println(j.draw());
-		}
+		//}
 		
 		Deck t = new Deck(true);
 		//t.shuffle(1);
