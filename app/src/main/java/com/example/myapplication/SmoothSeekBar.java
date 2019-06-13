@@ -38,7 +38,8 @@ public class SmoothSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBar
 
 
     public void init(Context context) {
-        Context mContext = context;
+        //Context mContext = context;
+        context.getClass();
     }
 
     @Override

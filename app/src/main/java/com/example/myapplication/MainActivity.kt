@@ -329,7 +329,8 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun bgChange() {
         val color = Color.argb(alpha, red, green, blue)
-        val complimentColor = getComplimentaryColor(Color.rgb(red, green, blue))//Color.argb(if(alpha>128) 0 else 255, red, green, blue))
+        val complimentColor =
+            getComplimentaryColor(Color.rgb(red, green, blue))//Color.argb(if(alpha>128) 0 else 255, red, green, blue))
         background.setBackgroundColor(color)
         cardImage.setColorFilter(color, PorterDuff.Mode.SCREEN)
         val infoString = Html.fromHtml(

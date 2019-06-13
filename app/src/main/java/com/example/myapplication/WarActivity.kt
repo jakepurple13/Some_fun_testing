@@ -67,11 +67,6 @@ class WarActivity : AppCompatActivity() {
             override fun draw(c: Card, size: Int) {
                 if (size < 1) {
                     if (playerCards.isEmpty()) {
-                        /*if (!dialog.isShowing) {
-                            dialog.setMessage("You Lose")
-                            dialog.show()
-                        }
-                        playerDeck += Card.RandomCard*/
                         stopPlaying = true
                     } else {
                         playerDeck += playerCards
@@ -86,11 +81,6 @@ class WarActivity : AppCompatActivity() {
             override fun draw(c: Card, size: Int) {
                 if (size < 1) {
                     if (enemyCards.isEmpty()) {
-                        /*if (!dialog.isShowing) {
-                            dialog.setMessage("You Win")
-                            dialog.show()
-                        }
-                        enemyDeck += Card.RandomCard*/
                         stopPlaying = true
                     } else {
                         enemyDeck += enemyCards
@@ -194,9 +184,9 @@ class WarActivity : AppCompatActivity() {
                 }
             }//war().await()
         }
-        if(stopPlaying) {
+        if (stopPlaying) {
             if (!dialog.isShowing) {
-                dialog.setMessage(if(playerDeck > enemyDeck) "You Win" else "You Lose")
+                dialog.setMessage(if (playerDeck > enemyDeck) "You Win" else "You Lose")
                 dialog.show()
             }
         }

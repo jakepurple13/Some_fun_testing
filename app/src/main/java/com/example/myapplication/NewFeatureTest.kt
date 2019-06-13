@@ -3,23 +3,14 @@ package com.example.myapplication
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Icon
-import android.hardware.biometrics.BiometricPrompt
 import android.os.Bundle
-import android.os.CancellationSignal
-import android.util.Base64
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_new_feature_test.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import android.util.Base64.URL_SAFE
-import androidx.fragment.app.FragmentActivity
-import crestron.com.deckofcards.Deck
-import java.security.Signature
 
 
 class NewFeatureTest : AppCompatActivity() {

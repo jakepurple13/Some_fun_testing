@@ -1,12 +1,10 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.SeekBar
-import androidx.core.graphics.ColorUtils
 import crestron.com.deckofcards.Card
 import crestron.com.deckofcards.CardDescriptor
 import crestron.com.deckofcards.Deck
@@ -14,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_bubble.*
 
 class BubbleActivity : AppCompatActivity() {
 
-    private val RGB_MAX = 255
+    private val rgbMAX = 255
 
     var red = 0
         set(value) {
@@ -146,9 +144,9 @@ class BubbleActivity : AppCompatActivity() {
 
     private fun getComplimentaryColor(color: Int): Int {
         return Color.rgb(
-            RGB_MAX - Color.red(color),
-            RGB_MAX - Color.green(color),
-            RGB_MAX - Color.blue(color)
+            rgbMAX - Color.red(color),
+            rgbMAX - Color.green(color),
+            rgbMAX - Color.blue(color)
         )
     }
 
