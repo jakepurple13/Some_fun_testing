@@ -430,7 +430,7 @@ class Deck {
     /**
      * Shorthand to draw from the bottom of the deck
      */
-    operator fun unaryMinus() = getCard(size-1)
+    operator fun unaryMinus() = getCard(size - 1)
 
     /**
      * Shorthand to draw from the deck
@@ -640,6 +640,22 @@ class Deck {
     }
 
     /**
+     * Gets a card out of the deck
+     * @return the card
+     */
+    @Throws(CardNotFoundException::class)
+    fun getCard(predicate: (Card) -> Boolean): Card {
+        for (i in deckOfCards.indices) {
+            if (predicate(deckOfCards[i])) {
+                val cTemp = deckOfCards.removeAt(i)
+                deckListener?.draw(cTemp, size)
+                return cTemp
+            }
+        }
+        throw CardNotFoundException("Could not find card")
+    }
+
+    /**
      * Get the location of a card
      * @param c the wanted card
      * @return the location of [c]
@@ -671,6 +687,22 @@ class Deck {
     }
 
     /**
+     * Gets the first card by Value.
+     * @return the first card by Value
+     */
+    @Throws(CardNotFoundException::class)
+    fun getFirstCardByValue(predicate: (Int) -> Boolean): Card {
+        for (i in 0 until size) {
+            if (predicate(deckOfCards[i].value)) {
+                val c = deckOfCards.removeAt(i)
+                deckListener?.draw(c, size)
+                return c
+            }
+        }
+        throw CardNotFoundException("Could not find card for the wanted value")
+    }
+
+    /**
      * Gets the last card by Value.
      *
      * @param v Value of Card
@@ -687,6 +719,24 @@ class Deck {
         }
 
         throw CardNotFoundException("Could not find card for value $v")
+    }
+
+    /**
+     * Gets the last card by Value.
+     *
+     * @param predicate a predicate
+     * @return the last card by Value
+     */
+    @Throws(CardNotFoundException::class)
+    fun getLastCardByValue(predicate: (Int) -> Boolean): Card {
+        for (i in size - 1 downTo 0) {
+            if (predicate(deckOfCards[i].value)) {
+                val c = deckOfCards.removeAt(i)
+                deckListener?.draw(c, size)
+                return c
+            }
+        }
+        throw CardNotFoundException("Could not find card for the wanted value")
     }
 
     /**
@@ -726,6 +776,38 @@ class Deck {
     }
 
     /**
+     * Gets the first card by suit.
+     * @return the first card by suit
+     */
+    @Throws(CardNotFoundException::class)
+    fun getFirstCardBySuit(predicate: (Suit) -> Boolean): Card {
+        for (i in 0 until size) {
+            if (predicate(deckOfCards[i].suit)) {
+                val c = deckOfCards.removeAt(i)
+                deckListener?.draw(c, size)
+                return c
+            }
+        }
+        throw CardNotFoundException("Could not find card for suit")
+    }
+
+    /**
+     * Gets the last card by suit.
+     * @return the last card by suit
+     */
+    @Throws(CardNotFoundException::class)
+    fun getLastCardBySuit(predicate: (Suit) -> Boolean): Card {
+        for (i in size - 1 downTo 0) {
+            if (predicate(deckOfCards[i].suit)) {
+                val c = deckOfCards.removeAt(i)
+                deckListener?.draw(c, size)
+                return c
+            }
+        }
+        throw CardNotFoundException("Could not find card for suit")
+    }
+
+    /**
      * Gets the first card by color.
      *
      * @param color the color
@@ -759,6 +841,38 @@ class Deck {
             }
         }
         throw CardNotFoundException("Could not find card for the color $color")
+    }
+
+    /**
+     * Gets the first card by color.
+     * @return the first card by color
+     */
+    @Throws(CardNotFoundException::class)
+    fun getFirstCardByColor(predicate: (Color) -> Boolean): Card {
+        for (i in 0 until size) {
+            if (predicate(deckOfCards[i].color)) {
+                val c = deckOfCards.removeAt(i)
+                deckListener?.draw(c, size)
+                return c
+            }
+        }
+        throw CardNotFoundException("Could not find card for the color")
+    }
+
+    /**
+     * Gets the last card by color.
+     * @return the last card by color
+     */
+    @Throws(CardNotFoundException::class)
+    fun getLastCardByColor(predicate: (Color) -> Boolean): Card {
+        for (i in size - 1 downTo 0) {
+            if (predicate(deckOfCards[i].color)) {
+                val c = deckOfCards.removeAt(i)
+                deckListener?.draw(c, size)
+                return c
+            }
+        }
+        throw CardNotFoundException("Could not find card for the color")
     }
 
     /**
@@ -799,6 +913,13 @@ class Deck {
             addAll(diamondsList.sortedWith(compareBy { it.value }))
             addAll(heartsList.sortedWith(compareBy { it.value }))
         }
+    }
+
+    /**
+     * a custom sort
+     */
+    fun sortBy(comparator: Comparator<in Card>) {
+        deckOfCards.sortWith(comparator)
     }
 
     /**
@@ -930,6 +1051,23 @@ class Deck {
      */
     fun getDeck(): ArrayList<Card> {
         return deckOfCards
+    }
+
+    /**
+     * partitions a deck into two decks based off of a predicate
+     */
+    fun partition(predicate: (Card) -> Boolean): Pair<Deck, Deck> {
+        val (deck1, deck2) = deckOfCards.partition(predicate)
+        return Pair(Deck(cards = deck1), Deck(cards = deck2))
+    }
+
+    fun find(predicate: (Card) -> Boolean): Deck {
+        val list = arrayListOf<Card>()
+        for (c in deckOfCards)
+            if (predicate(c)) {
+                list += c
+            }
+        return Deck(cards = list)
     }
 
     /**

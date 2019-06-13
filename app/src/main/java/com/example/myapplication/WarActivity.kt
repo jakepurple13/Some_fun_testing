@@ -182,7 +182,7 @@ class WarActivity : AppCompatActivity() {
                         "Player Wins with $playerCard beating $enemyCard"
                     }
                 }
-            }//war().await()
+            }
         }
         if (stopPlaying) {
             if (!dialog.isShowing) {

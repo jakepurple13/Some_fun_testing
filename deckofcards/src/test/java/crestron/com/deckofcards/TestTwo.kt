@@ -3,6 +3,7 @@ package crestron.com.deckofcards
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
 class TestTwo {
     @Test
@@ -32,6 +33,53 @@ class TestTwo {
     }
 
     @Test
+    fun partitionTest() {
+        Card.cardDescriptor = CardDescriptor.UNICODE_SYMBOL
+        val d = Deck()
+        val (black, red) = d.partition { it.color == Color.BLACK }
+        log("${black.toArrayString()}\n${red.toArrayString()}")
+        val (spades, clubs) = black.partition { it.suit == Suit.SPADES }
+        val (hearts, diamonds) = red.partition { it.suit == Suit.HEARTS }
+        log("${spades.toArrayString()}\n${clubs.toArrayString()}\n${diamonds.toArrayString()}\n${hearts.toArrayString()}")
+
+        class DelegateExample {
+            operator fun getValue(thisRef: Any?, prop: KProperty<*>): String {        // 2
+                return "$thisRef, thank you for delegating '${prop.name}' to me!"
+            }
+
+            operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: String) { // 2
+                println("$value has been assigned to ${prop.name} in $thisRef")
+            }
+        }
+
+        class Example {
+            var p: String by DelegateExample()
+        }
+
+        val e = Example()
+
+        e.p = "asdf"
+        log(e.p)
+
+        val d2 = d.find { it.value > 10 }
+        log(d2.toArrayString())
+        d.shuffle()
+        d.sortBy(compareBy { it.value })
+        val getCardP = d.getCard { it == Card(Suit.SPADES, 1) }
+        val firstCardValue = d.getFirstCardByValue { it == 11 }
+        val lastCardValue = d.getLastCardByValue { it == 11 }
+        val firstCardSuit = d.getFirstCardBySuit { it == Suit.SPADES }
+        val lastCardSuit = d.getLastCardBySuit { it == Suit.HEARTS }
+        val firstCardColor = d.getFirstCardByColor { it == Color.BLACK }
+        val lastCardColor = d.getLastCardByColor { it == Color.RED }
+        log("$getCardP" +
+                "\n$firstCardValue and $lastCardValue" +
+                "\n$firstCardSuit and $lastCardSuit" +
+                "\n$firstCardColor and $lastCardColor")
+
+    }
+
+    @Test
     fun dTest() {
         val d = Deck()
 
@@ -56,7 +104,7 @@ class TestTwo {
         }
 
         dq addDeck Deck(shuffler = true)
-        dq+=Card.RandomCard
+        dq += Card.RandomCard
     }
 
     @Test
