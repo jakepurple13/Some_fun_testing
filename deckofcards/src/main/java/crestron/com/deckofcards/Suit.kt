@@ -61,6 +61,13 @@ enum class Suit
                 unicodeSymbol == other.unicodeSymbol
     }
 
+    operator fun not(): Suit = when(this) {
+            HEARTS -> SPADES
+            DIAMONDS -> CLUBS
+            CLUBS -> DIAMONDS
+            SPADES -> HEARTS
+        }
+
     companion object {
         /**
          * @return a random suit
@@ -94,6 +101,12 @@ enum class Color(private val colorName: String) {
 
     override fun toString(): String {
         return colorName
+    }
+
+    operator fun not(): Color = when(this) {
+        BLACK -> RED
+        RED -> BLACK
+        BACK -> BACK
     }
 
     companion object {

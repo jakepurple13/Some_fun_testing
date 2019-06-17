@@ -151,25 +151,13 @@ class MainActivity : AppCompatActivity() {
             /*val c = firstPres.draw()
             cardTotal+=c.value
             cardImage.setImageResource(c.getImage(this@MainActivity))*/
+
             val i = Intent(this@MainActivity, NewFeatureTest::class.java)
             i.putExtra("bgColor", Color.argb(alpha, red, green, blue))
             startActivity(i)
         }
 
         button3.setOnClickListener {
-
-            /*Loged.e("I am being pressed")
-
-            val dialog = AlertDialog.Builder(this@MainActivity)
-                .setMessage("Hello")
-                .setTitle("Hello")
-                .setPositiveButton("Ok") { _, _ ->
-
-                }
-                .create()
-            runOnUiThread {
-                dialog.show()
-            }*/
             val i = Intent(this@MainActivity, SecondActivity::class.java)
             i.putExtra("bgColor", Color.argb(alpha, red, green, blue))
             startActivity(i)
@@ -193,14 +181,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         cardImage.setOnLongClickListener {
-            val suit = when {
-                green < 63 -> Suit.HEARTS
-                green in 64..125 -> Suit.DIAMONDS
-                green in 126..189 -> Suit.CLUBS
-                green in 190..255 -> Suit.SPADES
-                else -> Suit.SPADES
-            }
-            cardImage.setResourceImage(Card(suit, 13 - (blue % 13)))
+            if(holdCard == null)
+                cardImage.performClick()
+            cardImage.setResourceImage(!holdCard!!)
             true
         }
 
@@ -212,6 +195,11 @@ class MainActivity : AppCompatActivity() {
 
         randomcard.setOnClickListener {
             cardImage.setResourceImage(Card.RandomCard)
+        }
+
+        randomcard.setOnLongClickListener {
+            cardImage.setResourceImage(!Card.RandomCard)
+            true
         }
 
         randomsuit.setOnClickListener {

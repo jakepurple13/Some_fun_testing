@@ -10,9 +10,39 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
     private var maxValue = 16
     private var minValue = 1
 
-    operator fun plus(c: Card) = value + c.value
-    operator fun minus(c: Card) = value - c.value
-    override fun equals(other: Any?) = suit.equals((other as Card).suit) && value == other.value
+    /**
+     * adds the value of two cards
+     */
+    operator fun plus(c: Card): Int = value + c.value
+
+    /**
+     * subtracts the value of two cards
+     */
+    operator fun minus(c: Card): Int = value - c.value
+
+    /**
+     * inverses a card
+     * value == 14-currentValue
+     * suit == !Suit
+     * Spades <=> Hearts
+     * Clubs <=> Diamonds
+     */
+    operator fun not(): Card = Card(!suit, 14 - value)
+
+    /**
+     * returns a card with the value being 1 higher
+     */
+    operator fun unaryPlus(): Card = Card(suit, if (value + 1 < 13) value + 1 else value)
+
+    /**
+     * returns a card with the value being 1 lower
+     */
+    operator fun unaryMinus(): Card = Card(suit, if (value - 1 > 1) value - 1 else value)
+
+    /**
+     * checks to see if two cards are equal by checking both value and suit
+     */
+    override fun equals(other: Any?): Boolean = suit.equals((other as Card).suit) && value == other.value
 
     companion object DefaultCard {
         /**
