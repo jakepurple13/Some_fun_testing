@@ -72,10 +72,12 @@ class TestTwo {
         val lastCardSuit = d.getLastCardBySuit { it == Suit.HEARTS }
         val firstCardColor = d.getFirstCardByColor { it == Color.BLACK }
         val lastCardColor = d.getLastCardByColor { it == Color.RED }
-        log("$getCardP" +
-                "\n$firstCardValue and $lastCardValue" +
-                "\n$firstCardSuit and $lastCardSuit" +
-                "\n$firstCardColor and $lastCardColor")
+        log(
+            "$getCardP" +
+                    "\n$firstCardValue and $lastCardValue" +
+                    "\n$firstCardSuit and $lastCardSuit" +
+                    "\n$firstCardColor and $lastCardColor"
+        )
 
         log("${d.removeIf { it.value == 12 }}")
 
@@ -112,6 +114,32 @@ class TestTwo {
         log("$c")
 
         log("${d6.getDeck().sumBy { it.value }}")
+
+    }
+
+    @Test
+    fun opTesting() {
+        Card.cardDescriptor = CardDescriptor.UNICODE_SYMBOL
+        val d = Deck()
+        log("${arrayListOf(Card(Suit.HEARTS, 3), Card(Suit.SPADES, 3)) in d}")
+        d.getCards(arrayListOf(Card(Suit.SPADES, 3), Card(Suit.HEARTS, 3)))
+        log("${arrayListOf(Card(Suit.HEARTS, 3), Card(Suit.SPADES, 3)) !in d}")
+        d.removeNumber(10)
+        log("${d.none { it.value == 10 }}")
+        log("${d.any { it.value == 9 }}")
+        log(d.toArrayString())
+        log((!d).toArrayString())
+
+        val d1 = d.getDeck().associateWith { it.suit }
+        log("$d1")
+        val d2 = d.groupBy { it.suit }
+        log("$d2")
+        val c1 = d.associateBy { it.value }
+        log("$c1")
+        d.forEach {
+            print("$it, ")
+        }
+        log("\nCards that have value 9 == ${d.countSpecific { it.value == 9 }}")
 
     }
 
@@ -257,9 +285,9 @@ class TestTwo {
         log("Deck plus another deck: $d")
         d += Card(Suit.SPADES, 1)
         log("Deck plus Ace of Spades: $d")
-        d - Suit.SPADES
+        d -= Suit.SPADES
         log("Deck minus spades: $d")
-        d - Color.RED
+        d -= Color.RED
         log("Deck minus red: $d")
         log("5 cards from deck: ${(d - 5)}")
         log("One card from deck: ${(d - 5f)}")
@@ -300,9 +328,9 @@ class TestTwo {
 
         d = Deck()
         d *= 2
-        d - Suit.DIAMONDS
-        d - Suit.CLUBS
-        d - Suit.HEARTS
+        d -= Suit.DIAMONDS
+        d -= Suit.CLUBS
+        d -= Suit.HEARTS
 
         log("New deck is: $d and the size is ${d.size}")
         d.shuffle()

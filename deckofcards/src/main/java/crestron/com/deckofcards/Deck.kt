@@ -64,13 +64,13 @@ class Deck {
         get() = deckOfCards.firstOrNull()
 
     /**
-     * the card directly in the middle of the deck
+     * the card directly in the middle of the deck (without removing)
      */
     val middle: Card?
-        get() = deckOfCards.getOrNull(size/2)
+        get() = deckOfCards.getOrNull(size / 2)
 
     /**
-     * the last card (bottom of the deck)
+     * the last card (bottom of the deck) ((without removing))
      */
     val last: Card?
         get() = deckOfCards.lastOrNull()
@@ -315,6 +315,8 @@ class Deck {
 
     operator fun contains(num: Int): Boolean = deckOfCards.any { it.value == num }
 
+    operator fun contains(cards: Collection<Card>): Boolean = deckOfCards.containsAll(cards)
+
     /**
      * adds card to deck
      * @param c the card to add
@@ -359,22 +361,28 @@ class Deck {
     /**
      * removes a card from the deck
      */
-    operator fun minus(c: Card) = getCard(c)
+    operator fun minusAssign(c: Card) {
+        getCard(c)
+    }
+
+    /**
+     * removes all suit of s from this deck
+     */
+    operator fun minusAssign(s: Suit) {
+        removeSuit(s)
+    }
+
+    /**
+     * removes all color of color from this deck
+     */
+    operator fun minusAssign(color: Color) {
+        removeColor(color)
+    }
 
     /**
      * removes num number of cards from this deck
      */
     operator fun minus(num: Int): Collection<Card> = getCards(num)
-
-    /**
-     * removes all suit of s from this deck
-     */
-    operator fun minus(s: Suit) = removeSuit(s)
-
-    /**
-     * removes all color of color from this deck
-     */
-    operator fun minus(color: Color) = removeColor(color)
 
     /**
      * removes the num card from this deck
@@ -476,6 +484,15 @@ class Deck {
      * Shorthand to draw from the deck
      */
     operator fun unaryPlus(): Card = draw()
+
+    /**
+     * returns a deck with all the cards that are not in this deck
+     */
+    operator fun not(): Deck {
+        val d = Deck(false)
+        d.removeIf { it in deckOfCards }
+        return d
+    }
 
     /**
      * adds deck to this deck
@@ -654,6 +671,19 @@ class Deck {
         val cards = arrayListOf<Card>()
         for (i in 0 until num) {
             cards += draw()
+        }
+        return cards
+    }
+
+    /**
+     * Gets a [Collection] of cards from the top of the deck
+     * @param cardList the number of cards to get
+     * @return a [Collection] of cards
+     */
+    fun getCards(cardList: Collection<Card>): Collection<Card> {
+        val cards = arrayListOf<Card>()
+        for (i in cardList) {
+            cards += getCard(i)
         }
         return cards
     }
@@ -1046,6 +1076,40 @@ class Deck {
         return Pair(Deck(cards = deck1), Deck(cards = deck2))
     }
 
+    /**
+     * checks to see if there are no cards of a predicate in the deck
+     */
+    fun none(predicate: (Card) -> Boolean): Boolean = deckOfCards.none(predicate)
+
+    /**
+     * checks to see if there are any cards of a predicate in the deck
+     */
+    fun any(predicate: (Card) -> Boolean): Boolean = deckOfCards.any(predicate)
+
+    /**
+     * groups the deck by a predicate
+     */
+    fun <T> groupBy(predicate: (Card) -> T): Map<T, List<Card>> = deckOfCards.groupBy(predicate)
+
+    /**
+     * associates the deck by a predicate
+     */
+    fun <T> associateBy(predicate: (Card) -> T): Map<T, Card> = deckOfCards.associateBy(predicate)
+
+    /**
+     * executes a for each action
+     */
+    fun forEach(action: (Card) -> Unit) {
+        deckOfCards.forEach(action)
+    }
+
+    /**
+     * a custom count method
+     */
+    fun countSpecific(predicate: (Card) -> Boolean): Int {
+        return deckOfCards.count(predicate)
+    }
+
     //To String Methods
     /**
      * The Deck.
@@ -1053,12 +1117,7 @@ class Deck {
      * @return The remaining contents of the deck
      */
     override fun toString(): String {
-        var temp = ""
-        for (i in deckOfCards.indices) {
-            temp += "${deckOfCards[i]}\n"
-        }
-
-        return temp
+        return deckOfCards.joinToString("\n") { it.toString() }
     }
 
     /**
@@ -1067,12 +1126,7 @@ class Deck {
      * @return The remaining contents of the deck
      */
     fun toNormalString(): String {
-        var temp = ""
-        for (i in deckOfCards.indices) {
-            temp += "${deckOfCards[i].toNormalString()}\n"
-        }
-
-        return temp
+        return deckOfCards.joinToString("\n") { it.toNormalString() }
     }
 
     /**
@@ -1081,12 +1135,7 @@ class Deck {
      * @return The remaining contents of the deck
      */
     fun toSymbolString(): String {
-        var temp = ""
-        for (i in deckOfCards.indices) {
-            temp += "${deckOfCards[i].toSymbolString()}\n"
-        }
-
-        return temp
+        return deckOfCards.joinToString("\n") { it.toSymbolString() }
     }
 
     /**
@@ -1095,12 +1144,7 @@ class Deck {
      * @return The remaining contents of the deck
      */
     fun toPrettyString(): String {
-        var temp = ""
-        for (i in deckOfCards.indices) {
-            temp += "${deckOfCards[i].toPrettyString()}\n"
-        }
-
-        return temp
+        return deckOfCards.joinToString("\n") { it.toPrettyString() }
     }
 
     /**

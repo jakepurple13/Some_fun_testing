@@ -11,6 +11,25 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
     private var minValue = 1
 
     /**
+     * Gets the value ten.
+     *
+     * @return the value ten
+     */
+    val valueTen: Int
+        get() = if (value > 10) {
+            10
+        } else {
+            value
+        }
+
+    /**
+     * The color of the suit
+     *
+     * @return The color of the suit of this card. Black is true, red is false.
+     */
+    val color = suit.getColor()
+
+    /**
      * adds the value of two cards
      */
     operator fun plus(c: Card): Int = value + c.value
@@ -117,25 +136,6 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
         else -> value
     }
 
-    /**
-     * Gets the value ten.
-     *
-     * @return the value ten
-     */
-    val valueTen: Int
-        get() = if (value > 10) {
-            10
-        } else {
-            value
-        }
-
-    /**
-     * The color of the suit
-     *
-     * @return The color of the suit of this card. Black is true, red is false.
-     */
-    val color = suit.getColor()
-
     override fun toString(): String {
         return when (cardDescriptor) {
             CardDescriptor.UNICODE_SYMBOL -> toPrettyString()
@@ -179,8 +179,7 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
      *
      * @param c the c
      * @return true if the two cards have the same suit
-     *
-     *false if the two cards don't have the same suit
+     * false if the two cards don't have the same suit
      */
     fun equals(c: Card): Boolean {
         return suit.equals(c.suit) && value == c.value
