@@ -130,16 +130,54 @@ class TestTwo {
         log(d.toArrayString())
         log((!d).toArrayString())
 
+        fun groupTest(d: Deck) {
+            val suitGroup = d.groupBy { it.suit }
+            println("$suitGroup")
+            val colorGroup = d.groupBy { it.color }
+            println("$colorGroup")
+            val valueGroup = d.groupBy { it.value }
+            println("$valueGroup")
+        }
+
         val d1 = d.getDeck().associateWith { it.suit }
         log("$d1")
-        val d2 = d.groupBy { it.suit }
-        log("$d2")
+        groupTest(d)
         val c1 = d.associateBy { it.value }
         log("$c1")
         d.forEach {
             print("$it, ")
         }
         log("\nCards that have value 9 == ${d.countSpecific { it.value == 9 }}")
+        val dr = Deck.randomDeck(100)
+        log("${dr.toArrayString()} and size is ${dr.size}")
+        val dr1 = Deck.randomDeck()
+        log("${dr1.toArrayString()} and size is ${dr1.size}")
+        val dd = Deck(true)
+        groupTest(dd)
+
+        val deck1 = Deck(false)
+        deck1.sortToReset()
+        val deck2 = Deck(true)
+        val c = Deck.compareCardLists(deck1.getDeck(), deck2.getDeck()) { card1, c2 ->
+            card1.suit == c2.suit
+        }
+        val c2 = Deck.compareCardLists(deck1.getDeck(), deck2.getDeck())
+        log("$c and $c2")
+        log("${deck1.toArrayString()} \n ${deck2.toArrayString()}")
+        val c3 = Deck.compareCardLists(deck1, deck2)
+        log("$c3")
+        log("${deck1.toArrayString()} \n ${deck2.toArrayString()}")
+
+        fun highFunTest(deck: Deck, deckAction: (Card) -> Unit) {
+            for (i in deck) {
+                deckAction(i)
+            }
+        }
+        print("[")
+        highFunTest(deck2) {
+            print("$it, ")
+        }
+        print("]\n")
 
     }
 

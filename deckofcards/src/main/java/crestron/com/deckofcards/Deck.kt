@@ -191,6 +191,75 @@ class Deck {
             return d
         }
 
+        /**
+         * creates a [cardAmount]-card deck with random cards
+         * [cardAmount] default is 52
+         */
+        fun randomDeck(cardAmount: Int = 52): Deck {
+            val d = Deck()
+            for (i in 0 until cardAmount)
+                d += Card.RandomCard
+            return d
+        }
+
+        /**
+         * compares two lists of cards
+         * sorts them to resetting (A-K SPADES, A-K CLUBS, A-K DIAMONDS, A-K HEARTS)
+         * default comparison is value==value
+         */
+        fun compareCardLists(
+            list1: Collection<Card>,
+            list2: Collection<Card>,
+            check: (Card, Card) -> Boolean = { c1: Card, c2: Card -> c1.value == c2.value }
+        ): Boolean {
+            if (list1.size != list2.size) {
+                return false
+            }
+
+            val cardList1 = Deck(cards = list1)
+            val cardList2 = Deck(cards = list2)
+
+            cardList1.sortToReset()
+            cardList2.sortToReset()
+
+            var temp = true
+            for (l in 0 until cardList1.size) {
+                temp = check(cardList1[l], cardList2[l])
+                if (!temp)
+                    return false
+            }
+            return temp
+        }
+
+        /**
+         * compares two decks
+         * sorts them to resetting (A-K SPADES, A-K CLUBS, A-K DIAMONDS, A-K HEARTS)
+         * default comparison is value==value
+         */
+        fun compareCardLists(
+            list1: Deck,
+            list2: Deck,
+            check: (Card, Card) -> Boolean = { c1: Card, c2: Card -> c1.value == c2.value }
+        ): Boolean {
+            if (list1.size != list2.size) {
+                return false
+            }
+
+            val cardList1 = Deck(deck = list1)
+            val cardList2 = Deck(deck = list2)
+
+            cardList1.sortToReset()
+            cardList2.sortToReset()
+
+            var temp = true
+            for (l in 0 until cardList1.size) {
+                temp = check(cardList1[l], cardList2[l])
+                if (!temp)
+                    return false
+            }
+            return temp
+        }
+
     }
 
     //Constructors
