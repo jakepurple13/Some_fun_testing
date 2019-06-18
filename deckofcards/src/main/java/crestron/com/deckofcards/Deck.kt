@@ -3,6 +3,7 @@ package crestron.com.deckofcards
 import android.annotation.TargetApi
 import android.os.Build
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * The Class Deck.
@@ -203,6 +204,29 @@ class Deck {
         }
 
         /**
+         * purely for the compareCardLists methods
+         * for code clean up so these lines aren't repeated twice
+         */
+        private fun comparingMethod(
+            list1: Collection<Card>,
+            list2: Collection<Card>,
+            check: (Card, Card) -> Boolean = { c1: Card, c2: Card -> c1.value == c2.value }
+        ): Boolean {
+
+            val cardList1 = Deck(cards = list1)
+            val cardList2 = Deck(cards = list2)
+
+            cardList1.sortToReset()
+            cardList2.sortToReset()
+
+            for (l in 0 until list1.size) {
+                if (!check(cardList1[l], cardList2[l]))
+                    return false
+            }
+            return true
+        }
+
+        /**
          * compares two lists of cards
          * sorts them to resetting (A-K SPADES, A-K CLUBS, A-K DIAMONDS, A-K HEARTS)
          * default comparison is value==value
@@ -216,19 +240,7 @@ class Deck {
                 return false
             }
 
-            val cardList1 = Deck(cards = list1)
-            val cardList2 = Deck(cards = list2)
-
-            cardList1.sortToReset()
-            cardList2.sortToReset()
-
-            var temp = true
-            for (l in 0 until cardList1.size) {
-                temp = check(cardList1[l], cardList2[l])
-                if (!temp)
-                    return false
-            }
-            return temp
+            return comparingMethod(list1, list2, check)
         }
 
         /**
@@ -245,19 +257,7 @@ class Deck {
                 return false
             }
 
-            val cardList1 = Deck(deck = list1)
-            val cardList2 = Deck(deck = list2)
-
-            cardList1.sortToReset()
-            cardList2.sortToReset()
-
-            var temp = true
-            for (l in 0 until cardList1.size) {
-                temp = check(cardList1[l], cardList2[l])
-                if (!temp)
-                    return false
-            }
-            return temp
+            return comparingMethod(list1.getDeck(), list2.getDeck(), check)
         }
 
     }
@@ -487,6 +487,32 @@ class Deck {
     operator fun get(vararg suit: Suit): Collection<Card> = deckOfCards.filter { suit.contains(it.suit) }
 
     /**
+     * sets a card
+     */
+    operator fun set(int: Int, card: Card) {
+        deckOfCards[int] = card
+    }
+
+    /**
+     * sets a range of cards
+     */
+    operator fun set(intRange: IntRange, cards: Collection<Card>) {
+        val intSize = intRange.last - intRange.start + 1
+        if(intSize!=cards.size) {
+            return
+        }
+        var counter = 0
+        for(i in intRange) {
+            deckOfCards[i] = cards.elementAt(counter++)
+        }
+    }
+
+    /**
+     * replaces a card with another card
+     */
+    operator fun set(card: Card, card1: Card) = replaceCard(card, card1)
+
+    /**
      * compares the amount of cards in the deck
      * 1 if Deck has more cards than num
      * -1 if Deck has less cards than num
@@ -671,6 +697,16 @@ class Deck {
     }
 
     /**
+     * compares this deck to another deck
+     */
+    fun compareToDeck(otherDeck: Deck, check: (Card, Card) -> Boolean): Boolean {
+        if(size!=otherDeck.size) {
+            return false
+        }
+        return comparingMethod(this.deckOfCards, otherDeck.deckOfCards, check)
+    }
+
+    /**
      * Draws a card.
      *
      * @return Card
@@ -712,6 +748,30 @@ class Deck {
     fun addCard(location: Int = CardUtil.randomNumber(0, size), card: Card) {
         deckOfCards.add(location, card)
         deckListener?.cardAdded(mutableListOf(card))
+    }
+
+    /**
+     * replaces 1 occurrence of [cardToReplace] with [cardReplaceWith]
+     * default range == 0 until deck.size
+     */
+    fun replaceCard(cardToReplace: Card, cardReplaceWith: Card, range: (Deck) -> IntProgression = { deck -> 0 until deck.size }) {
+        for(i in range(this)) {
+            if(this[i] == cardToReplace) {
+                this[i] = cardReplaceWith
+                break
+            }
+        }
+    }
+
+    /**
+     * replaces all [cardToReplace] with [cardToReplace]
+     */
+    fun replaceAllCards(cardToReplace: Card, cardReplaceWith: Card) {
+        for(i in 0 until size) {
+            if(this[i] == cardToReplace) {
+                this[i] = cardReplaceWith
+            }
+        }
     }
 
     /**
@@ -1250,6 +1310,17 @@ class Deck {
      */
     fun toArrayPrettyString(): String {
         return "[${deckOfCards.joinToString(separator = ", ") { it.toPrettyString() }}]"
+    }
+
+    /**
+     * a custom print statement based on the user
+     * default is "$i=$card\t
+     */
+    fun toCustomString(stringStatement: (Card, Int) -> String = { card: Card, i: Int -> "$i=$card\t" }): String {
+        var tempString = ""
+        for(i in 0 until size)
+            tempString += stringStatement(this[i], i)
+        return tempString
     }
 
     /**

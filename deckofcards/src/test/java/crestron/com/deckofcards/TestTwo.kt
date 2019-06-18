@@ -156,6 +156,11 @@ class TestTwo {
         groupTest(dd)
 
         val deck1 = Deck(false)
+        deck1.deckListener = object : Deck.DeckListener {
+            override fun draw(c: Card, size: Int) {
+                log("$c")
+            }
+        }
         deck1.sortToReset()
         val deck2 = Deck(true)
         val c = Deck.compareCardLists(deck1.getDeck(), deck2.getDeck()) { card1, c2 ->
@@ -164,6 +169,8 @@ class TestTwo {
         val c2 = Deck.compareCardLists(deck1.getDeck(), deck2.getDeck())
         log("$c and $c2")
         log("${deck1.toArrayString()} \n ${deck2.toArrayString()}")
+        deck1-=Card.RandomCard
+        deck1+=Card.RandomCard
         val c3 = Deck.compareCardLists(deck1, deck2)
         log("$c3")
         log("${deck1.toArrayString()} \n ${deck2.toArrayString()}")
@@ -178,6 +185,81 @@ class TestTwo {
             print("$it, ")
         }
         print("]\n")
+
+        val deckAction: (Card) -> Unit = { println("$it") }
+        deckAction(Card(Suit.SPADES, 4))
+
+        val c5 = deck1.compareToDeck(deck2) { card1, card2 ->
+            card1.suit == card2.suit
+        }
+        log("$c5")
+        log("${deck1.toArrayString()} \n ${deck2.toArrayString()}")
+
+        val aS = Card(Suit.SPADES, 1)
+        val kD = Card(Suit.DIAMONDS, 13)
+        deck1.replaceCard(aS, !aS) {
+            it.size-1 downTo 0
+        }
+        deck1.replaceAllCards(!aS, aS)
+
+        deck1.replaceCard(kD, !kD) {
+            26..40
+        }
+
+        log(deck1.toArrayString())
+
+
+        fun printCards(deckToPrint: Deck, range: ((Deck) -> IntProgression)? = null) {
+            print("[")
+            val cd = range ?: { deck: Deck -> 0 until deck.size }
+            for(i in cd(deckToPrint)) {
+                print("$i=${deckToPrint[i]}, ")
+            }
+            print("]\n")
+        }
+
+        printCards(deck1)
+        printCards(deck1) { 26..40 }
+
+        log(deck1.toCustomString { card, num -> "$num=${card.toPrettyString()}\t" })
+
+        val deck3 = Deck(false)
+        val valueDecks = deck3.groupBy { it.suit }
+        println("$valueDecks")
+        val spades = Deck(cards = valueDecks[Suit.SPADES], numberOfDecks = 0)
+        val clubs = Deck(cards = valueDecks[Suit.CLUBS], numberOfDecks = 0)
+        val diamonds = Deck(cards = valueDecks[Suit.DIAMONDS], numberOfDecks = 0)
+        val hearts = Deck(cards = valueDecks[Suit.HEARTS], numberOfDecks = 0)
+
+        val statementString = { card: Card, i: Int -> "$i=$card\t" }
+        log(spades.toCustomString(statementString))
+        log(clubs.toCustomString(statementString))
+        log(diamonds.toCustomString(statementString))
+        log(hearts.toCustomString(statementString))
+
+        log("-------------------------")
+
+        hearts[5..8] = spades[2..5]
+        clubs[Card(Suit.CLUBS, 5)] = Card(Suit.DIAMONDS, 5)
+
+        log(spades.toCustomString(statementString))
+        log(clubs.toCustomString(statementString))
+        log(diamonds.toCustomString(statementString))
+        log(hearts.toCustomString(statementString))
+
+
+        //-------------------
+        val repeatFun: String.(Int) -> String = { times -> this.repeat(times) }
+        val twoParameters: (String, Int) -> String = repeatFun // OK
+
+        fun runTransformation(f: (String, Int) -> String): String {
+            return f("hello", 3)
+        }
+
+        val result = runTransformation(repeatFun) // OK
+        val result1 = twoParameters("world", 3)
+
+        println("result = $result\nresult1 = $result1")
 
     }
 
