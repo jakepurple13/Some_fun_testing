@@ -241,6 +241,8 @@ class TestTwo {
 
         hearts[5..8] = spades[2..5]
         clubs[Card(Suit.CLUBS, 5)] = Card(Suit.DIAMONDS, 5)
+        log("${clubs[Card(Suit.CLUBS, 5)]}")
+        log("${clubs[Card(Suit.DIAMONDS, 5)]}")
 
         log(spades.toCustomString(statementString))
         log(clubs.toCustomString(statementString))
@@ -248,7 +250,11 @@ class TestTwo {
         log(hearts.toCustomString(statementString))
 
 
-        //-------------------
+
+    }
+
+    @Test
+    fun higherOrderTesting() {
         val repeatFun: String.(Int) -> String = { times -> this.repeat(times) }
         val twoParameters: (String, Int) -> String = repeatFun // OK
 
@@ -260,7 +266,6 @@ class TestTwo {
         val result1 = twoParameters("world", 3)
 
         println("result = $result\nresult1 = $result1")
-
     }
 
     @Test
@@ -348,7 +353,7 @@ class TestTwo {
             card(Card.RandomCard)
         }
 
-        d.randomCard.compareSuit(Card.RandomCard)
+        log("${d.randomCard?.compareSuit(Card.RandomCard)}")
 
         d.clear()
 

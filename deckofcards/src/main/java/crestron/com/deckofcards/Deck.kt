@@ -47,15 +47,8 @@ class Deck {
      *
      * @return Card
      */
-    val randomCard: Card
-        @Throws(CardNotFoundException::class)
-        get() {
-            try {
-                return getCard(CardUtil.randomNumber(0, size - 1))
-            } catch (e: IndexOutOfBoundsException) {
-                throw emptyDeck
-            }
-        }
+    val randomCard: Card?
+        get() = deckOfCards.getOrNull(CardUtil.randomNumber(0, size - 1))
 
     /**
      * the first card (equivalent to [draw] but without removing)
@@ -486,6 +479,8 @@ class Deck {
      */
     operator fun get(vararg suit: Suit): Collection<Card> = deckOfCards.filter { suit.contains(it.suit) }
 
+    operator fun get(card: Card): Int = getCardLocation(card)
+
     /**
      * sets a card
      */
@@ -510,7 +505,7 @@ class Deck {
     /**
      * replaces a card with another card
      */
-    operator fun set(card: Card, card1: Card) = replaceCard(card, card1)
+    operator fun set(cardToReplace: Card, cardReplaceWith: Card) = replaceCard(cardToReplace, cardReplaceWith)
 
     /**
      * compares the amount of cards in the deck
@@ -877,10 +872,12 @@ class Deck {
      */
     @Throws(CardNotFoundException::class)
     fun getCardLocation(c: Card): Int {
-        val loc = deckOfCards.indexOf(c)
-        if (loc != -1)
-            return loc
-        throw CardNotFoundException("Could not find card $c")
+        for((num, card) in deckOfCards.withIndex()) {
+            if (card == c) {
+                return num
+            }
+        }
+        return -1
     }
 
     /**

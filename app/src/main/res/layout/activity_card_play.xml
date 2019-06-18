@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:ignore="HardcodedText"
+        tools:context=".CardPlayActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cards_to_show"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true" />
+
+    <TextView
+            android:layout_margin="5dp"
+            android:text="Cards Taken Out"
+            android:id="@+id/info_text"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/cards_to_show"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="HardcodedText"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/other_cards"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/info_text"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true" />
+
+    <Button
+            android:layout_below="@id/other_cards"
+            android:layout_alignParentStart="true"
+            android:text="Random Card/First Card"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/random_card_first"/>
+
+    <Button
+            android:layout_below="@id/random_card_first"
+            android:layout_alignParentStart="true"
+            android:text="Middle/Last Card"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/random_middle_last"/>
+
+    <Button
+            android:layout_below="@id/other_cards"
+            android:layout_toEndOf="@id/random_middle_last"
+            android:layout_toStartOf="@id/get_group"
+            android:text="Unary +/-"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/unary_op"/>
+
+    <Button
+            android:layout_below="@id/unary_op"
+            android:layout_toEndOf="@id/random_middle_last"
+            android:text="Not/Replace"
+            android:layout_width="125dp"
+            android:layout_toStartOf="@id/get_group"
+            android:layout_height="wrap_content"
+            android:id="@+id/not_replace"/>
+
+    <Button
+            android:layout_below="@id/other_cards"
+            android:text="Get Cards/Group"
+            android:layout_width="125dp"
+            android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content"
+            android:id="@+id/get_group"/>
+
+    <Button
+            android:layout_below="@id/get_group"
+            android:text="Remove Color/Suit"
+            android:layout_width="125dp"
+            android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content"
+            android:id="@+id/remove_color_suit"/>
+
+    <Button
+            android:layout_below="@id/remove_color_suit"
+            android:text="Remove Number"
+            android:layout_width="125dp"
+            android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content"
+            android:id="@+id/remove_number"/>
+
+    <RadioGroup
+            android:id="@+id/change_deck"
+            android:layout_below="@id/random_middle_last"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <RadioButton
+                android:text="Normal Deck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:tag="0"
+                android:id="@+id/radioButton"/>
+
+        <RadioButton
+                android:text="Number Only (5,7)"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="1"
+                android:id="@+id/radioButton2"/>
+
+        <RadioButton
+                android:text="Suit Only (Spades, Hearts)"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="2"
+                android:id="@+id/radioButton3"/>
+
+        <RadioButton
+                android:text="Color Only (Black)"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="3"
+                android:id="@+id/radioButton4"/>
+
+        <RadioButton
+                android:text="Random Deck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="4"
+                android:id="@+id/radioButton5"/>
+
+        <RadioButton
+                android:text="Full Deck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="5"
+                android:id="@+id/radioButton6"/>
+    </RadioGroup>
+
+    <RadioGroup
+            android:id="@+id/sorting_group"
+            android:layout_below="@id/remove_number"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <RadioButton
+                android:text="Sort by Value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="0"
+                android:id="@+id/radioButton7"/>
+
+        <RadioButton
+                android:text="Sort by Suit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="1"
+                android:id="@+id/radioButton8"/>
+
+        <RadioButton
+                android:text="Sort by Color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="2"
+                android:id="@+id/radioButton9"/>
+
+        <RadioButton
+                android:text="Sort to Reset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="3"
+                android:id="@+id/radioButton10"/>
+
+        <RadioButton
+                android:text="Shuffle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="4"
+                android:id="@+id/radioButton11"/>
+
+        <RadioButton
+                android:text="True Random Shuffle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="5"
+                android:id="@+id/radioButton12"/>
+    </RadioGroup>
+
+</RelativeLayout>

@@ -163,6 +163,15 @@ class MainActivity : AppCompatActivity() {
             startActivity(i)
         }
 
+        button3.setOnLongClickListener {
+            val i = Intent(this@MainActivity, CardPlayActivity::class.java)
+            i.putExtra("bgColor", Color.argb(alpha, red, green, blue))
+            startActivity(i)
+            true
+        }
+
+        button3.text = "Second/Card"
+
         button4.setOnClickListener {
             val i = Intent(this@MainActivity, WarActivity::class.java)
             i.putExtra("bgColor", Color.argb(alpha, red, green, blue))

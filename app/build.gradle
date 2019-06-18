@@ -35,5 +35,6 @@ dependencies {
     implementation project(':deckofcards')
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
     //implementation 'com.github.ma3udmohammadi:Android-Intent-Library:1.0.0'
 }
