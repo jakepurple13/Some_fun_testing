@@ -52,6 +52,9 @@ interface DragActions<T, VH : RecyclerView.ViewHolder> {
     fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int)
 }
 
+/**
+ * Make your Adapter extend this
+ */
 abstract class DragAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<T>) : RecyclerView.Adapter<VH>() {
     /**
      * Function called to swap dragged items
@@ -72,6 +75,9 @@ abstract class DragAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<
 
 class DraggingUtils {
     companion object {
+        /**
+         * Then call this and you are good to go!
+         */
         fun <T, VH : RecyclerView.ViewHolder> setDragUp(
             adapter: DragAdapter<T, VH>,
             recyclerView: RecyclerView,
