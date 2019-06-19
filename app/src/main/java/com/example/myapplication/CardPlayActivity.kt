@@ -30,6 +30,8 @@ class CardPlayActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_card_play)
 
+        background.setBackgroundColor(intent.getIntExtra("bgColor", 0))
+
         deck.deckListener = object : Deck.DeckListener {
             override fun draw(c: Card, size: Int) {
                 Loged.i("$c")
@@ -254,35 +256,30 @@ class CardPlayActivity : AppCompatActivity() {
         val spades = Deck(cards = valueDecks[Suit.SPADES], numberOfDecks = 0)
         val clubs = Deck(cards = valueDecks[Suit.CLUBS], numberOfDecks = 0)
 
-        adapter.stuff = spades.getDeck()
+        adapter.list = spades.getDeck()
         adapter.notifyDataSetChanged()
         other_cards.adapter = CardAdapter(clubs.getDeck(), this@CardPlayActivity)
     }
 
     private fun setCardAdapters() {
-        adapter.stuff = deck.getDeck()
+        adapter.list = deck.getDeck()
         adapter.notifyDataSetChanged()
         other_cards.adapter = CardAdapter(otherList, this@CardPlayActivity)
     }
 
     private fun setDragStuff() {
         // Setup ItemTouchHelper
-        val callback = DragManageAdapter(
-            adapter, ItemTouchHelper.START.or(ItemTouchHelper.END),
-            0
-        )
-        val helper = ItemTouchHelper(callback)
-        helper.attachToRecyclerView(cards_to_show)
+        DraggingUtils.setDragUp(adapter, cards_to_show, ItemTouchHelper.START.or(ItemTouchHelper.END))
     }
 
     class CardAdapter(
-        var stuff: ArrayList<Card>,
+        stuff: ArrayList<Card>,
         var context: Context
-    ) : RecyclerView.Adapter<ViewHolder>() {
+    ) : DragAdapter<Card, ViewHolder>(stuff) {
 
         // Gets the number of animals in the list
         override fun getItemCount(): Int {
-            return stuff.size
+            return list.size
         }
 
         // Inflates the item views
@@ -293,23 +290,7 @@ class CardPlayActivity : AppCompatActivity() {
         // Binds each animal in the ArrayList to a view
         @SuppressLint("SetTextI18n")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.cardInfo.setImageResource(stuff[position].getImage(context))
-        }
-
-        /**
-         * Function called to swap dragged items
-         */
-        fun swapItems(fromPosition: Int, toPosition: Int) {
-            if (fromPosition < toPosition) {
-                for (i in fromPosition until toPosition) {
-                    stuff[i] = stuff.set(i+1, stuff[i])
-                }
-            } else {
-                for (i in fromPosition..toPosition + 1) {
-                    stuff[i] = stuff.set(i-1, stuff[i])
-                }
-            }
-            notifyItemMoved(fromPosition, toPosition)
+            holder.cardInfo.setImageResource(list[position].getImage(context))
         }
 
     }
@@ -317,28 +298,6 @@ class CardPlayActivity : AppCompatActivity() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         // Holds the TextView that will add each animal to
         val cardInfo: ImageView = view.cardImage!!
-    }
-
-    class DragManageAdapter(
-        adapter: CardAdapter,
-        dragDirs: Int,
-        swipeDirs: Int
-    ) :
-        ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
-        private var nameAdapter = adapter
-
-        override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
-        ): Boolean {
-            nameAdapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
-            return true
-        }
-
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        }
-
     }
 
 }
