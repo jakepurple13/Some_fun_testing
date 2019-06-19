@@ -12,5 +12,9 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+        Loged.w("asdf")
+        Loged.wtf("asdf")
+        Loged.TAG = "asdf"
+        Loged.SHOW_PRETTY = true
     }
 }

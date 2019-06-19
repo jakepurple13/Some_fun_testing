@@ -37,4 +37,6 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
     //implementation 'com.github.ma3udmohammadi:Android-Intent-Library:1.0.0'
+    implementation 'com.mikepenz:fastadapter-extensions-drag:4.0.0' // drag support
+    implementation 'com.mikepenz:fastadapter:4.0.0'
 }

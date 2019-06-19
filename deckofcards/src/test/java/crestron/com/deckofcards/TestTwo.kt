@@ -249,8 +249,6 @@ class TestTwo {
         log(diamonds.toCustomString(statementString))
         log(hearts.toCustomString(statementString))
 
-
-
     }
 
     @Test

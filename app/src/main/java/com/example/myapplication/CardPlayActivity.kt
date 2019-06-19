@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import crestron.com.deckofcards.Card
@@ -20,8 +22,9 @@ import kotlinx.android.synthetic.main.card_item.view.*
 
 class CardPlayActivity : AppCompatActivity() {
 
-    var deck = Deck()
-    var otherList = arrayListOf<Card>()
+    private var deck = Deck()
+    private var otherList = arrayListOf<Card>()
+    private lateinit var adapter: CardAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +39,13 @@ class CardPlayActivity : AppCompatActivity() {
         val layoutManagerPlayer = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         cards_to_show.setHasFixedSize(true)
         cards_to_show.layoutManager = layoutManagerPlayer
-        cards_to_show.adapter = CardAdapter(deck.getDeck(), this@CardPlayActivity)
+        adapter = CardAdapter(deck.getDeck(), this@CardPlayActivity)
+        cards_to_show.adapter = adapter
+
+        val dividerItemDecoration = DividerItemDecoration(this, layoutManagerPlayer.orientation)
+        cards_to_show.addItemDecoration(dividerItemDecoration)
+
+        setDragStuff()
 
         val layoutManagerOther = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         other_cards.setHasFixedSize(true)
@@ -64,9 +73,9 @@ class CardPlayActivity : AppCompatActivity() {
         change_deck.setOnCheckedChangeListener { radioGroup, _ ->
             otherList.clear()
             val radio: RadioButton = findViewById(radioGroup.checkedRadioButtonId)
-            deck = when(radio.tag.toString().trim().toInt()) {
+            deck = when (radio.tag.toString().trim().toInt()) {
                 0 -> Deck()
-                1 -> Deck.numberOnly(5,7)
+                1 -> Deck.numberOnly(5, 7)
                 2 -> Deck.suitOnly(Suit.SPADES, Suit.HEARTS)
                 3 -> Deck.colorOnly(Color.BLACK)
                 4 -> Deck.randomDeck()
@@ -95,7 +104,7 @@ class CardPlayActivity : AppCompatActivity() {
                 else -> Deck()
             }
 
-            if(deck.deckListener==null)
+            if (deck.deckListener == null)
                 deck.deckListener = object : Deck.DeckListener {
                     override fun draw(c: Card, size: Int) {
                         Loged.i("$c")
@@ -133,7 +142,7 @@ class CardPlayActivity : AppCompatActivity() {
             true
         }
 
-        sorting_group.setOnCheckedChangeListener { radioGroup, i ->
+        sorting_group.setOnCheckedChangeListener { radioGroup, _ ->
             val radio: RadioButton = findViewById(radioGroup.checkedRadioButtonId)
             sorting(radio.tag.toString().trim().toInt())
         }
@@ -153,76 +162,76 @@ class CardPlayActivity : AppCompatActivity() {
 
     }
 
-    fun randomCard() {
+    private fun randomCard() {
         otherList.clear()
         val card = deck.randomCard ?: Card.BackCard
         otherList.add(card)
         setCardAdapters()
     }
 
-    fun firstCard() {
+    private fun firstCard() {
         otherList.clear()
         val card = deck.first ?: Card.BackCard
         otherList.add(card)
         setCardAdapters()
     }
 
-    fun middleCard() {
+    private fun middleCard() {
         otherList.clear()
         val card = deck.middle ?: Card.BackCard
         otherList.add(card)
         setCardAdapters()
     }
 
-    fun lastCard() {
+    private fun lastCard() {
         otherList.clear()
         val card = deck.last ?: Card.BackCard
         otherList.add(card)
         setCardAdapters()
     }
 
-    fun unaryPlusCard() {
+    private fun unaryPlusCard() {
         otherList.clear()
         val card = +deck
         otherList.add(card)
         setCardAdapters()
     }
 
-    fun unaryMinusCard() {
+    private fun unaryMinusCard() {
         otherList.clear()
         val card = -deck
         otherList.add(card)
         setCardAdapters()
     }
 
-    fun notCard() {
+    private fun notCard() {
         otherList.clear()
         deck = !deck
         setCardAdapters()
     }
 
-    fun replaceCard() {
-        deck.replaceCard(Card(Suit.SPADES, 5), Card(Suit.CLUBS, 7)) { 1..it.size-2 }
+    private fun replaceCard() {
+        deck.replaceCard(Card(Suit.SPADES, 5), Card(Suit.CLUBS, 7)) { 1..it.size - 2 }
         setCardAdapters()
     }
 
-    fun removeColor() {
+    private fun removeColor() {
         deck.removeColor(Color.RED)
         setCardAdapters()
     }
 
-    fun removeSuit() {
+    private fun removeSuit() {
         deck.removeSuit(Suit.randomSuit())
         setCardAdapters()
     }
 
-    fun removeNumber() {
+    private fun removeNumber() {
         deck.removeNumber(5)
         setCardAdapters()
     }
 
-    fun sorting(i: Int) {
-        when(i) {
+    private fun sorting(i: Int) {
+        when (i) {
             0 -> deck.sortByValue()
             1 -> deck.sortBySuit()
             2 -> deck.sortByColor()
@@ -233,30 +242,42 @@ class CardPlayActivity : AppCompatActivity() {
         setCardAdapters()
     }
 
-    fun getCards() {
+    private fun getCards() {
         otherList.clear()
         val card = deck.getCards(5)
         otherList.addAll(card)
         setCardAdapters()
     }
 
-    fun grouping() {
+    private fun grouping() {
         val valueDecks = deck.groupBy { it.suit }
         val spades = Deck(cards = valueDecks[Suit.SPADES], numberOfDecks = 0)
         val clubs = Deck(cards = valueDecks[Suit.CLUBS], numberOfDecks = 0)
 
-        cards_to_show.adapter = CardAdapter(spades.getDeck(), this@CardPlayActivity)
+        adapter.stuff = spades.getDeck()
+        adapter.notifyDataSetChanged()
         other_cards.adapter = CardAdapter(clubs.getDeck(), this@CardPlayActivity)
-
     }
 
     private fun setCardAdapters() {
-        cards_to_show.adapter = CardAdapter(deck.getDeck(), this@CardPlayActivity)
+        adapter.stuff = deck.getDeck()
+        adapter.notifyDataSetChanged()
         other_cards.adapter = CardAdapter(otherList, this@CardPlayActivity)
     }
 
-    class CardAdapter(private var stuff: ArrayList<Card>,
-                           var context: Context
+    private fun setDragStuff() {
+        // Setup ItemTouchHelper
+        val callback = DragManageAdapter(
+            adapter, ItemTouchHelper.START.or(ItemTouchHelper.END),
+            0
+        )
+        val helper = ItemTouchHelper(callback)
+        helper.attachToRecyclerView(cards_to_show)
+    }
+
+    class CardAdapter(
+        var stuff: ArrayList<Card>,
+        var context: Context
     ) : RecyclerView.Adapter<ViewHolder>() {
 
         // Gets the number of animals in the list
@@ -275,10 +296,49 @@ class CardPlayActivity : AppCompatActivity() {
             holder.cardInfo.setImageResource(stuff[position].getImage(context))
         }
 
+        /**
+         * Function called to swap dragged items
+         */
+        fun swapItems(fromPosition: Int, toPosition: Int) {
+            if (fromPosition < toPosition) {
+                for (i in fromPosition until toPosition) {
+                    stuff[i] = stuff.set(i+1, stuff[i])
+                }
+            } else {
+                for (i in fromPosition..toPosition + 1) {
+                    stuff[i] = stuff.set(i-1, stuff[i])
+                }
+            }
+            notifyItemMoved(fromPosition, toPosition)
+        }
+
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         // Holds the TextView that will add each animal to
         val cardInfo: ImageView = view.cardImage!!
     }
+
+    class DragManageAdapter(
+        adapter: CardAdapter,
+        dragDirs: Int,
+        swipeDirs: Int
+    ) :
+        ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
+        private var nameAdapter = adapter
+
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            nameAdapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        }
+
+    }
+
 }
