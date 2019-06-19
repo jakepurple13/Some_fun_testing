@@ -25,6 +25,7 @@ class CardPlayActivity : AppCompatActivity() {
     private var deck = Deck()
     private var otherList = arrayListOf<Card>()
     private lateinit var adapter: CardAdapter
+    private lateinit var otherAdapter: CardAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,12 +48,13 @@ class CardPlayActivity : AppCompatActivity() {
         val dividerItemDecoration = DividerItemDecoration(this, layoutManagerPlayer.orientation)
         cards_to_show.addItemDecoration(dividerItemDecoration)
 
-        setDragStuff()
-
         val layoutManagerOther = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         other_cards.setHasFixedSize(true)
         other_cards.layoutManager = layoutManagerOther
-        other_cards.adapter = CardAdapter(arrayListOf(Card.BackCard), this@CardPlayActivity)
+        otherAdapter = CardAdapter(arrayListOf(Card.BackCard), this@CardPlayActivity)
+        other_cards.adapter = otherAdapter
+
+        setDragStuff()
 
         random_card_first.setOnClickListener {
             randomCard()
@@ -258,18 +260,21 @@ class CardPlayActivity : AppCompatActivity() {
 
         adapter.list = spades.getDeck()
         adapter.notifyDataSetChanged()
-        other_cards.adapter = CardAdapter(clubs.getDeck(), this@CardPlayActivity)
+        otherAdapter.list = clubs.getDeck()
+        otherAdapter.notifyDataSetChanged()
     }
 
     private fun setCardAdapters() {
         adapter.list = deck.getDeck()
         adapter.notifyDataSetChanged()
-        other_cards.adapter = CardAdapter(otherList, this@CardPlayActivity)
+        otherAdapter.list = otherList
+        otherAdapter.notifyDataSetChanged()
     }
 
     private fun setDragStuff() {
         // Setup ItemTouchHelper
         DraggingUtils.setDragUp(adapter, cards_to_show, ItemTouchHelper.START.or(ItemTouchHelper.END))
+        DraggingUtils.setDragUp(otherAdapter, other_cards, ItemTouchHelper.START.or(ItemTouchHelper.END))
     }
 
     class CardAdapter(

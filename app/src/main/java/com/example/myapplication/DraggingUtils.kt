@@ -21,7 +21,7 @@ class DragManageAdapter<T, VH : RecyclerView.ViewHolder>(
             listAdapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
         }
 
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, adapter: DragAdapter<T, VH>) {
 
         }
     }
@@ -36,7 +36,7 @@ class DragManageAdapter<T, VH : RecyclerView.ViewHolder>(
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        actions.onSwiped(viewHolder, direction)
+        actions.onSwiped(viewHolder, direction, listAdapter)
     }
 
 }
@@ -49,7 +49,7 @@ interface DragActions<T, VH : RecyclerView.ViewHolder> {
         adapter: DragAdapter<T, VH>
     )
 
-    fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int)
+    fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, adapter: DragAdapter<T, VH>)
 }
 
 /**

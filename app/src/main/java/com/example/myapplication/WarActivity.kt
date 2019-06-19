@@ -1,12 +1,22 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import crestron.com.deckofcards.Card
 import crestron.com.deckofcards.Deck
 import kotlinx.android.synthetic.main.activity_war.*
+import kotlinx.android.synthetic.main.card_item.view.*
 import kotlinx.coroutines.*
 
 class WarActivity : AppCompatActivity() {
@@ -36,6 +46,8 @@ class WarActivity : AppCompatActivity() {
         add(card)
         playerInfo.text = "Cards Remaining: ${playerDeck.size}\nCards Waiting: ${playerCards.size}"
         enemyInfo.text = "Cards Remaining: ${enemyDeck.size}\nCards Waiting: ${enemyCards.size}"
+        adapter.list = playerCards
+        adapter.notifyDataSetChanged()
     }
 
     @SuppressLint("SetTextI18n")
@@ -44,9 +56,20 @@ class WarActivity : AppCompatActivity() {
         playerInfo.text = "Cards Remaining: ${playerDeck.getDeck().size}\nCards Waiting: ${playerCards.size}"
         enemyInfo.text = "Cards Remaining: ${enemyDeck.getDeck().size}\nCards Waiting: ${enemyCards.size}"
         stopPlaying = enemyDeck.getDeck().isEmpty() || playerDeck.getDeck().isEmpty()
+        adapter.list = playerCards
+        adapter.notifyDataSetChanged()
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun ArrayList<Card>.clearAll() {
+        clear()
+        adapter.list = playerCards
+        adapter.notifyDataSetChanged()
     }
 
     lateinit var dialog: AlertDialog
+
+    private lateinit var adapter: CardAdapter
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +77,17 @@ class WarActivity : AppCompatActivity() {
         setContentView(R.layout.activity_war)
 
         background.setBackgroundColor(intent.getIntExtra("bgColor", 0))
+
+        val layoutManagerPlayer = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        war_card_list.setHasFixedSize(true)
+        war_card_list.layoutManager = layoutManagerPlayer
+        adapter = CardAdapter(playerCards, this@WarActivity)
+        war_card_list.adapter = adapter
+
+        val dividerItemDecoration = DividerItemDecoration(this, layoutManagerPlayer.orientation)
+        war_card_list.addItemDecoration(dividerItemDecoration)
+
+        DraggingUtils.setDragUp(adapter, war_card_list, ItemTouchHelper.START.or(ItemTouchHelper.END))
 
         dialog = AlertDialog.Builder(this@WarActivity)
             .setTitle("Winner Decided")
@@ -70,7 +104,7 @@ class WarActivity : AppCompatActivity() {
                         stopPlaying = true
                     } else {
                         playerDeck += playerCards
-                        playerCards.clear()
+                        playerCards.clearAll()
                     }
                 }
                 playerInfo.text = "Cards Remaining: $size\nCards Waiting: ${playerCards.size}"
@@ -84,7 +118,7 @@ class WarActivity : AppCompatActivity() {
                         stopPlaying = true
                     } else {
                         enemyDeck += enemyCards
-                        enemyCards.clear()
+                        enemyCards.clearAll()
                     }
                 }
                 enemyInfo.text = "Cards Remaining: $size\nCards Waiting: ${enemyCards.size}"
@@ -202,5 +236,33 @@ class WarActivity : AppCompatActivity() {
     override fun finish() {
         autoswitch.isChecked = false
         super.finish()
+    }
+
+    class CardAdapter(
+        stuff: ArrayList<Card>,
+        var context: Context
+    ) : DragAdapter<Card, ViewHolder>(stuff) {
+
+        // Gets the number of animals in the list
+        override fun getItemCount(): Int {
+            return list.size
+        }
+
+        // Inflates the item views
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            return ViewHolder(LayoutInflater.from(context).inflate(R.layout.card_item, parent, false))
+        }
+
+        // Binds each animal in the ArrayList to a view
+        @SuppressLint("SetTextI18n")
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.cardInfo.setImageResource(list[position].getImage(context))
+        }
+
+    }
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        // Holds the TextView that will add each animal to
+        val cardInfo: ImageView = view.cardImage!!
     }
 }

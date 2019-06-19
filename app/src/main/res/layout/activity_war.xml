@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/background"
         tools:ignore="HardcodedText"
         tools:context=".WarActivity">
@@ -55,6 +56,14 @@
             android:layout_below="@id/enemypile"
             android:layout_centerHorizontal="true"
             android:id="@+id/enemyInfo" />
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/war_card_list"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="horizontal"
+            android:layout_above="@id/playerInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     <Switch
             android:text="Auto Play"
