@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.dragswipe
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
