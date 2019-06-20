@@ -2,6 +2,8 @@ package com.example.myapplication
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +28,7 @@ class CardPlayActivity : AppCompatActivity() {
     private var otherList = arrayListOf<Card>()
     private lateinit var adapter: CardAdapter
     private lateinit var otherAdapter: CardAdapter
+    private lateinit var helper: DragSwipeHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +58,19 @@ class CardPlayActivity : AppCompatActivity() {
         other_cards.adapter = otherAdapter
 
         setDragStuff()
+
+        class OverlapDecoration(private var horizontalOverlap: Int = -200) : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                val itemPosition = parent.getChildAdapterPosition(view)
+                if (itemPosition == 0) {
+                    return
+                }
+                outRect.set(horizontalOverlap, 0, 0, 0)
+            }
+        }
+
+        val bitmap = BitmapFactory.decodeResource(resources, Card.BackCard.getImage(this))
+        cards_to_show.addItemDecoration(OverlapDecoration((-bitmap.width / 1.5).toInt()))
 
         random_card_first.setOnClickListener {
             randomCard()
@@ -227,11 +243,13 @@ class CardPlayActivity : AppCompatActivity() {
     private fun removeSuit() {
         deck.removeSuit(Suit.randomSuit())
         setCardAdapters()
+        helper = DragSwipeUtils.setDragSwipeUp(otherAdapter, other_cards, Direction.START.or(Direction.END), Direction.DOWN.value)
     }
 
     private fun removeNumber() {
         deck.removeNumber(5)
         setCardAdapters()
+        DragSwipeUtils.disableDragSwipe(helper)
     }
 
     private fun sorting(i: Int) {
@@ -273,8 +291,19 @@ class CardPlayActivity : AppCompatActivity() {
 
     private fun setDragStuff() {
         // Setup ItemTouchHelper
-        DraggingUtils.setDragUp(adapter, cards_to_show, ItemTouchHelper.START.or(ItemTouchHelper.END))
-        DraggingUtils.setDragUp(otherAdapter, other_cards, ItemTouchHelper.START.or(ItemTouchHelper.END))
+        DragSwipeUtils.setDragSwipeUp(adapter, cards_to_show, ItemTouchHelper.START.or(ItemTouchHelper.END), actions = object : DragActions<Card, ViewHolder> {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+                adapter: DragAdapter<Card, ViewHolder>
+            ) {
+                super.onMove(recyclerView, viewHolder, target, adapter)
+                Loged.d("${viewHolder.adapterPosition} to ${target.adapterPosition}")
+            }
+
+        })
+        helper = DragSwipeUtils.setDragSwipeUp(otherAdapter, other_cards, Direction.START.or(Direction.END), Direction.DOWN.value)
     }
 
     class CardAdapter(

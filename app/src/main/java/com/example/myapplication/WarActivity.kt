@@ -2,6 +2,8 @@ package com.example.myapplication
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +12,6 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import crestron.com.deckofcards.Card
@@ -87,7 +88,20 @@ class WarActivity : AppCompatActivity() {
         val dividerItemDecoration = DividerItemDecoration(this, layoutManagerPlayer.orientation)
         war_card_list.addItemDecoration(dividerItemDecoration)
 
-        DraggingUtils.setDragUp(adapter, war_card_list, ItemTouchHelper.START.or(ItemTouchHelper.END))
+        DragSwipeUtils.setDragSwipeUp(adapter, war_card_list, Direction.START.or(Direction.END))
+
+        class OverlapDecoration(private var horizontalOverlap: Int = -200) : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                val itemPosition = parent.getChildAdapterPosition(view)
+                if (itemPosition == 0) {
+                    return
+                }
+                outRect.set(horizontalOverlap, 0, 0, 0)
+            }
+        }
+
+        val bitmap = BitmapFactory.decodeResource(resources, Card.BackCard.getImage(this))
+        war_card_list.addItemDecoration(OverlapDecoration((-bitmap.width / 1.5).toInt()))
 
         dialog = AlertDialog.Builder(this@WarActivity)
             .setTitle("Winner Decided")
