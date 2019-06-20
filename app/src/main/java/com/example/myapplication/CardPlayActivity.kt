@@ -291,7 +291,7 @@ class CardPlayActivity : AppCompatActivity() {
 
     private fun setDragStuff() {
         // Setup ItemTouchHelper
-        DragSwipeUtils.setDragSwipeUp(adapter, cards_to_show, ItemTouchHelper.START.or(ItemTouchHelper.END), actions = object : DragActions<Card, ViewHolder> {
+        DragSwipeUtils.setDragSwipeUp(adapter, cards_to_show, ItemTouchHelper.START.or(ItemTouchHelper.END), Direction.UP.value, actions = object : DragActions<Card, ViewHolder> {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -303,7 +303,7 @@ class CardPlayActivity : AppCompatActivity() {
             }
 
         })
-        helper = DragSwipeUtils.setDragSwipeUp(otherAdapter, other_cards, Direction.START.or(Direction.END), Direction.DOWN.value)
+        helper = DragSwipeUtils.setDragSwipeUp(otherAdapter, other_cards, Direction.START + Direction.END, Direction.DOWN.value)
     }
 
     class CardAdapter(

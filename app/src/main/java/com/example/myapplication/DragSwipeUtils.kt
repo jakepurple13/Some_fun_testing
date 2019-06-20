@@ -34,18 +34,18 @@ enum class Direction(val value: Int) {
     LEFT(ItemTouchHelper.LEFT),
     RIGHT(ItemTouchHelper.RIGHT),
     UP(ItemTouchHelper.UP),
-    DOWN(ItemTouchHelper.DOWN);
+    DOWN(ItemTouchHelper.DOWN),
+    NOTHING(0);
 
     fun or(direction: Direction): Int {
-        return this.value.or(direction.value)
+        return if (direction == NOTHING || this == NOTHING)
+            NOTHING.value
+        else
+            this.value.or(direction.value)
     }
 
-    fun and(direction: Direction): Int {
-        return this.value.and(direction.value)
-    }
-
-    fun xor(direction: Direction): Int {
-        return this.value.xor(direction.value)
+    operator fun plus(direction: Direction): Int {
+        return or(direction)
     }
 }
 
@@ -60,7 +60,7 @@ interface DragActions<T, VH : RecyclerView.ViewHolder> {
     }
 
     fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, adapter: DragAdapter<T, VH>) {
-        adapter.removeItem(viewHolder.adapterPosition, viewHolder, direction)
+        adapter.removeItem(viewHolder.adapterPosition)
     }
 }
 
@@ -84,7 +84,7 @@ abstract class DragAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<
         notifyItemMoved(fromPosition, toPosition)
     }
 
-    fun removeItem(position: Int, viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    fun removeItem(position: Int) {
         list.removeAt(position)
         notifyItemRemoved(position)
     }
@@ -107,8 +107,8 @@ class DragSwipeUtils {
         fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
             adapter: DragAdapter<T, VH>,
             recyclerView: RecyclerView,
-            dragDirs: Int = 0,
-            swipeDirs: Int = 0,
+            dragDirs: Int = Direction.NOTHING.value,
+            swipeDirs: Int = Direction.NOTHING.value,
             actions: DragActions<T, VH>? = null
         ): DragSwipeHelper {
             val callback = DragManageAdapter(

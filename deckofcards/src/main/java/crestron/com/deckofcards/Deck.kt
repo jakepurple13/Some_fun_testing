@@ -492,7 +492,7 @@ class Deck {
      * sets a range of cards
      */
     operator fun set(intRange: IntRange, cards: Collection<Card>) {
-        val intSize = intRange.last - intRange.start + 1
+        val intSize = intRange.last - intRange.first + 1
         if(intSize!=cards.size) {
             return
         }
