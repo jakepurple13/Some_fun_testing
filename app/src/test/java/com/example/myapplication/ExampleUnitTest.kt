@@ -16,8 +16,5 @@ class ExampleUnitTest {
         Loged.wtf("asdf")
         Loged.TAG = "asdf"
         Loged.SHOW_PRETTY = true
-        Direction.LEFT
-        Direction.RIGHT
-        Direction.UP
     }
 }

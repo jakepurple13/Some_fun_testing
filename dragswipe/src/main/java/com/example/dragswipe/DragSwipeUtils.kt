@@ -3,27 +3,27 @@ package com.example.dragswipe
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-private class DragManageAdapter<T, VH : RecyclerView.ViewHolder>(
-    adapter: DragAdapter<T, VH>,
+private class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
+    swipeAdapter: DragSwipeAdapter<T, VH>,
     dragDirs: Int,
     swipeDirs: Int
 ) :
     ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
-    private var listAdapter = adapter
+    private var listAdapter = swipeAdapter
 
-    var actions: DragActions<T, VH> = object : DragActions<T, VH> {}
+    var swipeActions: DragSwipeActions<T, VH> = object : DragSwipeActions<T, VH> {}
 
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        actions.onMove(recyclerView, viewHolder, target, listAdapter)
+        swipeActions.onMove(recyclerView, viewHolder, target, listAdapter)
         return true
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        actions.onSwiped(viewHolder, direction, listAdapter)
+        swipeActions.onSwiped(viewHolder, direction, listAdapter)
     }
 
 }
@@ -49,25 +49,41 @@ enum class Direction(val value: Int) {
     }
 }
 
-interface DragActions<T, VH : RecyclerView.ViewHolder> {
+interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
     fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder,
-        adapter: DragAdapter<T, VH>
+        swipeAdapter: DragSwipeAdapter<T, VH>
     ) {
-        adapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
+        swipeAdapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
     }
 
-    fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, adapter: DragAdapter<T, VH>) {
-        adapter.removeItem(viewHolder.adapterPosition)
+    fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, swipeAdapter: DragSwipeAdapter<T, VH>) {
+        swipeAdapter.removeItem(viewHolder.adapterPosition)
     }
 }
 
 /**
  * Make your Adapter extend this
  */
-abstract class DragAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<T>) : RecyclerView.Adapter<VH>() {
+abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<T>) : RecyclerView.Adapter<VH>() {
+
+    fun setListNotify(genericList: ArrayList<T>) {
+        list = genericList
+        notifyDataSetChanged()
+    }
+
+    fun addItem(item: T, position: Int = list.size - 1) {
+        list.add(position, item)
+        notifyItemInserted(position)
+    }
+
+    fun removeItem(position: Int) {
+        list.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
     /**
      * Function called to swap dragged items
      */
@@ -82,11 +98,6 @@ abstract class DragAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<
             }
         }
         notifyItemMoved(fromPosition, toPosition)
-    }
-
-    fun removeItem(position: Int) {
-        list.removeAt(position)
-        notifyItemRemoved(position)
     }
 }
 
@@ -105,17 +116,17 @@ class DragSwipeUtils {
          * Then call this and you are good to go!
          */
         fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
-            adapter: DragAdapter<T, VH>,
+            swipeAdapter: DragSwipeAdapter<T, VH>,
             recyclerView: RecyclerView,
             dragDirs: Int = Direction.NOTHING.value,
             swipeDirs: Int = Direction.NOTHING.value,
-            actions: DragActions<T, VH>? = null
+            swipeActions: DragSwipeActions<T, VH>? = null
         ): DragSwipeHelper {
-            val callback = DragManageAdapter(
-                adapter, dragDirs,
+            val callback = DragSwipeManageAdapter(
+                swipeAdapter, dragDirs,
                 swipeDirs
             )
-            callback.actions = actions ?: callback.actions
+            callback.swipeActions = swipeActions ?: callback.swipeActions
             val helper = ItemTouchHelper(callback)
             helper.attachToRecyclerView(recyclerView)
             return DragSwipeHelper(helper)

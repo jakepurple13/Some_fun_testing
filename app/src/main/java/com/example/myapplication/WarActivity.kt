@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dragswipe.Direction
-import com.example.dragswipe.DragAdapter
+import com.example.dragswipe.DragSwipeAdapter
 import com.example.dragswipe.DragSwipeUtils
 import crestron.com.deckofcards.Card
 import crestron.com.deckofcards.Deck
@@ -73,7 +73,7 @@ class WarActivity : AppCompatActivity() {
 
     lateinit var dialog: AlertDialog
 
-    private lateinit var adapter: CardAdapter
+    private lateinit var adapter: CardSwipeAdapter
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,7 +85,7 @@ class WarActivity : AppCompatActivity() {
         val layoutManagerPlayer = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         war_card_list.setHasFixedSize(true)
         war_card_list.layoutManager = layoutManagerPlayer
-        adapter = CardAdapter(playerCards, this@WarActivity)
+        adapter = CardSwipeAdapter(playerCards, this@WarActivity)
         war_card_list.adapter = adapter
 
         val dividerItemDecoration = DividerItemDecoration(this, layoutManagerPlayer.orientation)
@@ -255,10 +255,10 @@ class WarActivity : AppCompatActivity() {
         super.finish()
     }
 
-    class CardAdapter(
+    class CardSwipeAdapter(
         stuff: ArrayList<Card>,
         var context: Context
-    ) : DragAdapter<Card, ViewHolder>(stuff) {
+    ) : DragSwipeAdapter<Card, ViewHolder>(stuff) {
 
         // Gets the number of animals in the list
         override fun getItemCount(): Int {

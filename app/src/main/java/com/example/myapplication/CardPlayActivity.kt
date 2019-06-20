@@ -27,8 +27,8 @@ class CardPlayActivity : AppCompatActivity() {
 
     private var deck = Deck()
     private var otherList = arrayListOf<Card>()
-    private lateinit var adapter: CardAdapter
-    private lateinit var otherAdapter: CardAdapter
+    private lateinit var adapter: CardSwipeAdapter
+    private lateinit var otherAdapter: CardSwipeAdapter
     private lateinit var helper: DragSwipeHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +46,7 @@ class CardPlayActivity : AppCompatActivity() {
         val layoutManagerPlayer = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         cards_to_show.setHasFixedSize(true)
         cards_to_show.layoutManager = layoutManagerPlayer
-        adapter = CardAdapter(deck.getDeck(), this@CardPlayActivity)
+        adapter = CardSwipeAdapter(deck.getDeck(), this@CardPlayActivity)
         cards_to_show.adapter = adapter
 
         val dividerItemDecoration = DividerItemDecoration(this, layoutManagerPlayer.orientation)
@@ -55,7 +55,7 @@ class CardPlayActivity : AppCompatActivity() {
         val layoutManagerOther = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         other_cards.setHasFixedSize(true)
         other_cards.layoutManager = layoutManagerOther
-        otherAdapter = CardAdapter(arrayListOf(Card.BackCard), this@CardPlayActivity)
+        otherAdapter = CardSwipeAdapter(arrayListOf(Card.BackCard), this@CardPlayActivity)
         other_cards.adapter = otherAdapter
 
         setDragStuff()
@@ -181,6 +181,11 @@ class CardPlayActivity : AppCompatActivity() {
             removeNumber()
         }
 
+        remove_number.setOnLongClickListener {
+            addToOther()
+            true
+        }
+
     }
 
     private fun randomCard() {
@@ -253,6 +258,11 @@ class CardPlayActivity : AppCompatActivity() {
         DragSwipeUtils.disableDragSwipe(helper)
     }
 
+    private fun addToOther() {
+        otherAdapter.addItem(Card.RandomCard, otherAdapter.list.size/2)
+        setCardAdapters()
+    }
+
     private fun sorting(i: Int) {
         when (i) {
             0 -> deck.sortByValue()
@@ -277,29 +287,25 @@ class CardPlayActivity : AppCompatActivity() {
         val spades = Deck(cards = valueDecks[Suit.SPADES], numberOfDecks = 0)
         val clubs = Deck(cards = valueDecks[Suit.CLUBS], numberOfDecks = 0)
 
-        adapter.list = spades.getDeck()
-        adapter.notifyDataSetChanged()
-        otherAdapter.list = clubs.getDeck()
-        otherAdapter.notifyDataSetChanged()
+        adapter.setListNotify(spades.getDeck())
+        otherAdapter.setListNotify(clubs.getDeck())
     }
 
     private fun setCardAdapters() {
-        adapter.list = deck.getDeck()
-        adapter.notifyDataSetChanged()
-        otherAdapter.list = otherList
-        otherAdapter.notifyDataSetChanged()
+        adapter.setListNotify(deck.getDeck())
+        otherAdapter.setListNotify(otherList)
     }
 
     private fun setDragStuff() {
         // Setup ItemTouchHelper
-        DragSwipeUtils.setDragSwipeUp(adapter, cards_to_show, ItemTouchHelper.START.or(ItemTouchHelper.END), Direction.UP.value, actions = object : DragActions<Card, ViewHolder> {
+        DragSwipeUtils.setDragSwipeUp(adapter, cards_to_show, ItemTouchHelper.START.or(ItemTouchHelper.END), Direction.UP.value, swipeActions = object : DragSwipeActions<Card, ViewHolder> {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder,
-                adapter: DragAdapter<Card, ViewHolder>
+                swipeAdapter: DragSwipeAdapter<Card, ViewHolder>
             ) {
-                super.onMove(recyclerView, viewHolder, target, adapter)
+                super.onMove(recyclerView, viewHolder, target, swipeAdapter)
                 Loged.d("${viewHolder.adapterPosition} to ${target.adapterPosition}")
             }
 
@@ -307,10 +313,10 @@ class CardPlayActivity : AppCompatActivity() {
         helper = DragSwipeUtils.setDragSwipeUp(otherAdapter, other_cards, Direction.START + Direction.END, Direction.DOWN.value)
     }
 
-    class CardAdapter(
+    class CardSwipeAdapter(
         stuff: ArrayList<Card>,
         var context: Context
-    ) : DragAdapter<Card, ViewHolder>(stuff) {
+    ) : DragSwipeAdapter<Card, ViewHolder>(stuff) {
 
         // Gets the number of animals in the list
         override fun getItemCount(): Int {
