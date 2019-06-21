@@ -2,7 +2,11 @@ package com.example.dragswipe
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.dragswipe.Direction.NOTHING
 
+/**
+ * this class is to set up onMove(for dragging) and onSwiped(for swiping) methods
+ */
 private class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
     dragSwipeAdapter: DragSwipeAdapter<T, VH>,
     dragDirs: Int,
@@ -28,6 +32,11 @@ private class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
 
 }
 
+/**
+ * these are the directions you can swipe/drag
+ * they all are hooked with [ItemTouchHelper] but made them separate so its all in house and a bit easier to use
+ * Except for [NOTHING], that's equal to 0.
+ */
 enum class Direction(val value: Int) {
     START(ItemTouchHelper.START),
     END(ItemTouchHelper.END),
@@ -49,6 +58,9 @@ enum class Direction(val value: Int) {
     }
 }
 
+/**
+ * This is so you can create your actions for onMove and onSwiped
+ */
 interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
     fun onMove(
         recyclerView: RecyclerView,
@@ -65,20 +77,31 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
 }
 
 /**
- * Make your Adapter extend this
+ * Make your Adapter extend this!!!
+ * This is the big kahuna, extending this allows your adapter to work with the rest of these Utils.
+ * This is a simple one that adds 4 different methods.
  */
 abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<T>) : RecyclerView.Adapter<VH>() {
 
+    /**
+     * sets the list with new data and then notifies that the data changed
+     */
     fun setListNotify(genericList: ArrayList<T>) {
         list = genericList
         notifyDataSetChanged()
     }
 
+    /**
+     * adds an item to position and then notifies
+     */
     fun addItem(item: T, position: Int = list.size - 1) {
         list.add(position, item)
         notifyItemInserted(position)
     }
 
+    /**
+     * removes an item at position then notifies
+     */
     fun removeItem(position: Int) {
         list.removeAt(position)
         notifyItemRemoved(position)
@@ -101,12 +124,26 @@ abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: Array
     }
 }
 
+/**
+ * This class should never be created by you. This is to keep things in house.
+ * Even though this class contains a single variable, its just so you, the developer, don't have to look at what is
+ * really going on behind the scenes.
+ */
 class DragSwipeHelper internal constructor(internal var itemTouchHelper: ItemTouchHelper)
 
+/**
+ * The actual utility
+ */
 class DragSwipeUtils {
     companion object {
         /**
          * Then call this and you are good to go!
+         * This actually sets up the drag/swipe ability.
+         * @param dragDirs if you leave this blank, [Direction.NOTHING] is defaulted
+         * @param swipeDirs if you leave this blank, [Direction.NOTHING] is defaulted
+         * @param dragSwipeActions if you leave this blank, null is defaulted
+         * (but its alright because there are built in methods for dragging and swiping. Of course, those won't work if
+         * [dragDirs] and [swipeDirs] are nothing)
          */
         fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
             dragSwipeAdapter: DragSwipeAdapter<T, VH>,
@@ -125,6 +162,9 @@ class DragSwipeUtils {
             return DragSwipeHelper(helper)
         }
 
+        /**
+         * This will disable the drag/swipe ability
+         */
         fun disableDragSwipe(helper: DragSwipeHelper) {
             helper.itemTouchHelper.attachToRecyclerView(null)
         }
