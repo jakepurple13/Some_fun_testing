@@ -6,14 +6,30 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.dragswipe.Direction
+import com.example.dragswipe.DragSwipeAdapter
+import com.example.dragswipe.DragSwipeUtils
+import crestron.com.deckofcards.Card
 import kotlinx.android.synthetic.main.activity_new_feature_test.*
+import kotlinx.android.synthetic.main.card_item.view.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 class NewFeatureTest : AppCompatActivity() {
+
+    private lateinit var adapter: TestAdapter
+    private val lists = arrayListOf<Int>()
+    private var count = 0
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,8 +43,43 @@ class NewFeatureTest : AppCompatActivity() {
             }
         }
         confirmdialog.setOnClickListener {
-
+            lists+=count++
+            adapter.setListNotify(lists)
         }
+
+        val layoutManagerOther = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        fun_recycler.setHasFixedSize(true)
+        fun_recycler.layoutManager = layoutManagerOther
+        adapter = TestAdapter(lists, this@NewFeatureTest)
+        fun_recycler.adapter = adapter
+        DragSwipeUtils.setDragSwipeUp(adapter, fun_recycler, Direction.UP + Direction.DOWN, Direction.START + Direction.END)
+
+    }
+
+    class TestAdapter(stuff: ArrayList<Int>, val context: Context) : DragSwipeAdapter<Int, ViewHolders>(stuff) {
+        override fun getItemCount(): Int {
+            return list.size
+        }
+
+        // Inflates the item views
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolders {
+            return ViewHolders(LayoutInflater.from(context).inflate(R.layout.card_item, parent, false))
+        }
+
+        // Binds each animal in the ArrayList to a view
+        @SuppressLint("SetTextI18n")
+        override fun onBindViewHolder(holder: ViewHolders, position: Int) {
+            holder.cardInfo.setImageResource(Card.RandomCard.getImage(context))
+            holder.cardInfo.setOnClickListener {
+                Toast.makeText(context, "Number: ${list[position]} at position ${holder.adapterPosition}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    }
+
+    class ViewHolders(view: View) : RecyclerView.ViewHolder(view) {
+        // Holds the TextView that will add each animal to
+        val cardInfo: ImageView = view.cardImage!!
     }
 
     fun sendNoti(context: Context) {
