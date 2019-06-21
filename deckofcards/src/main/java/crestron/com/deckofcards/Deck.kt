@@ -452,6 +452,17 @@ class Deck {
     operator fun minus(num: Float): Card = getCard(num.toInt())
 
     /**
+     * if you want to reset the deck without creating a new one, then you can have actions right away
+     */
+    operator fun invoke(reset: Boolean = false, s: (Deck) -> Unit) {
+        if (reset) {
+            deckOfCards.clear()
+            initialize()
+        }
+        s(this)
+    }
+
+    /**
      * gets the cards between start and end
      */
     operator fun get(start: Int, end: Int): Collection<Card> = deckOfCards.subList(start, end)
@@ -493,11 +504,11 @@ class Deck {
      */
     operator fun set(intRange: IntRange, cards: Collection<Card>) {
         val intSize = intRange.last - intRange.first + 1
-        if(intSize!=cards.size) {
+        if (intSize != cards.size) {
             return
         }
         var counter = 0
-        for(i in intRange) {
+        for (i in intRange) {
             deckOfCards[i] = cards.elementAt(counter++)
         }
     }
@@ -695,7 +706,7 @@ class Deck {
      * compares this deck to another deck
      */
     fun compareToDeck(otherDeck: Deck, check: (Card, Card) -> Boolean): Boolean {
-        if(size!=otherDeck.size) {
+        if (size != otherDeck.size) {
             return false
         }
         return comparingMethod(this.deckOfCards, otherDeck.deckOfCards, check)
@@ -749,9 +760,13 @@ class Deck {
      * replaces 1 occurrence of [cardToReplace] with [cardReplaceWith]
      * default range == 0 until deck.size
      */
-    fun replaceCard(cardToReplace: Card, cardReplaceWith: Card, range: (Deck) -> IntProgression = { deck -> 0 until deck.size }) {
-        for(i in range(this)) {
-            if(this[i] == cardToReplace) {
+    fun replaceCard(
+        cardToReplace: Card,
+        cardReplaceWith: Card,
+        range: (Deck) -> IntProgression = { deck -> 0 until deck.size }
+    ) {
+        for (i in range(this)) {
+            if (this[i] == cardToReplace) {
                 this[i] = cardReplaceWith
                 break
             }
@@ -762,8 +777,8 @@ class Deck {
      * replaces all [cardToReplace] with [cardToReplace]
      */
     fun replaceAllCards(cardToReplace: Card, cardReplaceWith: Card) {
-        for(i in 0 until size) {
-            if(this[i] == cardToReplace) {
+        for (i in 0 until size) {
+            if (this[i] == cardToReplace) {
                 this[i] = cardReplaceWith
             }
         }
@@ -872,7 +887,7 @@ class Deck {
      */
     @Throws(CardNotFoundException::class)
     fun getCardLocation(c: Card): Int {
-        for((num, card) in deckOfCards.withIndex()) {
+        for ((num, card) in deckOfCards.withIndex()) {
             if (card == c) {
                 return num
             }
@@ -1315,7 +1330,7 @@ class Deck {
      */
     fun toCustomString(stringStatement: (Card, Int) -> String = { card: Card, i: Int -> "$i=$card\t" }): String {
         var tempString = ""
-        for(i in 0 until size)
+        for (i in 0 until size)
             tempString += stringStatement(this[i], i)
         return tempString
     }

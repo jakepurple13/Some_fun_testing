@@ -46,6 +46,9 @@ enum class Direction(val value: Int) {
     DOWN(ItemTouchHelper.DOWN),
     NOTHING(0);
 
+    /**
+     * use this when you want to add more than one action (or use [plus])
+     */
     fun or(direction: Direction): Int {
         return if (direction == NOTHING || this == NOTHING)
             NOTHING.value
@@ -53,13 +56,16 @@ enum class Direction(val value: Int) {
             this.value.or(direction.value)
     }
 
+    /**
+     * use this when you want to add more than one action (or use [or])
+     */
     operator fun plus(direction: Direction): Int {
         return or(direction)
     }
 }
 
 /**
- * This is so you can create your actions for onMove and onSwiped
+ * This is so you can create your actions for [onMove] and [onSwiped]
  */
 interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
     fun onMove(
@@ -77,9 +83,16 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
 }
 
 /**
- * Make your Adapter extend this!!!
+ * # Make your Adapter extend this!!!
  * This is the big kahuna, extending this allows your adapter to work with the rest of these Utils.
+ *
  * This is a simple one that adds 4 different methods.
+ *
+ * [setListNotify],
+ * [addItem],
+ * [removeItem],
+ * [swapItems]
+ *
  */
 abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<T>) : RecyclerView.Adapter<VH>() {
 
@@ -138,12 +151,18 @@ class DragSwipeUtils {
     companion object {
         /**
          * Then call this and you are good to go!
+         *
          * This actually sets up the drag/swipe ability.
+         *
          * @param dragDirs if you leave this blank, [Direction.NOTHING] is defaulted
+         *
          * @param swipeDirs if you leave this blank, [Direction.NOTHING] is defaulted
+         *
          * @param dragSwipeActions if you leave this blank, null is defaulted
          * (but its alright because there are built in methods for dragging and swiping. Of course, those won't work if
          * [dragDirs] and [swipeDirs] are nothing)
+         *
+         * @return an instance of [DragSwipeHelper]. Use this if you want to disable drag/swipe at any point
          */
         fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
             dragSwipeAdapter: DragSwipeAdapter<T, VH>,

@@ -117,6 +117,15 @@ class TestTwo {
     }
 
     @Test
+    fun xa() {
+        val d = Deck.randomDeck()
+        log("$d")
+        d(true) {
+            it.shuffle()
+        }
+    }
+
+    @Test
     fun opTesting() {
         Card.cardDescriptor = CardDescriptor.UNICODE_SYMBOL
         val d = Deck()
