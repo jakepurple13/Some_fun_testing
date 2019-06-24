@@ -12,14 +12,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
-/*class Card2(suit: Suit, value: Int) : Card(suit, value) {
+/*class Card2(suit: Suit, value: Int) : nextCard(suit, value) {
     init {
         maxValue = 5
         minValue = 3
     }
 
     override fun getImage(context: Context): Int {
-        return Card.BackCard.getImage(context)
+        return nextCard.BackCard.getImage(context)
     }
 }*/
 

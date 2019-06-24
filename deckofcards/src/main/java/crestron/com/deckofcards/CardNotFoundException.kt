@@ -5,7 +5,7 @@ package crestron.com.deckofcards
  */
 class CardNotFoundException
 /**
- * Instantiates a new card not found exception.
+ * Instantiates a new nextCard not found exception.
  *
  * @param message the message
  */

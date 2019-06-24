@@ -2,6 +2,7 @@ package crestron.com.deckofcards
 
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
+import kotlin.random.Random
 import kotlin.reflect.KProperty
 
 class TestTwo {
@@ -27,7 +28,7 @@ class TestTwo {
         val c = +d
         val c1 = -d
 
-        log("$c and $c1")
+        log("$c and $c1 and ${Random.nextCard()}")
 
     }
 
@@ -278,7 +279,7 @@ class TestTwo {
     fun dTest() {
         val d = Deck()
 
-        //d-=Card(Suit.SPADES, 5)
+        //d-=nextCard(Suit.SPADES, 5)
 
         val c = d.getCardLocation(Card(Suit.SPADES, 5))
         log("${Card(Suit.SPADES, 5)} is in the $c place of the deck")
@@ -334,11 +335,11 @@ class TestTwo {
             }
         }
 
-        log("Random card is ${d.randomCard}")
-        log("Random card is ${d.randomCard}")
-        log("Random card is ${d.randomCard}")
-        log("Random card is ${d.randomCard}")
-        log("Random card is ${d.getCard(6)}")
+        log("Random nextCard is ${d.randomCard}")
+        log("Random nextCard is ${d.randomCard}")
+        log("Random nextCard is ${d.randomCard}")
+        log("Random nextCard is ${d.randomCard}")
+        log("Random nextCard is ${d.getCard(6)}")
         d += Card.RandomCard
         d += arrayListOf<Card>().apply {
             add(Card.RandomCard)
@@ -421,7 +422,7 @@ class TestTwo {
         d -= Color.RED
         log("Deck minus red: $d")
         log("5 cards from deck: ${(d - 5)}")
-        log("One card from deck: ${(d - 5f)}")
+        log("One nextCard from deck: ${(d - 5f)}")
         d *= 2
         log("Deck size is ${d.size} and : $d")
         d /= 2
@@ -429,11 +430,11 @@ class TestTwo {
 
         d = Deck()
 
-        log("Random card is ${d.randomCard}")
-        log("Random card is ${d.randomCard}")
-        log("Random card is ${d.randomCard}")
-        log("Random card is ${d.randomCard}")
-        log("Random card is ${d.getCard(6)}")
+        log("Random nextCard is ${d.randomCard}")
+        log("Random nextCard is ${d.randomCard}")
+        log("Random nextCard is ${d.randomCard}")
+        log("Random nextCard is ${d.randomCard}")
+        log("Random nextCard is ${d.getCard(6)}")
 
         d = Deck()
 

@@ -14,15 +14,21 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cardviews.CardAnimateInfo
+import com.example.cardviews.CardAnimationListener
+import com.example.cardviews.CardProgressType
 import com.example.dragswipe.Direction
 import com.example.dragswipe.DragSwipeAdapter
 import com.example.dragswipe.DragSwipeUtils
 import crestron.com.deckofcards.Card
+import crestron.com.deckofcards.nextCard
 import kotlinx.android.synthetic.main.activity_new_feature_test.*
 import kotlinx.android.synthetic.main.card_item.view.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 
 class NewFeatureTest : AppCompatActivity() {
@@ -53,6 +59,48 @@ class NewFeatureTest : AppCompatActivity() {
         adapter = TestAdapter(lists, this@NewFeatureTest)
         fun_recycler.adapter = adapter
         DragSwipeUtils.setDragSwipeUp(adapter, fun_recycler, Direction.UP + Direction.DOWN, Direction.START + Direction.END)
+
+        cardImage.setOnClickListener {
+            cardImage.card = Card.RandomCard
+        }
+
+        cardImage.setOnLongClickListener {
+            cardImage.showBack = !cardImage.showBack
+            true
+        }
+
+        cardImage.animateOnChange = true
+
+        cardImage.cardAnimateInfo = CardAnimateInfo(100, false, CardAnimationListener(end = {
+            Loged.w("${it.card}")
+        }))
+
+        cardprogress.card = Card.RandomCard
+
+        cardprogress.cardAnimateInfo.reverse = true
+        cardprogress.animateToReset = false
+        cardprogress.type = CardProgressType.ROTATE
+        cardprogress.cardAnimateInfo.listener = CardAnimationListener(end = {
+            Loged.w("${it.card} and ${it.max} and ${it.progress}")
+        })
+
+        Loged.i("${cardprogress.max}")
+
+        cardprogress.setOnClickListener {
+            GlobalScope.launch(Dispatchers.Main) {
+                for(i in 1..100) {
+                    cardprogress.progress = i
+                    //delay(cardprogress.animate().duration*2)
+                    //delay(100)
+                }
+            }
+        }
+
+        cardprogress.setOnLongClickListener {
+            cardprogress.animate().cancel()
+            cardprogress.card = Random.nextCard()
+            true
+        }
 
     }
 

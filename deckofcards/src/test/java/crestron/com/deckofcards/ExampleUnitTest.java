@@ -2,7 +2,7 @@ package crestron.com.deckofcards;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -52,7 +52,7 @@ public class ExampleUnitTest {
 		Deck t = new Deck(true);
 		//t.shuffle(1);
 		*//*for(int i=0;i<d.deckCount();i++) {
-			Card c = t.draw();
+			nextCard c = t.draw();
 			//System.out.println(c + "\t" + c.getImage().toString());
 		}
 		*//*

@@ -1,5 +1,7 @@
 package crestron.com.deckofcards
 
+import kotlin.random.Random
+
 /**
  * The Enum Suit.
  */
@@ -33,7 +35,7 @@ enum class Suit
     SPADES("Spades", "S", "♠");
 
     /**
-     * get the [color] of the card
+     * get the [color] of the nextCard
      * [Color.BLACK] is [SPADES] and [CLUBS]
      * [Color.RED] is [DIAMONDS] and [HEARTS]
      */
@@ -61,12 +63,12 @@ enum class Suit
                 unicodeSymbol == other.unicodeSymbol
     }
 
-    operator fun not(): Suit = when(this) {
-            HEARTS -> SPADES
-            DIAMONDS -> CLUBS
-            CLUBS -> DIAMONDS
-            SPADES -> HEARTS
-        }
+    operator fun not(): Suit = when (this) {
+        HEARTS -> SPADES
+        DIAMONDS -> CLUBS
+        CLUBS -> DIAMONDS
+        SPADES -> HEARTS
+    }
 
     companion object {
         /**
@@ -103,7 +105,7 @@ enum class Color(private val colorName: String) {
         return colorName
     }
 
-    operator fun not(): Color = when(this) {
+    operator fun not(): Color = when (this) {
         BLACK -> RED
         RED -> BLACK
         BACK -> BACK
@@ -161,4 +163,11 @@ internal class CardUtil {
             return low + (Math.random() * ((high - low) + 1)).toInt()
         }
     }
+}
+
+/**
+ * Gets a random [Card]
+ */
+fun Random.nextCard(): Card {
+    return Card.RandomCard
 }

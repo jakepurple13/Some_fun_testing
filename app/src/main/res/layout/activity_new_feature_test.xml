@@ -23,6 +23,22 @@
             android:layout_height="wrap_content"
             android:id="@+id/confirmdialog"/>
 
+    <com.example.cardviews.CardProgress
+            android:id="@+id/cardprogress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/cardImage"
+            android:indeterminateDrawable="@drawable/progress_icon"
+            android:layout_centerHorizontal="true"/>
+
+    <com.example.cardviews.CardImageView
+            android:id="@+id/cardImage"
+            android:layout_above="@id/bubblenoti"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/b1fv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fun_recycler"
             android:layout_width="wrap_content"

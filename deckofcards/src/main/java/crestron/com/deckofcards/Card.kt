@@ -3,7 +3,7 @@ package crestron.com.deckofcards
 import android.content.Context
 
 /**
- * The Class Card.
+ * The Class nextCard.
  */
 open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
 
@@ -25,7 +25,7 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
     /**
      * The color of the suit
      *
-     * @return The color of the suit of this card. Black is true, red is false.
+     * @return The color of the suit of this nextCard. Black is true, red is false.
      */
     val color = suit.getColor()
 
@@ -40,7 +40,7 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
     operator fun minus(c: Card): Int = value - c.value
 
     /**
-     * inverses a card
+     * inverses a nextCard
      * value == 14-currentValue
      * suit == !Suit
      * Spades <=> Hearts
@@ -49,12 +49,12 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
     operator fun not(): Card = Card(!suit, 14 - value)
 
     /**
-     * returns a card with the value being 1 higher
+     * returns a nextCard with the value being 1 higher
      */
     operator fun unaryPlus(): Card = Card(suit, if (value + 1 < 13) value + 1 else value)
 
     /**
-     * returns a card with the value being 1 lower
+     * returns a nextCard with the value being 1 lower
      */
     operator fun unaryMinus(): Card = Card(suit, if (value - 1 > 1) value - 1 else value)
 
@@ -65,20 +65,20 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
 
     companion object DefaultCard {
         /**
-         * A Clear Card, [value] = 15, [suit] = SPADES
-         * Used as a placeholder for ImageViews when wanting to have a spot for a card but do not want anything to show
+         * A Clear nextCard, [value] = 15, [suit] = SPADES
+         * Used as a placeholder for ImageViews when wanting to have a spot for a nextCard but do not want anything to show
          */
         val ClearCard = Card(Suit.SPADES, 15)
 
         /**
-         * The Back of a Card, [value] = 16, [suit] = SPADES
-         * Used as a placeholder for ImageViews when wanting to have a spot for a card
-         * but want to show the back of a card
+         * The Back of a nextCard, [value] = 16, [suit] = SPADES
+         * Used as a placeholder for ImageViews when wanting to have a spot for a nextCard
+         * but want to show the back of a nextCard
          */
         val BackCard = Card(Suit.SPADES, 16)
 
         /**
-         * A card of both random suit and number
+         * A nextCard of both random suit and number
          */
         val RandomCard: Card
             get() {
@@ -86,17 +86,17 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
             }
 
         /**
-         * A card of random value but chosen suit
+         * A nextCard of random value but chosen suit
          */
         fun randomCardBySuit(suit: Suit) = Card(suit, CardUtil.randomNumber(1, 13))
 
         /**
-         * A card of random suit but chosen value
+         * A nextCard of random suit but chosen value
          */
         fun randomCardByValue(value: Int) = Card(Suit.randomSuit(), value)
 
         /**
-         * A card of random color and value
+         * A nextCard of random color and value
          */
         fun randomCardByColor(color: Color) = Card(Color.randomColor(color), CardUtil.randomNumber(1, 13))
 
@@ -115,7 +115,7 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
 
     init {
         if (value > maxValue || value < minValue) {
-            throw CardNotFoundException("The value isn't a card")
+            throw CardNotFoundException("The value isn't a nextCard")
         }
     }
 
@@ -186,7 +186,7 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
     }
 
     /**
-     * Gives the card image.
+     * Gives the nextCard image.
      */
     open fun getImage(context: Context): Int {
 

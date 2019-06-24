@@ -43,28 +43,28 @@ class Deck {
         get() = deckOfCards.isEmpty()
 
     /**
-     * Draws a random card from the deck.
+     * Draws a random nextCard from the deck.
      *
-     * @return Card
+     * @return nextCard
      */
     val randomCard: Card?
         get() = deckOfCards.getOrNull(CardUtil.randomNumber(0, size - 1))
 
     /**
-     * the first card (equivalent to [draw] but without removing)
+     * the first nextCard (equivalent to [draw] but without removing)
      * (Also the top of the deck)
      */
     val first: Card?
         get() = deckOfCards.firstOrNull()
 
     /**
-     * the card directly in the middle of the deck (without removing)
+     * the nextCard directly in the middle of the deck (without removing)
      */
     val middle: Card?
         get() = deckOfCards.getOrNull(size / 2)
 
     /**
-     * the last card (bottom of the deck) ((without removing))
+     * the last nextCard (bottom of the deck) ((without removing))
      */
     val last: Card?
         get() = deckOfCards.lastOrNull()
@@ -81,14 +81,14 @@ class Deck {
         fun build(): Deck = Deck(cards)
 
         /**
-         * add an entire 52 card deck
+         * add an entire 52 nextCard deck
          */
         fun addNormalDeck() {
             cards.addAll(Deck().deckOfCards)
         }
 
         /**
-         * add a card with #suit and a #value
+         * add a nextCard with #suit and a #value
          */
         fun card(suit: Suit, value: Int) {
             cards.add(Card(suit, value))
@@ -99,7 +99,7 @@ class Deck {
         }
 
         /**
-         * add a card
+         * add a nextCard
          */
         fun card(c: Card) {
             cards.add(c)
@@ -180,13 +180,13 @@ class Deck {
             when (color) {
                 Color.BLACK -> d.initialize(spades = true, clubs = true, diamonds = false, hearts = false)
                 Color.RED -> d.initialize(spades = false, clubs = false, diamonds = true, hearts = true)
-                Color.BACK -> throw CardNotFoundException("Cannot Find Back Card")
+                Color.BACK -> throw CardNotFoundException("Cannot Find Back nextCard")
             }
             return d
         }
 
         /**
-         * creates a [cardAmount]-card deck with random cards
+         * creates a [cardAmount]-nextCard deck with random cards
          * [cardAmount] default is 52
          */
         fun randomDeck(cardAmount: Int = 52): Deck {
@@ -366,8 +366,8 @@ class Deck {
 
     //operator overloading
     /**
-     * checks to see if the Deck has the card c
-     * @param c the card to check for
+     * checks to see if the Deck has the nextCard c
+     * @param c the nextCard to check for
      */
     operator fun contains(c: Card): Boolean = c in deckOfCards
 
@@ -380,8 +380,8 @@ class Deck {
     operator fun contains(cards: Collection<Card>): Boolean = deckOfCards.containsAll(cards)
 
     /**
-     * adds card to deck
-     * @param c the card to add
+     * adds nextCard to deck
+     * @param c the nextCard to add
      */
     operator fun plusAssign(c: Card) = addCard(c)
 
@@ -416,12 +416,12 @@ class Deck {
         when (color) {
             Color.BLACK -> initialize(spades = true, clubs = true, diamonds = false, hearts = false)
             Color.RED -> initialize(spades = false, clubs = false, diamonds = true, hearts = true)
-            Color.BACK -> throw CardNotFoundException("Cannot Find Back Card")
+            Color.BACK -> throw CardNotFoundException("Cannot Find Back nextCard")
         }
     }
 
     /**
-     * removes a card from the deck
+     * removes a nextCard from the deck
      */
     operator fun minusAssign(c: Card) {
         getCard(c)
@@ -447,7 +447,7 @@ class Deck {
     operator fun minus(num: Int): Collection<Card> = getCards(num)
 
     /**
-     * removes the num card from this deck
+     * removes the num nextCard from this deck
      */
     operator fun minus(num: Float): Card = getCard(num.toInt())
 
@@ -474,7 +474,7 @@ class Deck {
     operator fun get(range: IntRange): Collection<Card> = deckOfCards.slice(range)
 
     /**
-     * gets the card at the num index
+     * gets the nextCard at the num index
      */
     operator fun get(num: Int): Card = deckOfCards[num]
 
@@ -493,7 +493,7 @@ class Deck {
     operator fun get(card: Card): Int = getCardLocation(card)
 
     /**
-     * sets a card
+     * sets a nextCard
      */
     operator fun set(int: Int, card: Card) {
         deckOfCards[int] = card
@@ -514,7 +514,7 @@ class Deck {
     }
 
     /**
-     * replaces a card with another card
+     * replaces a nextCard with another nextCard
      */
     operator fun set(cardToReplace: Card, cardReplaceWith: Card) = replaceCard(cardToReplace, cardReplaceWith)
 
@@ -713,9 +713,9 @@ class Deck {
     }
 
     /**
-     * Draws a card.
+     * Draws a nextCard.
      *
-     * @return Card
+     * @return nextCard
      */
     @Throws(CardNotFoundException::class)
     fun draw(): Card {
@@ -729,9 +729,9 @@ class Deck {
     }
 
     /**
-     * Adds a card to the deck.
+     * Adds a nextCard to the deck.
      *
-     * @param c Card
+     * @param c nextCard
      */
     infix fun addCard(c: Card) {
         deckOfCards.add(c)
@@ -741,7 +741,7 @@ class Deck {
     /**
      * Adds cards to the deck.
      *
-     * @param c Card
+     * @param c nextCard
      */
     infix fun addCards(c: Collection<Card>) {
         deckOfCards.addAll(c)
@@ -749,7 +749,7 @@ class Deck {
     }
 
     /**
-     * places a card in a wanted location
+     * places a nextCard in a wanted location
      */
     fun addCard(location: Int = CardUtil.randomNumber(0, size), card: Card) {
         deckOfCards.add(location, card)
@@ -785,10 +785,10 @@ class Deck {
     }
 
     /**
-     * Draws a random card from the deck.
+     * Draws a random nextCard from the deck.
      *
-     * @param n The place where the card is drawn
-     * @return Card
+     * @param n The place where the nextCard is drawn
+     * @return nextCard
      */
     @Throws(CardNotFoundException::class)
     infix fun getCard(n: Int): Card {
@@ -828,11 +828,11 @@ class Deck {
     }
 
     /**
-     * Gets the card you want.
+     * Gets the nextCard you want.
      *
      * @param s Suit
      * @param v Value
-     * @return Your Card
+     * @return Your nextCard
      */
     @Throws(CardNotFoundException::class)
     fun getCard(s: Suit, v: Int): Card {
@@ -844,13 +844,13 @@ class Deck {
                 return cTemp
             }
         }
-        throw CardNotFoundException("Could not find card $check")
+        throw CardNotFoundException("Could not find nextCard $check")
     }
 
     /**
-     * Gets a card out of the deck
-     * @param c the wanted card
-     * @return the card
+     * Gets a nextCard out of the deck
+     * @param c the wanted nextCard
+     * @return the nextCard
      */
     @Throws(CardNotFoundException::class)
     fun getCard(c: Card): Card {
@@ -861,12 +861,12 @@ class Deck {
                 return cTemp
             }
         }
-        throw CardNotFoundException("Could not find card $c")
+        throw CardNotFoundException("Could not find nextCard $c")
     }
 
     /**
-     * Gets a card out of the deck
-     * @return the card
+     * Gets a nextCard out of the deck
+     * @return the nextCard
      */
     @Throws(CardNotFoundException::class)
     fun getCard(predicate: (Card) -> Boolean): Card {
@@ -877,12 +877,12 @@ class Deck {
                 return cTemp
             }
         }
-        throw CardNotFoundException("Could not find card")
+        throw CardNotFoundException("Could not find nextCard")
     }
 
     /**
-     * Get the location of a card
-     * @param c the wanted card
+     * Get the location of a nextCard
+     * @param c the wanted nextCard
      * @return the location of [c]
      */
     @Throws(CardNotFoundException::class)
@@ -896,10 +896,10 @@ class Deck {
     }
 
     /**
-     * Gets the first card by Value.
+     * Gets the first nextCard by Value.
      *
-     * @param v Value of Card
-     * @return the first card by Value
+     * @param v Value of nextCard
+     * @return the first nextCard by Value
      */
     @Throws(CardNotFoundException::class)
     fun getFirstCardByValue(v: Int): Card {
@@ -910,12 +910,12 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for value $v")
+        throw CardNotFoundException("Could not find nextCard for value $v")
     }
 
     /**
-     * Gets the first card by Value.
-     * @return the first card by Value
+     * Gets the first nextCard by Value.
+     * @return the first nextCard by Value
      */
     @Throws(CardNotFoundException::class)
     fun getFirstCardByValue(predicate: (Int) -> Boolean): Card {
@@ -926,14 +926,14 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for the wanted value")
+        throw CardNotFoundException("Could not find nextCard for the wanted value")
     }
 
     /**
-     * Gets the last card by Value.
+     * Gets the last nextCard by Value.
      *
-     * @param v Value of Card
-     * @return the last card by Value
+     * @param v Value of nextCard
+     * @return the last nextCard by Value
      */
     @Throws(CardNotFoundException::class)
     fun getLastCardByValue(v: Int): Card {
@@ -945,14 +945,14 @@ class Deck {
             }
         }
 
-        throw CardNotFoundException("Could not find card for value $v")
+        throw CardNotFoundException("Could not find nextCard for value $v")
     }
 
     /**
-     * Gets the last card by Value.
+     * Gets the last nextCard by Value.
      *
      * @param predicate a predicate
-     * @return the last card by Value
+     * @return the last nextCard by Value
      */
     @Throws(CardNotFoundException::class)
     fun getLastCardByValue(predicate: (Int) -> Boolean): Card {
@@ -963,14 +963,14 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for the wanted value")
+        throw CardNotFoundException("Could not find nextCard for the wanted value")
     }
 
     /**
-     * Gets the first card by suit.
+     * Gets the first nextCard by suit.
      *
      * @param s Suit
-     * @return the first card by suit
+     * @return the first nextCard by suit
      */
     @Throws(CardNotFoundException::class)
     fun getFirstCardBySuit(s: Suit): Card {
@@ -981,14 +981,14 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for suit $s")
+        throw CardNotFoundException("Could not find nextCard for suit $s")
     }
 
     /**
-     * Gets the last card by suit.
+     * Gets the last nextCard by suit.
      *
      * @param s Suit
-     * @return the last card by suit
+     * @return the last nextCard by suit
      */
     @Throws(CardNotFoundException::class)
     fun getLastCardBySuit(s: Suit): Card {
@@ -999,12 +999,12 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for suit $s")
+        throw CardNotFoundException("Could not find nextCard for suit $s")
     }
 
     /**
-     * Gets the first card by suit.
-     * @return the first card by suit
+     * Gets the first nextCard by suit.
+     * @return the first nextCard by suit
      */
     @Throws(CardNotFoundException::class)
     fun getFirstCardBySuit(predicate: (Suit) -> Boolean): Card {
@@ -1015,12 +1015,12 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for suit")
+        throw CardNotFoundException("Could not find nextCard for suit")
     }
 
     /**
-     * Gets the last card by suit.
-     * @return the last card by suit
+     * Gets the last nextCard by suit.
+     * @return the last nextCard by suit
      */
     @Throws(CardNotFoundException::class)
     fun getLastCardBySuit(predicate: (Suit) -> Boolean): Card {
@@ -1031,14 +1031,14 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for suit")
+        throw CardNotFoundException("Could not find nextCard for suit")
     }
 
     /**
-     * Gets the first card by color.
+     * Gets the first nextCard by color.
      *
      * @param color the color
-     * @return the first card by color
+     * @return the first nextCard by color
      */
     @Throws(CardNotFoundException::class)
     fun getFirstCardByColor(color: Color): Card {
@@ -1049,14 +1049,14 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for the color $color")
+        throw CardNotFoundException("Could not find nextCard for the color $color")
     }
 
     /**
-     * Gets the last card by color.
+     * Gets the last nextCard by color.
      *
      * @param color the color
-     * @return the last card by color
+     * @return the last nextCard by color
      */
     @Throws(CardNotFoundException::class)
     fun getLastCardByColor(color: Color): Card {
@@ -1067,12 +1067,12 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for the color $color")
+        throw CardNotFoundException("Could not find nextCard for the color $color")
     }
 
     /**
-     * Gets the first card by color.
-     * @return the first card by color
+     * Gets the first nextCard by color.
+     * @return the first nextCard by color
      */
     @Throws(CardNotFoundException::class)
     fun getFirstCardByColor(predicate: (Color) -> Boolean): Card {
@@ -1083,12 +1083,12 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for the color")
+        throw CardNotFoundException("Could not find nextCard for the color")
     }
 
     /**
-     * Gets the last card by color.
-     * @return the last card by color
+     * Gets the last nextCard by color.
+     * @return the last nextCard by color
      */
     @Throws(CardNotFoundException::class)
     fun getLastCardByColor(predicate: (Color) -> Boolean): Card {
@@ -1099,7 +1099,7 @@ class Deck {
                 return c
             }
         }
-        throw CardNotFoundException("Could not find card for the color")
+        throw CardNotFoundException("Could not find nextCard for the color")
     }
 
     /**
@@ -1111,7 +1111,7 @@ class Deck {
     }
 
     /**
-     * Sorts the deck by card value
+     * Sorts the deck by nextCard value
      */
     fun sortByValue() {
         deckOfCards.sortWith(compareBy { it.value })
@@ -1326,7 +1326,7 @@ class Deck {
 
     /**
      * a custom print statement based on the user
-     * default is "$i=$card\t
+     * default is "$i=$nextCard\t
      */
     fun toCustomString(stringStatement: (Card, Int) -> String = { card: Card, i: Int -> "$i=$card\t" }): String {
         var tempString = ""
@@ -1347,15 +1347,15 @@ class Deck {
         }
 
         /**
-         * listener for when a card is removed from the deck
-         * @param c the card that was removed
+         * listener for when a nextCard is removed from the deck
+         * @param c the nextCard that was removed
          * @param size the size of the deck
          */
         fun draw(c: Card, size: Int)
 
         /**
-         * when a card is added to the deck
-         * @param c the card(s) that was added
+         * when a nextCard is added to the deck
+         * @param c the nextCard(s) that was added
          */
         fun cardAdded(c: Collection<Card>) {
             println(c)

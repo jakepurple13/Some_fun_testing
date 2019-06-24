@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         @SuppressLint("SetTextI18n")
         set(value) {
             field = value
-            textView.text = "Card Total: $field"
+            textView.text = "nextCard Total: $field"
         }
 
     interface Base {
@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        button3.text = "Second/Card"
+        button3.text = "Second/nextCard"
 
         button4.setOnClickListener {
             val i = Intent(this@MainActivity, WarActivity::class.java)
