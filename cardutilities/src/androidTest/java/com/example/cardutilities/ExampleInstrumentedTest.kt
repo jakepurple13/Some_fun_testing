@@ -1,6 +1,8 @@
-package com.example.myapplication
+package com.example.cardutilities
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -14,11 +16,7 @@ class ExampleInstrumentedTest {
     @Test
     fun useAppContext() {
         // Context of the app under test.
-        //val appContext = InstrumentationRegistry.getTargetContext()
-        //assertEquals("com.example.myapplication", appContext.packageName)
-        Loged.w("asdf")
-        Loged.wtf("asdf")
-        Loged.TAG = "asdf"
-        Loged.SHOW_PRETTY = true
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        assertEquals("com.example.cardutilities.test", appContext.packageName)
     }
 }

@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cardutilities.fullInfo
 import com.example.cardviews.CardAnimateInfo
 import com.example.cardviews.CardAnimationListener
 import com.example.cardviews.CardProgressType
@@ -29,7 +30,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
-
 
 class NewFeatureTest : AppCompatActivity() {
 
@@ -49,7 +49,7 @@ class NewFeatureTest : AppCompatActivity() {
             }
         }
         confirmdialog.setOnClickListener {
-            lists+=count++
+            lists += count++
             adapter.setListNotify(lists)
         }
 
@@ -58,7 +58,12 @@ class NewFeatureTest : AppCompatActivity() {
         fun_recycler.layoutManager = layoutManagerOther
         adapter = TestAdapter(lists, this@NewFeatureTest)
         fun_recycler.adapter = adapter
-        DragSwipeUtils.setDragSwipeUp(adapter, fun_recycler, Direction.UP + Direction.DOWN, Direction.START + Direction.END)
+        DragSwipeUtils.setDragSwipeUp(
+            adapter,
+            fun_recycler,
+            Direction.UP + Direction.DOWN,
+            Direction.START + Direction.END
+        )
 
         cardImage.setOnClickListener {
             cardImage.card = Card.RandomCard
@@ -72,7 +77,7 @@ class NewFeatureTest : AppCompatActivity() {
         cardImage.animateOnChange = true
 
         cardImage.cardAnimateInfo = CardAnimateInfo(100, false, CardAnimationListener(end = {
-            Loged.w("${it.card}")
+            Loged.w("${it.card} and ${it.card?.fullInfo()}")
         }))
 
         cardprogress.card = Card.RandomCard
@@ -88,7 +93,7 @@ class NewFeatureTest : AppCompatActivity() {
 
         cardprogress.setOnClickListener {
             GlobalScope.launch(Dispatchers.Main) {
-                for(i in 1..100) {
+                for (i in 1..100) {
                     cardprogress.progress = i
                     //delay(cardprogress.animate().duration*2)
                     //delay(100)
@@ -119,7 +124,11 @@ class NewFeatureTest : AppCompatActivity() {
         override fun onBindViewHolder(holder: ViewHolders, position: Int) {
             holder.cardInfo.setImageResource(Card.RandomCard.getImage(context))
             holder.cardInfo.setOnClickListener {
-                Toast.makeText(context, "Number: ${list[position]} at position ${holder.adapterPosition}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Number: ${list[position]} at position ${holder.adapterPosition}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 

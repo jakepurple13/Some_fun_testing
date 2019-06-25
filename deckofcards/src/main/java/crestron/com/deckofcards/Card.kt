@@ -23,6 +23,20 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
         }
 
     /**
+     * the value in string format
+     */
+    val valueString: String
+        get() {
+            return when (value) {
+                1 -> "A"
+                11 -> "J"
+                12 -> "Q"
+                13 -> "K"
+                else -> "$value"
+            }
+        }
+
+    /**
      * The color of the suit
      *
      * @return The color of the suit of this nextCard. Black is true, red is false.
@@ -51,12 +65,42 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
     /**
      * returns a nextCard with the value being 1 higher
      */
-    operator fun unaryPlus(): Card = Card(suit, if (value + 1 < 13) value + 1 else value)
+    operator fun unaryPlus(): Card {
+        var num = value
+        var suits = suit
+        if(num+1>13) {
+            num = 1
+            suits = when(suit) {
+                Suit.HEARTS -> Suit.SPADES
+                Suit.DIAMONDS -> Suit.HEARTS
+                Suit.CLUBS -> Suit.DIAMONDS
+                Suit.SPADES -> Suit.CLUBS
+            }
+        } else {
+            num+=1
+        }
+        return Card(suits, num)
+    }
 
     /**
      * returns a nextCard with the value being 1 lower
      */
-    operator fun unaryMinus(): Card = Card(suit, if (value - 1 > 1) value - 1 else value)
+    operator fun unaryMinus(): Card {
+        var num = value
+        var suits = suit
+        if(num-1<1) {
+            num = 13
+            suits = when(suit) {
+                Suit.HEARTS -> Suit.DIAMONDS
+                Suit.DIAMONDS -> Suit.CLUBS
+                Suit.CLUBS -> Suit.SPADES
+                Suit.SPADES -> Suit.HEARTS
+            }
+        } else {
+            num-=1
+        }
+        return Card(suits, num)
+    }
 
     /**
      * checks to see if two cards are equal by checking both value and suit
@@ -145,33 +189,15 @@ open class Card(val suit: Suit, val value: Int) : Comparable<Card> {
     }
 
     internal fun toNormalString(): String {
-        return when (value) {
-            1 -> "Ace"
-            11 -> "Jack"
-            12 -> "Queen"
-            13 -> "King"
-            else -> "$value"
-        } + " of $suit"
+        return "$valueString of $suit"
     }
 
     internal fun toSymbolString(): String {
-        return when (value) {
-            1 -> "A"
-            11 -> "J"
-            12 -> "Q"
-            13 -> "K"
-            else -> "$value"
-        } + suit.symbol
+        return valueString + suit.symbol
     }
 
     internal fun toPrettyString(): String {
-        return when (value) {
-            1 -> "A"
-            11 -> "J"
-            12 -> "Q"
-            13 -> "K"
-            else -> "$value"
-        } + suit.unicodeSymbol
+        return valueString + suit.unicodeSymbol
     }
 
     /**

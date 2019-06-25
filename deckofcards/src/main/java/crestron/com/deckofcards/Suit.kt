@@ -105,12 +105,6 @@ enum class Color(private val colorName: String) {
         return colorName
     }
 
-    operator fun not(): Color = when (this) {
-        BLACK -> RED
-        RED -> BLACK
-        BACK -> BACK
-    }
-
     companion object {
         fun randomColor(color: Color): Suit {
             return when (color) {

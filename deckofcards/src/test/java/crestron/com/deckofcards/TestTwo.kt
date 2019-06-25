@@ -2,7 +2,6 @@ package crestron.com.deckofcards
 
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
-import kotlin.random.Random
 import kotlin.reflect.KProperty
 
 class TestTwo {
@@ -28,7 +27,7 @@ class TestTwo {
         val c = +d
         val c1 = -d
 
-        log("$c and $c1 and ${Random.nextCard()}")
+        log("$c and $c1")
 
     }
 

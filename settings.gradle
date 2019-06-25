@@ -1,1 +1,1 @@
-include ':app', ':deckofcards', ':dragswipe', ':cardviews'
+include ':app', ':deckofcards', ':dragswipe', ':cardviews', ':cardutilities'
