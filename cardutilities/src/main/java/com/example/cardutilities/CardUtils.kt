@@ -2,6 +2,7 @@ package com.example.cardutilities
 
 import crestron.com.deckofcards.Card
 import crestron.com.deckofcards.Deck
+import kotlin.random.Random
 
 /**
  * removes num of cards and returns them
@@ -13,6 +14,8 @@ fun Deck.removeCards(num: Int): Collection<Card> {
     }
     return cards
 }
+
+fun Random.nextDeck(): Deck = Deck.randomDeck()
 
 fun ArrayList<Card>.addWithAction(card: Card, action: (Card) -> Unit) {
     add(card)

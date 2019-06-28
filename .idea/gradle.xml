@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/cardviews" />
             <option value="$PROJECT_DIR$/deckofcards" />
             <option value="$PROJECT_DIR$/dragswipe" />
+            <option value="$PROJECT_DIR$/funutilities" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

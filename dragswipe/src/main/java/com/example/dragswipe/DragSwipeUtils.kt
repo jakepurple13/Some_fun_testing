@@ -77,7 +77,11 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
         dragSwipeAdapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
     }
 
-    fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, dragSwipeAdapter: DragSwipeAdapter<T, VH>) {
+    fun onSwiped(
+        viewHolder: RecyclerView.ViewHolder,
+        direction: Int,
+        dragSwipeAdapter: DragSwipeAdapter<T, VH>
+    ) {
         dragSwipeAdapter.removeItem(viewHolder.adapterPosition)
     }
 }
@@ -94,7 +98,8 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
  * [swapItems]
  *
  */
-abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<T>) : RecyclerView.Adapter<VH>() {
+abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<T>) :
+    RecyclerView.Adapter<VH>() {
 
     /**
      * sets the list with new data and then notifies that the data changed
@@ -147,45 +152,43 @@ class DragSwipeHelper internal constructor(internal var itemTouchHelper: ItemTou
 /**
  * The actual utility
  */
-class DragSwipeUtils {
-    companion object {
-        /**
-         * Then call this and you are good to go!
-         *
-         * This actually sets up the drag/swipe ability.
-         *
-         * @param dragDirs if you leave this blank, [Direction.NOTHING] is defaulted
-         *
-         * @param swipeDirs if you leave this blank, [Direction.NOTHING] is defaulted
-         *
-         * @param dragSwipeActions if you leave this blank, null is defaulted
-         * (but its alright because there are built in methods for dragging and swiping. Of course, those won't work if
-         * [dragDirs] and [swipeDirs] are nothing)
-         *
-         * @return an instance of [DragSwipeHelper]. Use this if you want to disable drag/swipe at any point
-         */
-        fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
-            dragSwipeAdapter: DragSwipeAdapter<T, VH>,
-            recyclerView: RecyclerView,
-            dragDirs: Int = Direction.NOTHING.value,
-            swipeDirs: Int = Direction.NOTHING.value,
-            dragSwipeActions: DragSwipeActions<T, VH>? = null
-        ): DragSwipeHelper {
-            val callback = DragSwipeManageAdapter(
-                dragSwipeAdapter, dragDirs,
-                swipeDirs
-            )
-            callback.dragSwipeActions = dragSwipeActions ?: callback.dragSwipeActions
-            val helper = ItemTouchHelper(callback)
-            helper.attachToRecyclerView(recyclerView)
-            return DragSwipeHelper(helper)
-        }
+object DragSwipeUtils {
+    /**
+     * Then call this and you are good to go!
+     *
+     * This actually sets up the drag/swipe ability.
+     *
+     * @param dragDirs if you leave this blank, [Direction.NOTHING] is defaulted
+     *
+     * @param swipeDirs if you leave this blank, [Direction.NOTHING] is defaulted
+     *
+     * @param dragSwipeActions if you leave this blank, null is defaulted
+     * (but its alright because there are built in methods for dragging and swiping. Of course, those won't work if
+     * [dragDirs] and [swipeDirs] are nothing)
+     *
+     * @return an instance of [DragSwipeHelper]. Use this if you want to disable drag/swipe at any point
+     */
+    fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
+        dragSwipeAdapter: DragSwipeAdapter<T, VH>,
+        recyclerView: RecyclerView,
+        dragDirs: Int = Direction.NOTHING.value,
+        swipeDirs: Int = Direction.NOTHING.value,
+        dragSwipeActions: DragSwipeActions<T, VH>? = null
+    ): DragSwipeHelper {
+        val callback = DragSwipeManageAdapter(
+            dragSwipeAdapter, dragDirs,
+            swipeDirs
+        )
+        callback.dragSwipeActions = dragSwipeActions ?: callback.dragSwipeActions
+        val helper = ItemTouchHelper(callback)
+        helper.attachToRecyclerView(recyclerView)
+        return DragSwipeHelper(helper)
+    }
 
-        /**
-         * This will disable the drag/swipe ability
-         */
-        fun disableDragSwipe(helper: DragSwipeHelper) {
-            helper.itemTouchHelper.attachToRecyclerView(null)
-        }
+    /**
+     * This will disable the drag/swipe ability
+     */
+    fun disableDragSwipe(helper: DragSwipeHelper) {
+        helper.itemTouchHelper.attachToRecyclerView(null)
     }
 }
