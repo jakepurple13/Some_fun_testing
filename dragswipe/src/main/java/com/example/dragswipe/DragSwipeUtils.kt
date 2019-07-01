@@ -158,6 +158,14 @@ object DragSwipeUtils {
      *
      * This actually sets up the drag/swipe ability.
      *
+     * @param T the type that the list is made of
+     *
+     * @param VH your custom ViewHolder
+     *
+     * @param dragSwipeAdapter the adapter that will support drag and swipe
+     *
+     * @param recyclerView the [RecyclerView] that the [dragSwipeAdapter] will be attached to
+     *
      * @param dragDirs if you leave this blank, [Direction.NOTHING] is defaulted
      *
      * @param swipeDirs if you leave this blank, [Direction.NOTHING] is defaulted
@@ -183,6 +191,33 @@ object DragSwipeUtils {
         val helper = ItemTouchHelper(callback)
         helper.attachToRecyclerView(recyclerView)
         return DragSwipeHelper(helper)
+    }
+
+    /**
+     * @see setDragSwipeUp
+     *
+     * @param dragDirs sets things up so you can only have certain elements draggable
+     * @param swipeDirs sets things up so you can only have certain elements swipable
+     */
+    fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
+        dragSwipeAdapter: DragSwipeAdapter<T, VH>,
+        recyclerView: RecyclerView,
+        dragDirs: (RecyclerView, DragSwipeAdapter<T, VH>) -> Int = { _, _ -> Direction.NOTHING.value },
+        swipeDirs: (RecyclerView, DragSwipeAdapter<T, VH>) -> Int = { _, _ -> Direction.NOTHING.value },
+        dragSwipeActions: DragSwipeActions<T, VH>? = null
+    ): DragSwipeHelper {
+        val callback = DragSwipeManageAdapter(
+            dragSwipeAdapter, dragDirs(recyclerView, dragSwipeAdapter),
+            swipeDirs(recyclerView, dragSwipeAdapter)
+        )
+        callback.dragSwipeActions = dragSwipeActions ?: callback.dragSwipeActions
+        val helper = ItemTouchHelper(callback)
+        helper.attachToRecyclerView(recyclerView)
+        return DragSwipeHelper(helper)
+    }
+
+    fun enableDragSwipe(helper: DragSwipeHelper, recyclerView: RecyclerView) {
+        helper.itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     /**

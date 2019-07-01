@@ -21,6 +21,7 @@ import com.example.cardviews.CardProgressType
 import com.example.dragswipe.Direction
 import com.example.dragswipe.DragSwipeAdapter
 import com.example.dragswipe.DragSwipeUtils
+import com.example.funutilities.RecyclerViewDragSwipeManager
 import crestron.com.deckofcards.Card
 import crestron.com.deckofcards.nextCard
 import kotlinx.android.synthetic.main.activity_new_feature_test.*
@@ -36,6 +37,7 @@ class NewFeatureTest : AppCompatActivity() {
     private lateinit var adapter: TestAdapter
     private val lists = arrayListOf<Int>()
     private var count = 0
+    private lateinit var manager: RecyclerViewDragSwipeManager
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,17 +55,34 @@ class NewFeatureTest : AppCompatActivity() {
             adapter.setListNotify(lists)
         }
 
+        manager = RecyclerViewDragSwipeManager(fun_recycler)
+
         val layoutManagerOther = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         fun_recycler.setHasFixedSize(true)
         fun_recycler.layoutManager = layoutManagerOther
         adapter = TestAdapter(lists, this@NewFeatureTest)
         fun_recycler.adapter = adapter
-        DragSwipeUtils.setDragSwipeUp(
+        /*DragSwipeUtils.setDragSwipeUp(
             adapter,
             fun_recycler,
             Direction.UP + Direction.DOWN,
             Direction.START + Direction.END
+        )*/
+
+        val helper = DragSwipeUtils.setDragSwipeUp(
+            adapter,
+            fun_recycler,
+            { _, _ ->
+                Direction.UP + Direction.DOWN
+            },
+            { _, _ ->
+                Direction.START + Direction.END
+            }
         )
+
+        manager.dragSwipeHelper = helper
+
+        manager.dragSwipedEnabled = true
 
         cardImage.setOnClickListener {
             cardImage.card = Card.RandomCard
@@ -106,17 +125,23 @@ class NewFeatureTest : AppCompatActivity() {
             cardprogress.card = Random.nextCard()
             true
         }
-
     }
 
-    class TestAdapter(stuff: ArrayList<Int>, val context: Context) : DragSwipeAdapter<Int, ViewHolders>(stuff) {
+    class TestAdapter(stuff: ArrayList<Int>, val context: Context) :
+        DragSwipeAdapter<Int, ViewHolders>(stuff) {
         override fun getItemCount(): Int {
             return list.size
         }
 
         // Inflates the item views
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolders {
-            return ViewHolders(LayoutInflater.from(context).inflate(R.layout.card_item, parent, false))
+            return ViewHolders(
+                LayoutInflater.from(context).inflate(
+                    R.layout.card_item,
+                    parent,
+                    false
+                )
+            )
         }
 
         // Binds each animal in the ArrayList to a view
@@ -141,7 +166,8 @@ class NewFeatureTest : AppCompatActivity() {
 
     fun sendNoti(context: Context) {
         val channel = NotificationChannel("asdf1", "asdf1", NotificationManager.IMPORTANCE_HIGH)
-        val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val mNotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.createNotificationChannel(channel)
 
         // Create bubble intent
