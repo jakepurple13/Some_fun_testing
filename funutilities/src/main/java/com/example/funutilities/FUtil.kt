@@ -2,24 +2,14 @@ package com.example.funutilities
 
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import androidx.annotation.IntRange
+import androidx.core.graphics.alpha
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import java.util.*
 import kotlin.random.Random
-
-fun Button.listener(listener: (View) -> Unit) {
-    this.setOnClickListener {
-        listener(it)
-    }
-}
-
-fun Button.longListener(listener: (View) -> Boolean) {
-    this.setOnLongClickListener {
-        listener(it)
-    }
-}
 
 fun ImageView.setColor(color: Color, mode: PorterDuff.Mode = PorterDuff.Mode.SCREEN) {
     this.setColorFilter(color.toArgb(), mode)
@@ -52,6 +42,7 @@ fun <T, R> findSimilarities(
     predicate2: (T) -> R
 ): List<T> {
     val aColIds = list2.asSequence().map(predicate1).toSet()
+    list1.distinctBy { it }
     return list1.filter { predicate2(it) in aColIds }
 }
 
@@ -74,6 +65,7 @@ object RandomCharPool {
         val lists = findSimilarities(char, charPool, { it }, { it })
         char.removeAll(lists)
         charPool.addAll(char)
+        charPool.sortBy { it }
     }
 
     /**
@@ -133,6 +125,45 @@ fun Random.nextChar(): Char {
     return RandomCharPool.charPool.random()
 }
 
+/**
+ * returns a random uppercase char
+ * to modify what else is/is not allowed in the random char pool, @see [RandomCharPool]
+ */
+fun Random.nextUpperCaseChar(): Char {
+    return ('A'..'Z').random()
+}
+
+/**
+ * returns a random lowercase char
+ * to modify what else is/is not allowed in the random char pool, @see [RandomCharPool]
+ */
+fun Random.nextLowerCaseChar(): Char {
+    return ('a'..'z').random()
+}
+
+/**
+ * returns a random [Locale]
+ */
 fun Random.nextLocale(): Locale {
     return Locale.getAvailableLocales().random()
+}
+
+fun Color.getComplimentaryColor(): Int {
+    val rgbMAX = 255
+    return Color.argb(
+        rgbMAX - alpha(),
+        rgbMAX - red(),
+        rgbMAX - green(),
+        rgbMAX - blue()
+    )
+}
+
+fun Int.getComplimentaryColor(): Int {
+    val rgbMAX = 255
+    return Color.argb(
+        rgbMAX - alpha,
+        rgbMAX - red,
+        rgbMAX - green,
+        rgbMAX - blue
+    )
 }

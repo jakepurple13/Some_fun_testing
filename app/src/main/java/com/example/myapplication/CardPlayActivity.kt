@@ -16,12 +16,14 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dragswipe.*
+import com.example.funutilities.*
 import crestron.com.deckofcards.Card
 import crestron.com.deckofcards.Color
 import crestron.com.deckofcards.Deck
 import crestron.com.deckofcards.Suit
 import kotlinx.android.synthetic.main.activity_card_play.*
 import kotlinx.android.synthetic.main.card_item.view.*
+import kotlin.random.Random
 
 class CardPlayActivity : AppCompatActivity() {
 
@@ -182,10 +184,19 @@ class CardPlayActivity : AppCompatActivity() {
         }
 
         remove_number.setOnLongClickListener {
-            addToOther()
+            //addToOther()
+            shuffleAdapter()
+
             true
         }
 
+    }
+
+    private fun shuffleAdapter() {
+        adapter.shuffleItems()
+        adapter.getFirstItem()
+        adapter.getMiddleItem()
+        adapter.getLastItem()
     }
 
     private fun randomCard() {
@@ -340,6 +351,7 @@ class CardPlayActivity : AppCompatActivity() {
         @SuppressLint("SetTextI18n")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.cardInfo.setImageResource(list[position].getImage(context))
+            holder.cardInfo.setColor(Random.nextColor())
         }
 
     }

@@ -2,6 +2,8 @@ package com.example.funutilities
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dragswipe.*
+import java.util.*
+import kotlin.random.Random
 
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeUtils.startEndDrag(
     dragSwipeAdapter: DragSwipeAdapter<T, VH>,
@@ -64,7 +66,14 @@ fun <T, VH : RecyclerView.ViewHolder> DragSwipeUtils.upDownSwipe(
 }
 
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.shuffleItems() {
-    list.shuffle()
+    for (i in list.indices) {
+        val num = Random.nextInt(0, list.size - 1)
+        Collections.swap(list, i, num)
+        notifyItemMoved(i, num)
+        notifyItemChanged(i)
+        notifyItemChanged(num)
+    }
+    println("$list")
 }
 
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.getFirstItem(): T {
@@ -77,6 +86,12 @@ fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.getMiddleItem(): T
 
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.getLastItem(): T {
     return list.last()
+}
+
+operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.get(num: Int): T = list[num]
+
+operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.set(num: Int, element: T) {
+    list[num] = element
 }
 
 fun RecyclerView.attachDragSwipeHelper(dragSwipeHelper: DragSwipeHelper) {

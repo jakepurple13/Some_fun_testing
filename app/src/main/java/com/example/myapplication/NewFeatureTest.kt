@@ -22,7 +22,9 @@ import com.example.dragswipe.Direction
 import com.example.dragswipe.DragSwipeAdapter
 import com.example.dragswipe.DragSwipeUtils
 import com.example.funutilities.RecyclerViewDragSwipeManager
+import com.example.funutilities.shuffleItems
 import crestron.com.deckofcards.Card
+import crestron.com.deckofcards.Deck
 import crestron.com.deckofcards.nextCard
 import kotlinx.android.synthetic.main.activity_new_feature_test.*
 import kotlinx.android.synthetic.main.card_item.view.*
@@ -35,7 +37,7 @@ import kotlin.random.Random
 class NewFeatureTest : AppCompatActivity() {
 
     private lateinit var adapter: TestAdapter
-    private val lists = arrayListOf<Int>()
+    private val lists = arrayListOf<Card>()
     private var count = 0
     private lateinit var manager: RecyclerViewDragSwipeManager
 
@@ -51,8 +53,14 @@ class NewFeatureTest : AppCompatActivity() {
             }
         }
         confirmdialog.setOnClickListener {
-            lists += count++
+            adapter.shuffleItems()
+        }
+
+        confirmdialog.setOnLongClickListener {
+            //lists += count++
+            lists += Deck().getDeck()
             adapter.setListNotify(lists)
+            true
         }
 
         manager = RecyclerViewDragSwipeManager(fun_recycler)
@@ -127,8 +135,8 @@ class NewFeatureTest : AppCompatActivity() {
         }
     }
 
-    class TestAdapter(stuff: ArrayList<Int>, val context: Context) :
-        DragSwipeAdapter<Int, ViewHolders>(stuff) {
+    class TestAdapter(stuff: ArrayList<Card>, val context: Context) :
+        DragSwipeAdapter<Card, ViewHolders>(stuff) {
         override fun getItemCount(): Int {
             return list.size
         }
@@ -147,7 +155,8 @@ class NewFeatureTest : AppCompatActivity() {
         // Binds each animal in the ArrayList to a view
         @SuppressLint("SetTextI18n")
         override fun onBindViewHolder(holder: ViewHolders, position: Int) {
-            holder.cardInfo.setImageResource(Card.RandomCard.getImage(context))
+            //holder.cardInfo.setImageResource(Card.RandomCard.getImage(context))
+            holder.cardInfo.setImageResource(list[position].getImage(context))
             holder.cardInfo.setOnClickListener {
                 Toast.makeText(
                     context,
