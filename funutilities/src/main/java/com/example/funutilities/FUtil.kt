@@ -46,6 +46,26 @@ fun <T, R> findSimilarities(
     return list1.filter { predicate2(it) in aColIds }
 }
 
+fun Color.getComplimentaryColor(): Int {
+    val rgbMAX = 255
+    return Color.argb(
+        rgbMAX - alpha(),
+        rgbMAX - red(),
+        rgbMAX - green(),
+        rgbMAX - blue()
+    )
+}
+
+fun Int.getComplimentaryColor(): Int {
+    val rgbMAX = 255
+    return Color.argb(
+        rgbMAX - alpha,
+        rgbMAX - red,
+        rgbMAX - green,
+        rgbMAX - blue
+    )
+}
+
 /**
  * returns a random color
  */
@@ -146,24 +166,4 @@ fun Random.nextLowerCaseChar(): Char {
  */
 fun Random.nextLocale(): Locale {
     return Locale.getAvailableLocales().random()
-}
-
-fun Color.getComplimentaryColor(): Int {
-    val rgbMAX = 255
-    return Color.argb(
-        rgbMAX - alpha(),
-        rgbMAX - red(),
-        rgbMAX - green(),
-        rgbMAX - blue()
-    )
-}
-
-fun Int.getComplimentaryColor(): Int {
-    val rgbMAX = 255
-    return Color.argb(
-        rgbMAX - alpha,
-        rgbMAX - red,
-        rgbMAX - green,
-        rgbMAX - blue
-    )
 }

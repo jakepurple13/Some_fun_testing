@@ -190,13 +190,18 @@ class CardPlayActivity : AppCompatActivity() {
             true
         }
 
+        if(Random.nextInt(0, 10) > 11) {
+            cards_to_show.removeDragSwipeHelper(helper)
+            cards_to_show.attachDragSwipeHelper(helper)
+        }
+
     }
 
     private fun shuffleAdapter() {
         adapter.shuffleItems()
-        adapter.getFirstItem()
-        adapter.getMiddleItem()
-        adapter.getLastItem()
+        Loged.i("First item: ${adapter.getFirstItem()}\n" +
+        "Middle item: ${adapter.getMiddleItem()}\n" +
+        "Last item: ${adapter.getLastItem()}")
     }
 
     private fun randomCard() {

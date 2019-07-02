@@ -1,69 +1,11 @@
 package com.example.funutilities
 
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dragswipe.*
+import com.example.dragswipe.DragSwipeAdapter
+import com.example.dragswipe.DragSwipeHelper
+import com.example.dragswipe.DragSwipeUtils
 import java.util.*
 import kotlin.random.Random
-
-fun <T, VH : RecyclerView.ViewHolder> DragSwipeUtils.startEndDrag(
-    dragSwipeAdapter: DragSwipeAdapter<T, VH>,
-    recyclerView: RecyclerView,
-    swipeDirs: Int = Direction.NOTHING.value,
-    dragSwipeActions: DragSwipeActions<T, VH>? = null
-): DragSwipeHelper {
-    return setDragSwipeUp(
-        dragSwipeAdapter,
-        recyclerView,
-        Direction.START + Direction.END,
-        swipeDirs,
-        dragSwipeActions
-    )
-}
-
-fun <T, VH : RecyclerView.ViewHolder> DragSwipeUtils.upDownDrag(
-    dragSwipeAdapter: DragSwipeAdapter<T, VH>,
-    recyclerView: RecyclerView,
-    swipeDirs: Int = Direction.NOTHING.value,
-    dragSwipeActions: DragSwipeActions<T, VH>? = null
-): DragSwipeHelper {
-    return setDragSwipeUp(
-        dragSwipeAdapter,
-        recyclerView,
-        Direction.UP + Direction.DOWN,
-        swipeDirs,
-        dragSwipeActions
-    )
-}
-
-fun <T, VH : RecyclerView.ViewHolder> DragSwipeUtils.startEndSwipe(
-    dragSwipeAdapter: DragSwipeAdapter<T, VH>,
-    recyclerView: RecyclerView,
-    dragDirs: Int = Direction.NOTHING.value,
-    dragSwipeActions: DragSwipeActions<T, VH>? = null
-): DragSwipeHelper {
-    return setDragSwipeUp(
-        dragSwipeAdapter,
-        recyclerView,
-        dragDirs,
-        Direction.START + Direction.END,
-        dragSwipeActions
-    )
-}
-
-fun <T, VH : RecyclerView.ViewHolder> DragSwipeUtils.upDownSwipe(
-    dragSwipeAdapter: DragSwipeAdapter<T, VH>,
-    recyclerView: RecyclerView,
-    dragDirs: Int = Direction.NOTHING.value,
-    dragSwipeActions: DragSwipeActions<T, VH>? = null
-): DragSwipeHelper {
-    return setDragSwipeUp(
-        dragSwipeAdapter,
-        recyclerView,
-        dragDirs,
-        Direction.UP + Direction.DOWN,
-        dragSwipeActions
-    )
-}
 
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.shuffleItems() {
     for (i in list.indices) {
@@ -73,7 +15,6 @@ fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.shuffleItems() {
         notifyItemChanged(i)
         notifyItemChanged(num)
     }
-    println("$list")
 }
 
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.getFirstItem(): T {
@@ -94,10 +35,16 @@ operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.set(num: 
     list[num] = element
 }
 
+/**
+ * @see [DragSwipeUtils.enableDragSwipe]
+ */
 fun RecyclerView.attachDragSwipeHelper(dragSwipeHelper: DragSwipeHelper) {
     DragSwipeUtils.enableDragSwipe(dragSwipeHelper, this)
 }
 
+/**
+ * @see [DragSwipeUtils.disableDragSwipe]
+ */
 fun RecyclerView.removeDragSwipeHelper(dragSwipeHelper: DragSwipeHelper) {
     DragSwipeUtils.disableDragSwipe(dragSwipeHelper)
 }
@@ -112,6 +59,10 @@ class RecyclerViewDragSwipeManager(private val recyclerView: RecyclerView) {
             setDragSwipe()
         }
 
+    /**
+     * if true, it will enable DragSwipe
+     * if false, it will disable DragSwipe
+     */
     var dragSwipedEnabled: Boolean = true
         set(value) {
             field = value

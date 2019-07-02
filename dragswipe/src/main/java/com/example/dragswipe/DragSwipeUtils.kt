@@ -120,9 +120,10 @@ abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: Array
     /**
      * removes an item at position then notifies
      */
-    fun removeItem(position: Int) {
-        list.removeAt(position)
+    fun removeItem(position: Int): T {
+        val item = list.removeAt(position)
         notifyItemRemoved(position)
+        return item
     }
 
     /**
