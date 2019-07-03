@@ -3,6 +3,9 @@ package com.example.myapplication
 import com.example.cardutilities.*
 import com.example.funutilities.findSimilarities
 import crestron.com.deckofcards.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.random.Random
@@ -59,10 +62,10 @@ class ExampleUnitTest {
         val deck2 = Deck.randomDeck()
         //deck+=deck2
         val c = Card.RandomCard
-        deck+=c
-        deck2+=c
-        deck2+=c
-        deck2+=Card(Suit.SPADES, 5)
+        deck += c
+        deck2 += c
+        deck2 += c
+        deck2 += Card(Suit.SPADES, 5)
         deck.sortToReset()
         deck2.sortToReset()
 
@@ -97,12 +100,12 @@ class ExampleUnitTest {
         }
 
         val list = arrayListOf<SimTest>()
-        for(i in 0..100) {
-            list+=SimTest("$i", "${i*100}")
+        for (i in 0..100) {
+            list += SimTest("$i", "${i * 100}")
         }
         val list1 = arrayListOf<SimTest>()
-        for(i in 50..150) {
-            list1+=SimTest("$i", "${i*100}")
+        for (i in 50..150) {
+            list1 += SimTest("$i", "${i * 100}")
         }
         val sim4 = findSimilarities(list, list1, {
             it.link
@@ -118,9 +121,18 @@ class ExampleUnitTest {
 
     @Test
     fun netTest() {
-        //val show = ShowApi(Source.RECENT_CARTOON)
-        //val list = show.showInfoList
-        //println("$list")
+
+        runBlocking {
+            //println("$list")
+            withContext(Dispatchers.Default) {
+                val show = com.example.showapi.ShowApi(com.example.showapi.Source.RECENT_CARTOON)
+                val list = show.showInfoList
+                val ep = com.example.showapi.EpisodeApi(list[0])
+                println(ep.episodeList[0].getVideoLink())
+                //println("$list")
+            }
+        }
+
         var count = 0
         val s: Int by ByTested {
             println("Here we are at ${count++}")
@@ -129,7 +141,7 @@ class ExampleUnitTest {
         println("jhgf")
         println("$s")
         val a: Int by ByTested {
-            s+s
+            s + s
         }
         println("$s and $a")
 

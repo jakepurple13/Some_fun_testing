@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.showapi
 
 import com.google.gson.Gson
 import org.jsoup.Jsoup
@@ -35,15 +35,24 @@ enum class Source(val link: String, val recent: Boolean = false) {
     }
 }
 
+/**
+ * Info about the show, name and url
+ */
 open class ShowInfo(val name: String, val url: String) {
     override fun toString(): String {
         return "$name: $url"
     }
 }
 
+/**
+ * The actual api!
+ */
 class ShowApi(private val source: Source) {
     private var doc: Document = Jsoup.connect(source.link).get()
 
+    /**
+     * returns a list of the show's from the wanted source
+     */
     val showInfoList: ArrayList<ShowInfo>
         get() {
             return if (source.recent)
@@ -60,7 +69,12 @@ class ShowApi(private val source: Source) {
             val listOfStuff = lists.select("td").select("a[href^=http]")
             val listOfShows = arrayListOf<ShowInfo>()
             for (element in listOfStuff) {
-                listOfShows.add(ShowInfo(element.text(), element.attr("abs:href")))
+                listOfShows.add(
+                    ShowInfo(
+                        element.text(),
+                        element.attr("abs:href")
+                    )
+                )
             }
             listOfShows.sortBy { it.name }
             listOfShows
@@ -94,7 +108,8 @@ class ShowApi(private val source: Source) {
             }
             val listOfShows = arrayListOf<ShowInfo>()
             for (element in listOfStuff) {
-                val showInfo = ShowInfo(element.text(), element.attr("abs:href"))
+                val showInfo =
+                    ShowInfo(element.text(), element.attr("abs:href"))
                 if (!element.text().contains("Episode"))
                     listOfShows.add(showInfo)
             }
@@ -118,9 +133,15 @@ class ShowApi(private val source: Source) {
     }
 }
 
+/**
+ * Actual Show information
+ */
 class EpisodeApi(private val source: ShowInfo, timeOut: Int = 10000) {
     private var doc: Document = Jsoup.connect(source.url).timeout(timeOut).get()
 
+    /**
+     * The name of the Show
+     */
     val name: String
         get() {
             return if (source.url.contains("gogoanime")) {
@@ -130,6 +151,9 @@ class EpisodeApi(private val source: ShowInfo, timeOut: Int = 10000) {
             }
         }
 
+    /**
+     * The url of the image
+     */
     val image: String
         get() {
             return if (source.url.contains("gogoanime")) {
@@ -140,6 +164,9 @@ class EpisodeApi(private val source: ShowInfo, timeOut: Int = 10000) {
 
         }
 
+    /**
+     * the description
+     */
     val description: String
         get() {
             if (source.url.contains("gogoanime")) {
@@ -157,7 +184,6 @@ class EpisodeApi(private val source: ShowInfo, timeOut: Int = 10000) {
                         try {
                             d.substring(d.indexOf("Description: ") + 13, d.indexOf("Category: "))
                         } catch (e: StringIndexOutOfBoundsException) {
-                            Loged.e(e.message!!)
                             d
                         }
                     }
@@ -165,6 +191,9 @@ class EpisodeApi(private val source: ShowInfo, timeOut: Int = 10000) {
             }
         }
 
+    /**
+     * The episode list
+     */
     val episodeList: ArrayList<EpisodeInfo>
         get() {
             var listOfShows = arrayListOf<EpisodeInfo>()
@@ -188,7 +217,12 @@ class EpisodeApi(private val source: ShowInfo, timeOut: Int = 10000) {
                     val doc1 = Jsoup.connect(url).get()
                     val stuffList = doc1.allElements.select("div#videos").select("a[href^=http]")
                     for (i in stuffList) {
-                        listOfShows.add(EpisodeInfo(i.text(), i.attr("abs:href")))
+                        listOfShows.add(
+                            EpisodeInfo(
+                                i.text(),
+                                i.attr("abs:href")
+                            )
+                        )
                     }
                 }
                 getStuff(source.url)
@@ -202,8 +236,14 @@ class EpisodeApi(private val source: ShowInfo, timeOut: Int = 10000) {
         }
 }
 
+/**
+ * Actual Episode info, name and url
+ */
 class EpisodeInfo(name: String, url: String): ShowInfo(name, url) {
 
+    /**
+     * returns a url link to the episodes video
+     */
     fun getVideoLink(): String {
         if (url.contains("gogoanime")) {
             val doc = Jsoup.connect(url).get()
@@ -285,15 +325,15 @@ internal class Normal {
 
 
 internal class Storage {
-    var sub: String? = null
+    private var sub: String? = null
 
-    var source: String? = null
+    private var source: String? = null
 
     var link: String? = null
 
-    var quality: String? = null
+    private var quality: String? = null
 
-    var filename: String? = null
+    private var filename: String? = null
 
     override fun toString(): String {
         return "ClassPojo [sub = $sub, source = $source, link = $link, quality = $quality, filename = $filename]"

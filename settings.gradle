@@ -1,3 +1,4 @@
 rootProject.name = 'MyApplication'
 include ':app', ':deckofcards', ':dragswipe', ':cardviews', ':cardutilities'
 include ':funutilities'
+include ':showapi'

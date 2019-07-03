@@ -13,6 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dragswipe.*
 import com.example.funutilities.get
 import com.example.funutilities.shuffleItems
+import com.example.showapi.EpisodeApi
+import com.example.showapi.ShowApi
+import com.example.showapi.ShowInfo
+import com.example.showapi.Source
 import kotlinx.android.synthetic.main.activity_show_drag_swipe.*
 import kotlinx.android.synthetic.main.show_info_layout.view.*
 import kotlinx.coroutines.Dispatchers
@@ -105,7 +109,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
             holder.description.text = ""
             holder.title.setOnClickListener {
                 GlobalScope.launch {
-                    val episodeApi = EpisodeApi(list[0])
+                    val episodeApi = EpisodeApi(list[position])
                     val link = episodeApi.episodeList[0].getVideoLink()
                     Loged.wtf(link)
                     GlobalScope.launch(Dispatchers.Main) {

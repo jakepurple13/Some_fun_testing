@@ -37,6 +37,7 @@ dependencies {
     implementation project(':cardviews')
     implementation project(':cardutilities')
     implementation project(':funutilities')
+    implementation project(':showapi')
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
