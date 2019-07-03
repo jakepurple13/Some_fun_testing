@@ -119,7 +119,7 @@ class ShowApi(private val source: Source) {
 
     private fun gogoAnimeRecent(): ArrayList<ShowInfo> {
         val listOfStuff =
-            doc.allElements.select("div.dl-item")//.select("table#updates").select("a[href^=http]")
+            doc.allElements.select("div.dl-item")
         val listOfShows = arrayListOf<ShowInfo>()
         for (element in listOfStuff) {
             val tempUrl = element.select("div.name").select("a[href^=http]").attr("abs:href")
@@ -198,12 +198,10 @@ class EpisodeApi(private val source: ShowInfo, timeOut: Int = 10000) {
         get() {
             var listOfShows = arrayListOf<EpisodeInfo>()
             if (source.url.contains("gogoanime")) {
-                //val doc = Jsoup.connect(source.url).get()
                 val stuffList = doc.select("ul.check-list").select("li")
                 val showList = arrayListOf<EpisodeInfo>()
                 for (i in stuffList) {
                     val urlInfo = i.select("a[href^=http]")
-                    //val episodeName = i.select("a").text()
                     val epName = if (urlInfo.text().contains(name)) {
                         urlInfo.text().substring(name.length)
                     } else {
@@ -234,12 +232,16 @@ class EpisodeApi(private val source: ShowInfo, timeOut: Int = 10000) {
             }
             return listOfShows
         }
+
+    override fun toString(): String {
+        return "$name - ${episodeList.size} eps - $description"
+    }
 }
 
 /**
  * Actual Episode info, name and url
  */
-class EpisodeInfo(name: String, url: String): ShowInfo(name, url) {
+class EpisodeInfo(name: String, url: String) : ShowInfo(name, url) {
 
     /**
      * returns a url link to the episodes video
@@ -249,26 +251,17 @@ class EpisodeInfo(name: String, url: String): ShowInfo(name, url) {
             val doc = Jsoup.connect(url).get()
             return doc.select("a[download^=http]").attr("abs:download")
         } else {
-            val htmld = getHtml(url)
-            val m = "<iframe src=\"([^\"]+)\"[^<]+<\\/iframe>".toRegex().toPattern().matcher(htmld)
-            var s = ""
+            val episodeHtml = getHtml(url)
+            val matcher = "<iframe src=\"([^\"]+)\"[^<]+<\\/iframe>".toRegex().toPattern()
+                .matcher(episodeHtml)
             val list = arrayListOf<String>()
-            while (m.find()) {
-                val g = m.group(1)
-                s += g!! + "\n"
-                list.add(g)
+            while (matcher.find()) {
+                list.add(matcher.group(1)!!)
             }
 
-            val regex =
-                "(http|https):\\/\\/([\\w+?\\.\\w+])+([a-zA-Z0-9\\~\\%\\&\\-\\_\\?\\.\\=\\/])+(part[0-9])+.(\\w*)"
-
-            val htmlc = if (regex.toRegex().toPattern().matcher(list[0]).find()) {
-                list
-            } else {
-                getHtml(list[0])
-            }
+            val videoHtml = getHtml(list[0])
             val reg =
-                "var video_links = (\\{.*?\\});".toRegex().toPattern().matcher(htmlc.toString())
+                "var video_links = (\\{.*?\\});".toRegex().toPattern().matcher(videoHtml)
             if (reg.find()) {
                 val d = reg.group(1)
                 val g = Gson()

@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -37,6 +38,16 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         show_list.setHasFixedSize(true)
         show_list.layoutManager = LinearLayoutManager(this)
         show_list.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
+
+        fun bleh() {
+            val show = ShowApi(Source.getSourceFromUrl(Source.RECENT_CARTOON.link))
+            val list = show.showInfoList
+            Loged.i("$list")
+            val episodeApi = EpisodeApi(list[0])
+            val link = episodeApi.episodeList[0].getVideoLink()
+            Loged.wtf(link)
+            Loged.wtf("${episodeApi.description} + ${episodeApi.image}")
+        }
 
         fun getStuffAsync() = GlobalScope.launch {
             Loged.w("Starting to get the stuff from ${Source.RECENT_CARTOON.link}")
@@ -104,9 +115,10 @@ class ShowDragSwipeActivity : AppCompatActivity() {
             return list.size
         }
 
+        @SuppressLint("SetTextI18n")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.title.text = list[position].name
-            holder.description.text = ""
+            holder.title.text = "$position: ${list[position].name}"
+            holder.description.text = list[position].url
             holder.title.setOnClickListener {
                 GlobalScope.launch {
                     val episodeApi = EpisodeApi(list[position])
