@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.text.Spannable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,6 +60,20 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                 val link = episodeApi.episodeList[0].getVideoLink()
                 Loged.wtf(link)
                 runOnUiThread {
+                    /*ImgAscii()
+                        .quality(AsciiQuality.BEST)
+                        //.color(true)
+                        .url(episodeApi.image)
+                        .convert(object : ImgAscii.Listener {
+                            override fun onProgress(percentage: Int) {
+                                println("$percentage")
+                            }
+
+                            override fun onResponse(response: Spannable?) {
+                                println("$response")
+                            }
+
+                        })*/
                     adapter = ShowAdapter(list, this@ShowDragSwipeActivity) {
                         show_list.smoothScrollToPosition(adapter.itemCount-1)
                     }
@@ -117,18 +132,46 @@ class ShowDragSwipeActivity : AppCompatActivity() {
 
         @SuppressLint("SetTextI18n")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.title.text = "$position: ${list[position].name}"
-            holder.description.text = list[position].url
+            holder.title.text = "$position: ${list[position].name}\n${list[position].url}"
+            holder.description.text = ""
             holder.title.setOnClickListener {
                 GlobalScope.launch {
                     val episodeApi = EpisodeApi(list[position])
                     val link = episodeApi.episodeList[0].getVideoLink()
+                    val epInfo = episodeApi.toString()
                     Loged.wtf(link)
                     GlobalScope.launch(Dispatchers.Main) {
-                        holder.description.text = link
+                        holder.description.text = "$epInfo\n$link"
                     }
                 }
             }
+            holder.title.setOnLongClickListener {
+                GlobalScope.launch {
+                    val episodeApi = EpisodeApi(list[position])
+                    GlobalScope.launch(Dispatchers.Main) {
+                        ImgAscii()
+                            .quality(AsciiQuality.WORST)
+                            .color(true)
+                            .url(episodeApi.image)
+                            .convert(object : ImgAscii.Listener {
+                                override fun onProgress(percentage: Int) {
+                                    print("$percentage%\t")
+                                }
+
+                                override fun onResponse(response: Spannable?) {
+                                    println()
+                                    GlobalScope.launch(Dispatchers.Main) {
+                                        holder.description.text = response!!
+                                    }
+                                }
+
+                            })
+                    }
+                }
+                true
+            }
+
+
         }
 
         override fun addItems(items: Collection<ShowInfo>, position: Int) {

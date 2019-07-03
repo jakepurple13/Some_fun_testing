@@ -158,4 +158,9 @@ class ExampleUnitTest {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): T = value()
     }
 
+    @Test
+    fun kotTest() {
+
+    }
+
 }
