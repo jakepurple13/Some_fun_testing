@@ -6,6 +6,7 @@ import crestron.com.deckofcards.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.random.Random
+import kotlin.reflect.KProperty
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -114,4 +115,35 @@ class ExampleUnitTest {
         println("sim4 $sim4")
 
     }
+
+    @Test
+    fun netTest() {
+        //val show = ShowApi(Source.RECENT_CARTOON)
+        //val list = show.showInfoList
+        //println("$list")
+        var count = 0
+        val s: Int by ByTested {
+            println("Here we are at ${count++}")
+            5
+        }
+        println("jhgf")
+        println("$s")
+        val a: Int by ByTested {
+            s+s
+        }
+        println("$s and $a")
+
+        ByTested {
+            println("here")
+        }
+    }
+
+    interface ByTest<out T> {
+        val value: T
+    }
+
+    class ByTested<out T>(override val value: () -> T) : ByTest<Function0<T>> {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): T = value()
+    }
+
 }

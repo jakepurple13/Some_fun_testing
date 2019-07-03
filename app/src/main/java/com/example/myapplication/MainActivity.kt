@@ -157,6 +157,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(i)
         }
 
+        button.setOnLongClickListener {
+            val i = Intent(this@MainActivity, ShowDragSwipeActivity::class.java)
+            i.putExtra("bgColor", Color.argb(alpha, red, green, blue))
+            startActivity(i)
+            true
+        }
+
         button3.setOnClickListener {
             val i = Intent(this@MainActivity, SecondActivity::class.java)
             i.putExtra("bgColor", Color.argb(alpha, red, green, blue))

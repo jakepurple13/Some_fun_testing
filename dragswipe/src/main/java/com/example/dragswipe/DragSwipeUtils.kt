@@ -104,23 +104,33 @@ abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: Array
     /**
      * sets the list with new data and then notifies that the data changed
      */
-    fun setListNotify(genericList: ArrayList<T>) {
+    open fun setListNotify(genericList: ArrayList<T>) {
         list = genericList
         notifyDataSetChanged()
     }
 
     /**
      * adds an item to position and then notifies
+     * position default is size of [list]
      */
-    fun addItem(item: T, position: Int = list.size - 1) {
+    open fun addItem(item: T, position: Int = list.size) {
         list.add(position, item)
         notifyItemInserted(position)
     }
 
     /**
+     * adds multiple item to position and then notifies
+     * position default is size of [list]
+     */
+    open fun addItems(items: Collection<T>, position: Int = list.size) {
+        list.addAll(position, items)
+        notifyItemRangeInserted(position, items.size)
+    }
+
+    /**
      * removes an item at position then notifies
      */
-    fun removeItem(position: Int): T {
+    open fun removeItem(position: Int): T {
         val item = list.removeAt(position)
         notifyItemRemoved(position)
         return item

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ShowDragSwipeActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/show_list"
+            android:layout_toStartOf="@id/shuffle_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    <Button
+            android:text="Shuffle"
+            android:id="@+id/shuffle_button"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    <Button
+            android:text="Add Back In"
+            android:id="@+id/add_button"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/shuffle_button"
+            android:layout_toEndOf="@id/show_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+</RelativeLayout>

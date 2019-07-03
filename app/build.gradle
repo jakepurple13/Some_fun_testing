@@ -43,4 +43,6 @@ dependencies {
     //implementation 'com.github.ma3udmohammadi:Android-Intent-Library:1.0.0'
     implementation 'com.mikepenz:fastadapter-extensions-drag:4.0.0' // drag support
     implementation 'com.mikepenz:fastadapter:4.0.0'
+    implementation 'org.jsoup:jsoup:1.12.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
