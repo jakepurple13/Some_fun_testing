@@ -12,7 +12,7 @@ import java.util.*
 import kotlin.random.Random
 
 fun ImageView.setColor(color: Color, mode: PorterDuff.Mode = PorterDuff.Mode.SCREEN) {
-    this.setColorFilter(color.toArgb(), mode)
+    this.setColor(color.toArgb(), mode)
 }
 
 fun ImageView.setColor(color: Int, mode: PorterDuff.Mode = PorterDuff.Mode.SCREEN) {
@@ -26,7 +26,7 @@ fun ImageView.setColor(
     @IntRange(from = 0, to = 255) blue: Int,
     mode: PorterDuff.Mode = PorterDuff.Mode.SCREEN
 ) {
-    this.setColorFilter(Color.argb(alpha, red, green, blue), mode)
+    this.setColor(Color.argb(alpha, red, green, blue), mode)
 }
 
 /**
@@ -75,6 +75,24 @@ fun Random.nextColor(
     @IntRange(from = 0, to = 255) green: Int = nextInt(0, 255),
     @IntRange(from = 0, to = 255) blue: Int = nextInt(0, 255)
 ): Int = Color.argb(alpha, red, green, blue)
+
+/**
+ * returns a random [IntRange]
+ */
+fun Random.nextIntRange(until: Int = Int.MAX_VALUE): kotlin.ranges.IntRange {
+    val first = nextInt(until = until)
+    val second = nextInt(first, until)
+    return first..second
+}
+
+/**
+ * returns a random [IntRange]
+ */
+fun Random.nextLongRange(until: Long = Long.MAX_VALUE): LongRange {
+    val first = nextLong(until = until)
+    val second = nextLong(first, until)
+    return first..second
+}
 
 object RandomCharPool {
 
@@ -142,7 +160,7 @@ fun Random.nextString(@IntRange(from = 1) length: Int): String {
  * to modify what else is/is not allowed in the random char pool, @see [RandomCharPool]
  */
 fun Random.nextChar(): Char {
-    return RandomCharPool.charPool.random()
+    return RandomCharPool.charPool.random(this)
 }
 
 /**
@@ -150,7 +168,7 @@ fun Random.nextChar(): Char {
  * to modify what else is/is not allowed in the random char pool, @see [RandomCharPool]
  */
 fun Random.nextUpperCaseChar(): Char {
-    return ('A'..'Z').random()
+    return ('A'..'Z').random(this)
 }
 
 /**
@@ -158,29 +176,20 @@ fun Random.nextUpperCaseChar(): Char {
  * to modify what else is/is not allowed in the random char pool, @see [RandomCharPool]
  */
 fun Random.nextLowerCaseChar(): Char {
-    return ('a'..'z').random()
+    return ('a'..'z').random(this)
 }
 
 /**
  * returns a random [Locale]
  */
 fun Random.nextLocale(): Locale {
-    return Locale.getAvailableLocales().random()
+    return Locale.getAvailableLocales().random(this)
 }
 
-/**
- * returns a random [IntRange]
- */
-fun Random.nextIntRange(until: Int = Int.MAX_VALUE): kotlin.ranges.IntRange {
-    val first = nextInt(until = until)
-    val second = nextInt(first, until)
-    return first..second
+fun <T> List<T>.middle(): T {
+    return get(size / 2)
 }
 
-fun <T> ArrayList<T>.middle(): T {
-    return get(size/2)
-}
-
-fun <T> ArrayList<T>.middleOrNull(): T? {
-    return getOrNull(size/2)
+fun <T> List<T>.middleOrNull(): T? {
+    return getOrNull(size / 2)
 }

@@ -76,11 +76,11 @@ class NewFeatureTest : AppCompatActivity() {
         confirmdialog.setOnClickListener {
             val aceSpades = Card(Suit.SPADES, 1)
             //Loged.d("${adapter[aceSpades]} and ${aceSpades in adapter} and ${adapter[adapter[aceSpades]]}")
-            val range = Random.nextIntRange(10*count)
+            val range = Random.nextIntRange(10 * count)
             Loged.w("${range.first}..${range.last} and ${aceSpades in adapter}")
             val lists = arrayListOf<Card>()
-            for(i in range) {
-                lists+=Card.RandomCard
+            for (i in range) {
+                lists += Card.RandomCard
             }
             adapter[range] = lists
         }
@@ -111,7 +111,7 @@ class NewFeatureTest : AppCompatActivity() {
             Direction.START + Direction.END
         )*/
 
-        val callBack = SwipeToDelete(
+        val callback = SwipeToDelete(
             adapter,
             Direction.UP + Direction.DOWN,
             Direction.START + Direction.END,
@@ -120,7 +120,7 @@ class NewFeatureTest : AppCompatActivity() {
 
         val helper2 = DragSwipeUtils.setDragSwipeUp(
             fun_recycler,
-            callBack,
+            callback,
             object : DragSwipeActions<Card, ViewHolders> {
                 override fun onSwiped(
                     viewHolder: RecyclerView.ViewHolder,
@@ -136,7 +136,20 @@ class NewFeatureTest : AppCompatActivity() {
                         Loged.i("Went right")
                     }
                 }
+
+                override fun getMovementFlags(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    callback: DragSwipeManageAdapter<Card, ViewHolders>
+                ): Int {
+                    return if (viewHolder.adapterPosition % 10 == 0)
+                        Direction.NOTHING.value
+                    else
+                        super.getMovementFlags(recyclerView, viewHolder, callback)
+                }
             })
+
+        DragSwipeUtils.disableDragSwipe(helper2)
 
         val helper = DragSwipeUtils.setDragSwipeUp(
             adapter,
@@ -165,6 +178,8 @@ class NewFeatureTest : AppCompatActivity() {
             }
         )
 
+        DragSwipeUtils.disableDragSwipe(helper)
+
         manager.dragSwipeHelper = if (gridOrVega) {
             Loged.wtf("First Helper")
             helper
@@ -172,6 +187,7 @@ class NewFeatureTest : AppCompatActivity() {
             Loged.wtf("Custom Helper")
             helper2
         }
+
         gridOrVega = !gridOrVega
 
         manager.dragSwipedEnabled = true
@@ -257,7 +273,7 @@ class NewFeatureTest : AppCompatActivity() {
         val cardInfo: ImageView = view.cardImage!!
     }
 
-    fun sendNoti(context: Context) {
+    private fun sendNoti(context: Context) {
         val channel = NotificationChannel("asdf1", "asdf1", NotificationManager.IMPORTANCE_HIGH)
         val mNotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -317,13 +333,15 @@ class NewFeatureTest : AppCompatActivity() {
         private val clearPaint =
             Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
 
-        override fun getMovementFlags(
+        /*override fun getMovementFlags(
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder
         ): Int {
-            if (viewHolder.adapterPosition % 10 == 0) return 0
-            return super.getMovementFlags(recyclerView, viewHolder)
-        }
+            return if (viewHolder.adapterPosition % 10 == 0)
+                Direction.NOTHING.value
+            else
+                super.getMovementFlags(recyclerView, viewHolder)
+        }*/
 
         override fun onChildDraw(
             c: Canvas,

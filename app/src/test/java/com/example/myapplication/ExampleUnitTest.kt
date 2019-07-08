@@ -1,7 +1,7 @@
 package com.example.myapplication
 
 import com.example.cardutilities.*
-import com.example.funutilities.findSimilarities
+import com.example.funutilities.*
 import crestron.com.deckofcards.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -117,6 +117,8 @@ class ExampleUnitTest {
         println("lis1 $list1")
         println("sim4 $sim4")
 
+        sim4.middleOrNull()
+
     }
 
     @Test
@@ -159,6 +161,17 @@ class ExampleUnitTest {
             println("index:${i.index} and value:${i.value}")
         }
         println("0".repeat(1))
+        for((i,j) in (Random.nextIntRange(10)).withIndex()) {
+            println("i:$i and j:$j")
+        }
+        println("0".repeat(10))
+        for((i,j) in (Random.nextLongRange(10)).withIndex()) {
+            println("i:$i and j:$j")
+        }
+        val locale = Random.nextLocale()
+        val lc = Random.nextLowerCaseChar()
+        val uc = Random.nextUpperCaseChar()
+        println("$locale and $lc and $uc")
     }
 
     interface ByTest<out T> {

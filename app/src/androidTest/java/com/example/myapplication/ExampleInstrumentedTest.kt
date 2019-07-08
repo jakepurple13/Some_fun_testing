@@ -1,7 +1,9 @@
 package com.example.myapplication
 
 import android.text.Spannable
+import androidx.core.graphics.toColor
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.funutilities.getComplimentaryColor
 import com.example.showapi.Source
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -25,6 +27,9 @@ class ExampleInstrumentedTest {
         Loged.wtf("asdf")
         Loged.TAG = "asdf"
         Loged.SHOW_PRETTY = true
+        val y = 4
+        println("${y.getComplimentaryColor()}")
+        println("${y.toColor().getComplimentaryColor()}")
     }
 
     @Test

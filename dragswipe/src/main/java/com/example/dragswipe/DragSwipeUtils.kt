@@ -58,10 +58,10 @@ enum class Direction(val value: Int) {
 }
 
 operator fun Int.plus(direction: Direction): Int {
-    return if(direction==NOTHING) {
+    return if (direction == Direction.NOTHING) {
         Direction.NOTHING.value
     } else {
-        this + direction.value
+        this.or(direction.value)
     }
 }
 
@@ -70,13 +70,14 @@ operator fun Int.plus(direction: Direction): Int {
  * extend this if you want to add actions to your swiping
  */
 open class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
-    dragSwipeAdapter: DragSwipeAdapter<T, VH>,
+    private var dragSwipeAdapter: DragSwipeAdapter<T, VH>,
     dragDirs: Int,
     swipeDirs: Int
-) :
-    ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
-    private var listAdapter = dragSwipeAdapter
+) : ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
 
+    /**
+     * These are the actions for [DragSwipeActions.onMove] and [DragSwipeActions.onSwiped] and [DragSwipeActions.getMovementFlags]
+     */
     var dragSwipeActions: DragSwipeActions<T, VH> = object : DragSwipeActions<T, VH> {}
 
     override fun onMove(
@@ -84,7 +85,7 @@ open class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        dragSwipeActions.onMove(recyclerView, viewHolder, target, listAdapter)
+        dragSwipeActions.onMove(recyclerView, viewHolder, target, dragSwipeAdapter)
         return true
     }
 
@@ -92,8 +93,15 @@ open class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
         dragSwipeActions.onSwiped(
             viewHolder,
             Direction.getDirectionFromValue(direction),
-            listAdapter
+            dragSwipeAdapter
         )
+    }
+
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        return dragSwipeActions.getMovementFlags(recyclerView, viewHolder, this)
     }
 
 }
@@ -120,6 +128,7 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
 
     /**
      * when the element is swiped
+     *
      * @param direction the direction swiped
      */
     fun onSwiped(
@@ -128,6 +137,23 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
         dragSwipeAdapter: DragSwipeAdapter<T, VH>
     ) {
         dragSwipeAdapter.removeItem(viewHolder.adapterPosition)
+    }
+
+    /**
+     * # Only modify this if you know what you are doing!
+     * This is for when you want to control how certain elements are swiped/dragged
+     *
+     * @param viewHolder the viewholder that you are modifying
+     */
+    fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        callback: DragSwipeManageAdapter<T, VH>
+    ): Int {
+        return ItemTouchHelper.Callback.makeMovementFlags(
+            callback.getDragDirs(recyclerView, viewHolder),
+            callback.getSwipeDirs(recyclerView, viewHolder)
+        )
     }
 }
 
@@ -139,6 +165,7 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
  *
  * [setListNotify],
  * [addItem],
+ * [addItems],
  * [removeItem],
  * [swapItems]
  *
@@ -228,7 +255,7 @@ object DragSwipeUtils {
      * (but its alright because there are built in methods for dragging and swiping. Of course, those won't work if
      * [dragDirs] and [swipeDirs] are nothing)
      *
-     * @return an instance of [DragSwipeHelper]. Use this if you want to disable drag/swipe at any point
+     * @return an instance of [DragSwipeHelper]. Use this if you want to disable drag/swipe at any point, or enable if you had disabled it
      */
     fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
         dragSwipeAdapter: DragSwipeAdapter<T, VH>,
@@ -249,6 +276,7 @@ object DragSwipeUtils {
 
     /**
      * @see setDragSwipeUp
+     *
      * @param callback a custom callback if you want to add custom drawings and so on
      */
     fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
