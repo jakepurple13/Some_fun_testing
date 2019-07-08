@@ -35,6 +35,45 @@ operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.set(num: 
     list[num] = element
 }
 
+operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.set(
+    num: IntRange,
+    element: List<T>
+) {
+    for ((i, j) in num.withIndex()) {
+        list[j] = element[i]
+    }
+}
+
+operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.plusAssign(elements: List<T>) {
+    addItems(elements)
+}
+
+operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.plusAssign(element: T) {
+    addItem(element)
+}
+
+operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.minusAssign(element: List<T>) {
+    val intList = arrayListOf<Int>()
+    for (i in list.withIndex())
+        if (i == element)
+            intList += i.index
+    for (i in intList)
+        removeItem(i)
+}
+
+operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.minusAssign(element: T) {
+    removeItem(list.indexOf(element))
+}
+
+operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.contains(element: T): Boolean {
+    return element in list
+}
+
+/**
+ * allows iteration
+ */
+operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.iterator() = list.iterator()
+
 /**
  * @see [DragSwipeUtils.enableDragSwipe]
  */

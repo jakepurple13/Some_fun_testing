@@ -152,14 +152,8 @@ class ExampleUnitTest {
 
     @Test
     fun netTest2() {
-        runBlocking {
-            //println("$list")
-            withContext(Dispatchers.Default) {
-                val show = com.example.showapi.ShowApi(com.example.showapi.Source.CARTOON_MOVIES)
-                val list = show.showInfoList
-                val ep = com.example.showapi.EpisodeApi(list[0])
-                println(ep.episodeList[0].getVideoLinks())
-            }
+        for((i,j) in (5..10).withIndex()) {
+            println("i:$i and j:$j")
         }
     }
 

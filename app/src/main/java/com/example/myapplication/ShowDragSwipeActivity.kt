@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dragswipe.*
 import com.example.funutilities.get
+import com.example.funutilities.iterator
 import com.example.funutilities.shuffleItems
 import com.example.showapi.EpisodeApi
 import com.example.showapi.ShowApi
@@ -82,6 +83,13 @@ class ShowDragSwipeActivity : AppCompatActivity() {
 
         shuffle_button.setOnClickListener {
             adapter.shuffleItems()
+        }
+
+        shuffle_button.setOnLongClickListener {
+            for(i in adapter) {
+                println(i)
+            }
+            true
         }
 
         add_button.setOnClickListener {

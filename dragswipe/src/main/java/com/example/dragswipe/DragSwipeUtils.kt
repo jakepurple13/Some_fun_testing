@@ -7,7 +7,7 @@ import com.example.dragswipe.Direction.NOTHING
 /**
  * this class is to set up onMove(for dragging) and onSwiped(for swiping) methods
  */
-private class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
+internal class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
     dragSwipeAdapter: DragSwipeAdapter<T, VH>,
     dragDirs: Int,
     swipeDirs: Int
@@ -165,8 +165,6 @@ class DragSwipeHelper internal constructor(internal var itemTouchHelper: ItemTou
  */
 object DragSwipeUtils {
     /**
-     * Then call this and you are good to go!
-     *
      * This actually sets up the drag/swipe ability.
      *
      * @param T the type that the list is made of
