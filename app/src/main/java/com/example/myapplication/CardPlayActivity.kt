@@ -327,7 +327,7 @@ class CardPlayActivity : AppCompatActivity() {
 
             override fun onSwiped(
                 viewHolder: RecyclerView.ViewHolder,
-                direction: Int,
+                direction: Direction,
                 dragSwipeAdapter: DragSwipeAdapter<Card, ViewHolder>
             ) {
                 Loged.d("${viewHolder.adapterPosition} and it was swiped $direction")

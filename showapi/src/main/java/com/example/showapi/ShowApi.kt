@@ -375,7 +375,6 @@ internal class Normal {
     }
 }
 
-
 internal class Storage {
     private var sub: String? = null
 

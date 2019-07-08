@@ -155,6 +155,9 @@ class ExampleUnitTest {
         for((i,j) in (5..10).withIndex()) {
             println("i:$i and j:$j")
         }
+        for(i in (5..10).withIndex()) {
+            println("index:${i.index} and value:${i.value}")
+        }
     }
 
     interface ByTest<out T> {
@@ -170,7 +173,7 @@ class ExampleUnitTest {
 
         fun isOdd(x: Int) = x % 2 != 0 // == (Int) -> Boolean
         val numbers = listOf(1,2,3)
-        println(numbers.filter(::isOdd))
+        println("just isOdd" + numbers.filter(::isOdd))
 
         fun <A, B, C> compose(f: (B) -> C, g: (A) -> B): (A) -> C {
             return { x -> f(g(x)) }
@@ -182,6 +185,15 @@ class ExampleUnitTest {
         val strings = listOf("a", "ab", "abc")
 
         println(strings.filter(oddLength))
+
+        fun <A, B, C, D> composes(f: (C) -> D, g: (B) -> C, h: (A) -> B): (A) -> D {
+            return { x -> f(g(h(x))) }
+        }
+
+        fun addStuff(s: String) = s
+
+        val oddLengths = composes(::isOdd, ::length, ::addStuff)
+        println(strings.filter(oddLengths))
 
     }
 

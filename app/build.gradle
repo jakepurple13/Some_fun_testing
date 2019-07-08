@@ -21,6 +21,9 @@ android {
         }
     }
     buildToolsVersion = '29.0.0 rc3'
+    packagingOptions {
+        exclude 'META-INF/library-core_release.kotlin_module'
+    }
 }
 
 dependencies {
@@ -40,11 +43,15 @@ dependencies {
     implementation project(':showapi')
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta01'
     //implementation 'com.github.ma3udmohammadi:Android-Intent-Library:1.0.0'
     implementation 'com.mikepenz:fastadapter-extensions-drag:4.0.0' // drag support
     implementation 'com.mikepenz:fastadapter:4.0.0'
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation "com.mikepenz:iconics-core:4.0.1-b01"
+    implementation 'com.mikepenz:google-material-typeface:3.0.1.4.original-kotlin@aar'
+    implementation 'com.mikepenz:material-design-iconic-typeface:2.2.0.6-kotlin@aar'
+    implementation 'com.mikepenz:fontawesome-typeface:5.9.0.0-kotlin@aar'
 }

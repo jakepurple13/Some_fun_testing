@@ -129,7 +129,7 @@ object RandomCharPool {
  * returns a random string based on length
  * to modify what else is/is not allowed in the random char pool, @see [RandomCharPool]
  */
-fun Random.nextString(@IntRange(from = 0) length: Int): String {
+fun Random.nextString(@IntRange(from = 1) length: Int): String {
     var string = ""
     for (i in 1..length) {
         string += RandomCharPool.charPool[nextInt(0, RandomCharPool.charPool.size)]
@@ -166,4 +166,12 @@ fun Random.nextLowerCaseChar(): Char {
  */
 fun Random.nextLocale(): Locale {
     return Locale.getAvailableLocales().random()
+}
+
+fun <T> ArrayList<T>.middle(): T {
+    return get(size/2)
+}
+
+fun <T> ArrayList<T>.middleOrNull(): T? {
+    return getOrNull(size/2)
 }

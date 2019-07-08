@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.*
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,17 +14,18 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cardutilities.fullInfo
 import com.example.cardviews.CardAnimateInfo
 import com.example.cardviews.CardAnimationListener
 import com.example.cardviews.CardProgressType
-import com.example.dragswipe.Direction
-import com.example.dragswipe.DragSwipeAdapter
-import com.example.dragswipe.DragSwipeUtils
+import com.example.dragswipe.*
 import com.example.funutilities.RecyclerViewDragSwipeManager
 import com.example.funutilities.shuffleItems
+import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
 import crestron.com.deckofcards.Card
 import crestron.com.deckofcards.Deck
 import crestron.com.deckofcards.nextCard
@@ -67,7 +70,8 @@ class NewFeatureTest : AppCompatActivity() {
 
         val layoutManagerOther = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         fun_recycler.setHasFixedSize(true)
-        fun_recycler.layoutManager = layoutManagerOther
+        //fun_recycler.layoutManager = layoutManagerOther
+        fun_recycler.layoutManager = GridLayoutManager(this, 3)
         adapter = TestAdapter(lists, this@NewFeatureTest)
         fun_recycler.adapter = adapter
         /*DragSwipeUtils.setDragSwipeUp(
@@ -77,18 +81,69 @@ class NewFeatureTest : AppCompatActivity() {
             Direction.START + Direction.END
         )*/
 
+        val callBack = SwipeToDelete(
+            adapter,
+            Direction.UP + Direction.DOWN + Direction.START + Direction.END,
+            Direction.START + Direction.END,
+            this@NewFeatureTest
+        )
+
+        val helper2 = DragSwipeUtils.setDragSwipeUp(
+            fun_recycler,
+            callBack,
+            object : DragSwipeActions<Card, ViewHolders> {
+                override fun onSwiped(
+                    viewHolder: RecyclerView.ViewHolder,
+                    direction: Direction,
+                    dragSwipeAdapter: DragSwipeAdapter<Card, ViewHolders>
+                ) {
+                    super.onSwiped(viewHolder, direction, dragSwipeAdapter)
+                    Loged.wtf("$direction")
+
+                    if (direction == Direction.START) {
+                        Loged.i("Went left")
+                    } else if (direction == Direction.END) {
+                        Loged.i("Went right")
+                    }
+                }
+            })
+
         val helper = DragSwipeUtils.setDragSwipeUp(
             adapter,
             fun_recycler,
             { _, _ ->
-                Direction.UP + Direction.DOWN
+                Direction.UP + Direction.DOWN + Direction.START + Direction.END
             },
             { _, _ ->
                 Direction.START + Direction.END
+            },
+            object : DragSwipeActions<Card, ViewHolders> {
+                override fun onSwiped(
+                    viewHolder: RecyclerView.ViewHolder,
+                    direction: Direction,
+                    dragSwipeAdapter: DragSwipeAdapter<Card, ViewHolders>
+                ) {
+                    super.onSwiped(viewHolder, direction, dragSwipeAdapter)
+                    Loged.wtf("$direction")
+
+                    if (direction == Direction.START) {
+                        Loged.i("Went left")
+                    } else if (direction == Direction.END) {
+                        Loged.i("Went right")
+                    }
+                }
             }
         )
 
-        manager.dragSwipeHelper = helper
+        val bool = Random.nextBoolean()
+
+        manager.dragSwipeHelper = if(bool) {
+            Loged.wtf("First Helper")
+            helper
+        } else {
+            Loged.wtf("Custom Helper")
+            helper2
+        }
 
         manager.dragSwipedEnabled = true
 
@@ -217,4 +272,90 @@ class NewFeatureTest : AppCompatActivity() {
         // number to NotificationManager.cancel().
         mNotificationManager.notify(1, builder.build())
     }
+
+    class SwipeToDelete(
+        dragSwipeAdapter: DragSwipeAdapter<Card, ViewHolders>,
+        dragDirs: Int,
+        swipeDirs: Int,
+        val context: Context
+    ) : DragSwipeManageAdapter<Card, ViewHolders>(dragSwipeAdapter, dragDirs, swipeDirs) {
+
+        private val deleteIcon = IconicsDrawable(context).icon(GoogleMaterial.Icon.gmd_delete)
+        private val intrinsicWidth = deleteIcon.intrinsicWidth
+        private val intrinsicHeight = deleteIcon.intrinsicHeight
+        private val background = ColorDrawable()
+        private val backgroundColor = Color.parseColor("#00f44336")
+        private val clearPaint =
+            Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
+
+        override fun getMovementFlags(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder
+        ): Int {
+            if (viewHolder.adapterPosition%10 == 0) return 0
+            return super.getMovementFlags(recyclerView, viewHolder)
+        }
+
+        override fun onChildDraw(
+            c: Canvas,
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            dX: Float,
+            dY: Float,
+            actionState: Int,
+            isCurrentlyActive: Boolean
+        ) {
+            val itemView = viewHolder.itemView
+            val itemHeight = itemView.bottom - itemView.top
+            val isCanceled = dX == 0f && !isCurrentlyActive
+
+            if (isCanceled) {
+                clearCanvas(
+                    c,
+                    itemView.right + dX,
+                    itemView.top.toFloat(),
+                    itemView.right.toFloat(),
+                    itemView.bottom.toFloat()
+                )
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+                return
+            }
+
+            // Draw the red delete background
+            background.color = backgroundColor
+            background.setBounds(
+                itemView.right + dX.toInt(),
+                itemView.top,
+                itemView.right,
+                itemView.bottom
+            )
+            background.draw(c)
+
+            // Calculate position of delete icon
+            val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+            val deleteIconMargin = (itemHeight - intrinsicHeight) / 2
+            val deleteIconLeft = itemView.right - deleteIconMargin - intrinsicWidth
+            val deleteIconRight = itemView.right - deleteIconMargin
+            val deleteIconBottom = deleteIconTop + intrinsicHeight
+
+            // Draw the delete icon
+            deleteIcon.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
+            deleteIcon.draw(c)
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+        }
+
+        private fun clearCanvas(c: Canvas?, left: Float, top: Float, right: Float, bottom: Float) {
+            c?.drawRect(left, top, right, bottom, clearPaint)
+        }
+    }
+
 }

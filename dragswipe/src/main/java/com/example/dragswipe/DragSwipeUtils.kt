@@ -5,34 +5,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dragswipe.Direction.NOTHING
 
 /**
- * this class is to set up onMove(for dragging) and onSwiped(for swiping) methods
- */
-internal class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
-    dragSwipeAdapter: DragSwipeAdapter<T, VH>,
-    dragDirs: Int,
-    swipeDirs: Int
-) :
-    ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
-    private var listAdapter = dragSwipeAdapter
-
-    var dragSwipeActions: DragSwipeActions<T, VH> = object : DragSwipeActions<T, VH> {}
-
-    override fun onMove(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        target: RecyclerView.ViewHolder
-    ): Boolean {
-        dragSwipeActions.onMove(recyclerView, viewHolder, target, listAdapter)
-        return true
-    }
-
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        dragSwipeActions.onSwiped(viewHolder, direction, listAdapter)
-    }
-
-}
-
-/**
  * these are the directions you can swipe/drag
  * they all are hooked with [ItemTouchHelper] but made them separate so its all in house and a bit easier to use
  * Except for [NOTHING], that's equal to 0.
@@ -62,12 +34,81 @@ enum class Direction(val value: Int) {
     operator fun plus(direction: Direction): Int {
         return or(direction)
     }
+
+    override fun toString(): String {
+        return "${this.name}=$value"
+    }
+
+    companion object {
+        /**
+         * gets the [Direction] from a value
+         */
+        fun getDirectionFromValue(value: Int): Direction {
+            return when (value) {
+                START.value -> START
+                END.value -> END
+                LEFT.value -> LEFT
+                RIGHT.value -> RIGHT
+                UP.value -> UP
+                DOWN.value -> DOWN
+                else -> NOTHING
+            }
+        }
+    }
+}
+
+operator fun Int.plus(direction: Direction): Int {
+    return if(direction==Direction.NOTHING) {
+        Direction.NOTHING.value
+    } else {
+        this + direction.value
+    }
+}
+
+/**
+ * this class is to set up onMove(for dragging) and onSwiped(for swiping) methods
+ * extend this if you want to add actions to your swiping
+ */
+open class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
+    dragSwipeAdapter: DragSwipeAdapter<T, VH>,
+    dragDirs: Int,
+    swipeDirs: Int
+) :
+    ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
+    private var listAdapter = dragSwipeAdapter
+
+    var dragSwipeActions: DragSwipeActions<T, VH> = object : DragSwipeActions<T, VH> {}
+
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+        dragSwipeActions.onMove(recyclerView, viewHolder, target, listAdapter)
+        return true
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        dragSwipeActions.onSwiped(
+            viewHolder,
+            Direction.getDirectionFromValue(direction),
+            listAdapter
+        )
+    }
+
 }
 
 /**
  * This is so you can create your actions for [onMove] and [onSwiped]
  */
 interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
+
+    /**
+     * when the element is moved around
+     *
+     * @param viewHolder the previous position
+     * @param target the new position
+     */
     fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
@@ -77,9 +118,13 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
         dragSwipeAdapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
     }
 
+    /**
+     * when the element is swiped
+     * @param direction the direction swiped
+     */
     fun onSwiped(
         viewHolder: RecyclerView.ViewHolder,
-        direction: Int,
+        direction: Direction,
         dragSwipeAdapter: DragSwipeAdapter<T, VH>
     ) {
         dragSwipeAdapter.removeItem(viewHolder.adapterPosition)
@@ -204,6 +249,21 @@ object DragSwipeUtils {
 
     /**
      * @see setDragSwipeUp
+     * @param callback a custom callback if you want to add custom drawings and so on
+     */
+    fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
+        recyclerView: RecyclerView,
+        callback: DragSwipeManageAdapter<T, VH>,
+        dragSwipeActions: DragSwipeActions<T, VH>? = null
+    ): DragSwipeHelper {
+        callback.dragSwipeActions = dragSwipeActions ?: callback.dragSwipeActions
+        val helper = ItemTouchHelper(callback)
+        helper.attachToRecyclerView(recyclerView)
+        return DragSwipeHelper(helper)
+    }
+
+    /**
+     * @see setDragSwipeUp
      *
      * @param dragDirs sets things up so you can only have certain elements draggable
      * @param swipeDirs sets things up so you can only have certain elements swipable
@@ -215,14 +275,13 @@ object DragSwipeUtils {
         swipeDirs: (RecyclerView, DragSwipeAdapter<T, VH>) -> Int = { _, _ -> Direction.NOTHING.value },
         dragSwipeActions: DragSwipeActions<T, VH>? = null
     ): DragSwipeHelper {
-        val callback = DragSwipeManageAdapter(
-            dragSwipeAdapter, dragDirs(recyclerView, dragSwipeAdapter),
-            swipeDirs(recyclerView, dragSwipeAdapter)
+        return setDragSwipeUp(
+            dragSwipeAdapter,
+            recyclerView,
+            dragDirs(recyclerView, dragSwipeAdapter),
+            swipeDirs(recyclerView, dragSwipeAdapter),
+            dragSwipeActions
         )
-        callback.dragSwipeActions = dragSwipeActions ?: callback.dragSwipeActions
-        val helper = ItemTouchHelper(callback)
-        helper.attachToRecyclerView(recyclerView)
-        return DragSwipeHelper(helper)
     }
 
     fun enableDragSwipe(helper: DragSwipeHelper, recyclerView: RecyclerView) {

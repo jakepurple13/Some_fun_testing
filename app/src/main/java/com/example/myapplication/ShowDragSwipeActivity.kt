@@ -65,7 +65,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                             object : DragSwipeActions<ShowInfo, ViewHolder> {
                                 override fun onSwiped(
                                     viewHolder: RecyclerView.ViewHolder,
-                                    direction: Int,
+                                    direction: Direction,
                                     dragSwipeAdapter: DragSwipeAdapter<ShowInfo, ViewHolder>
                                 ) {
                                     listOfDeleted += dragSwipeAdapter[viewHolder.adapterPosition]
@@ -86,7 +86,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         }
 
         shuffle_button.setOnLongClickListener {
-            for(i in adapter) {
+            for (i in adapter) {
                 println(i)
             }
             true
@@ -97,6 +97,11 @@ class ShowDragSwipeActivity : AppCompatActivity() {
             listOfDeleted.clear()
         }
 
+        add_button.setOnLongClickListener {
+
+            true
+        }
+
     }
 
     class ShowAdapter(
@@ -105,6 +110,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         var scrollToEnd: () -> Unit
     ) :
         DragSwipeAdapter<ShowInfo, ViewHolder>(stuff) {
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
                 LayoutInflater.from(context).inflate(
