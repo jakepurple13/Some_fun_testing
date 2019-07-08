@@ -158,6 +158,7 @@ class ExampleUnitTest {
         for(i in (5..10).withIndex()) {
             println("index:${i.index} and value:${i.value}")
         }
+        println("0".repeat(1))
     }
 
     interface ByTest<out T> {

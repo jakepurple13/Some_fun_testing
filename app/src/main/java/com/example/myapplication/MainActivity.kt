@@ -353,11 +353,11 @@ class MainActivity : AppCompatActivity() {
         main_info.text = infoString
         main_info.setTextColor(complimentColor)
         fun equalDigits(color: Int): String {
-            return when {
-                color < 10 -> "00"
-                color < 100 -> "0"
-                else -> ""
-            } + "$color"
+            return "0".repeat(when {
+                color < 10 -> 2
+                color < 100 -> 1
+                else -> 0
+            }) + "$color"
         }
         colorbarinfo.text = "R${equalDigits(red)}" +
                 "\nG${equalDigits(green)}" +

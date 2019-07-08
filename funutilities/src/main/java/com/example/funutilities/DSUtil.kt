@@ -31,8 +31,12 @@ fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.getLastItem(): T {
 
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.get(num: Int): T = list[num]
 
+operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.get(element: T): Int =
+    list.indexOf(element)
+
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.set(num: Int, element: T) {
     list[num] = element
+    notifyItemChanged(num)
 }
 
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.set(
@@ -42,6 +46,7 @@ operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.set(
     for ((i, j) in num.withIndex()) {
         list[j] = element[i]
     }
+    notifyItemRangeChanged(num.first, num.count())
 }
 
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.plusAssign(elements: List<T>) {

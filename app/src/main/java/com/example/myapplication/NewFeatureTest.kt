@@ -15,19 +15,19 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cardutilities.fullInfo
 import com.example.cardviews.CardAnimateInfo
 import com.example.cardviews.CardAnimationListener
 import com.example.cardviews.CardProgressType
 import com.example.dragswipe.*
-import com.example.funutilities.RecyclerViewDragSwipeManager
-import com.example.funutilities.shuffleItems
+import com.example.funutilities.*
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
+import com.stone.vega.library.VegaLayoutManager
 import crestron.com.deckofcards.Card
 import crestron.com.deckofcards.Deck
+import crestron.com.deckofcards.Suit
 import crestron.com.deckofcards.nextCard
 import kotlinx.android.synthetic.main.activity_new_feature_test.*
 import kotlinx.android.synthetic.main.card_item.view.*
@@ -37,12 +37,24 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
+
 class NewFeatureTest : AppCompatActivity() {
 
     private lateinit var adapter: TestAdapter
     private val lists = arrayListOf<Card>()
     private var count = 0
     private lateinit var manager: RecyclerViewDragSwipeManager
+    private var gridOrVega: Boolean
+        set(value) {
+            val pref = this@NewFeatureTest.getSharedPreferences("MyPref", 0) // 0 - for private mode
+            val editor = pref.edit()
+            editor.putBoolean("gridorvega", value)
+            editor.apply()
+        }
+        get() {
+            val pref = this@NewFeatureTest.getSharedPreferences("MyPref", 0) // 0 - for private mode
+            return pref.getBoolean("gridorvega", true)
+        }
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,12 +67,27 @@ class NewFeatureTest : AppCompatActivity() {
                 sendNoti(this@NewFeatureTest)
             }
         }
-        confirmdialog.setOnClickListener {
+
+        bubblenoti.setOnLongClickListener {
             adapter.shuffleItems()
+            true
+        }
+
+        confirmdialog.setOnClickListener {
+            val aceSpades = Card(Suit.SPADES, 1)
+            //Loged.d("${adapter[aceSpades]} and ${aceSpades in adapter} and ${adapter[adapter[aceSpades]]}")
+            val range = Random.nextIntRange(10*count)
+            Loged.w("${range.first}..${range.last} and ${aceSpades in adapter}")
+            val lists = arrayListOf<Card>()
+            for(i in range) {
+                lists+=Card.RandomCard
+            }
+            adapter[range] = lists
         }
 
         confirmdialog.setOnLongClickListener {
             //lists += count++
+            count++
             lists += Deck().getDeck()
             adapter.setListNotify(lists)
             true
@@ -68,10 +95,13 @@ class NewFeatureTest : AppCompatActivity() {
 
         manager = RecyclerViewDragSwipeManager(fun_recycler)
 
-        val layoutManagerOther = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        //val layoutManagerOther = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         fun_recycler.setHasFixedSize(true)
         //fun_recycler.layoutManager = layoutManagerOther
-        fun_recycler.layoutManager = GridLayoutManager(this, 3)
+        if (gridOrVega)
+            fun_recycler.layoutManager = GridLayoutManager(this, 3)
+        else
+            fun_recycler.layoutManager = VegaLayoutManager()
         adapter = TestAdapter(lists, this@NewFeatureTest)
         fun_recycler.adapter = adapter
         /*DragSwipeUtils.setDragSwipeUp(
@@ -83,7 +113,7 @@ class NewFeatureTest : AppCompatActivity() {
 
         val callBack = SwipeToDelete(
             adapter,
-            Direction.UP + Direction.DOWN + Direction.START + Direction.END,
+            Direction.UP + Direction.DOWN,
             Direction.START + Direction.END,
             this@NewFeatureTest
         )
@@ -135,15 +165,14 @@ class NewFeatureTest : AppCompatActivity() {
             }
         )
 
-        val bool = Random.nextBoolean()
-
-        manager.dragSwipeHelper = if(bool) {
+        manager.dragSwipeHelper = if (gridOrVega) {
             Loged.wtf("First Helper")
             helper
         } else {
             Loged.wtf("Custom Helper")
             helper2
         }
+        gridOrVega = !gridOrVega
 
         manager.dragSwipedEnabled = true
 
@@ -292,7 +321,7 @@ class NewFeatureTest : AppCompatActivity() {
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder
         ): Int {
-            if (viewHolder.adapterPosition%10 == 0) return 0
+            if (viewHolder.adapterPosition % 10 == 0) return 0
             return super.getMovementFlags(recyclerView, viewHolder)
         }
 

@@ -168,6 +168,15 @@ fun Random.nextLocale(): Locale {
     return Locale.getAvailableLocales().random()
 }
 
+/**
+ * returns a random [IntRange]
+ */
+fun Random.nextIntRange(until: Int = Int.MAX_VALUE): kotlin.ranges.IntRange {
+    val first = nextInt(until = until)
+    val second = nextInt(first, until)
+    return first..second
+}
+
 fun <T> ArrayList<T>.middle(): T {
     return get(size/2)
 }
