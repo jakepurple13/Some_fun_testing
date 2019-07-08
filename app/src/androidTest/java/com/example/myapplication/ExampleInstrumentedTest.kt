@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.text.Spannable
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.showapi.Source
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -28,9 +29,10 @@ class ExampleInstrumentedTest {
 
     @Test
     fun useAppContexts() {
-        val show = com.example.showapi.ShowApi(com.example.showapi.Source.RECENT_CARTOON)
+        val show = com.example.showapi.ShowApi(Source.getSourceFromUrl(com.example.showapi.Source.RECENT_CARTOON.link))
         val list = show.showInfoList
         val ep = com.example.showapi.EpisodeApi(list[0])
+        println(ep.description)
         println(ep.episodeList[0].getVideoLink())
 
         fun imgascii() {
@@ -55,6 +57,19 @@ class ExampleInstrumentedTest {
             }
         }
 
+    }
+
+    @Test
+    fun netTest2() {
+        runBlocking {
+            //println("$list")
+            withContext(Dispatchers.Default) {
+                val show = com.example.showapi.ShowApi(com.example.showapi.Source.CARTOON_MOVIES)
+                val list = show.showInfoList
+                val ep = com.example.showapi.EpisodeApi(list[0])
+                println(ep.episodeList[0].getVideoLinks())
+            }
+        }
     }
 
 }

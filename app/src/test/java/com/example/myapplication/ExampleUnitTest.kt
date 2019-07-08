@@ -150,6 +150,19 @@ class ExampleUnitTest {
         }
     }
 
+    @Test
+    fun netTest2() {
+        runBlocking {
+            //println("$list")
+            withContext(Dispatchers.Default) {
+                val show = com.example.showapi.ShowApi(com.example.showapi.Source.CARTOON_MOVIES)
+                val list = show.showInfoList
+                val ep = com.example.showapi.EpisodeApi(list[0])
+                println(ep.episodeList[0].getVideoLinks())
+            }
+        }
+    }
+
     interface ByTest<out T> {
         val value: T
     }
@@ -160,6 +173,21 @@ class ExampleUnitTest {
 
     @Test
     fun kotTest() {
+
+        fun isOdd(x: Int) = x % 2 != 0 // == (Int) -> Boolean
+        val numbers = listOf(1,2,3)
+        println(numbers.filter(::isOdd))
+
+        fun <A, B, C> compose(f: (B) -> C, g: (A) -> B): (A) -> C {
+            return { x -> f(g(x)) }
+        }
+
+        fun length(s: String) = s.length
+
+        val oddLength = compose(::isOdd, ::length)
+        val strings = listOf("a", "ab", "abc")
+
+        println(strings.filter(oddLength))
 
     }
 

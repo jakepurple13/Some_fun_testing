@@ -28,8 +28,8 @@ import java.net.SocketTimeoutException
 
 class ShowDragSwipeActivity : AppCompatActivity() {
 
-    lateinit var adapter: ShowAdapter
-    var helper: DragSwipeHelper? = null
+    private lateinit var adapter: ShowAdapter
+    private var helper: DragSwipeHelper? = null
     val listOfDeleted = arrayListOf<ShowInfo>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,16 +39,6 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         show_list.setHasFixedSize(true)
         show_list.layoutManager = LinearLayoutManager(this)
         show_list.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
-
-        fun bleh() {
-            val show = ShowApi(Source.getSourceFromUrl(Source.RECENT_CARTOON.link))
-            val list = show.showInfoList
-            Loged.i("$list")
-            val episodeApi = EpisodeApi(list[0])
-            val link = episodeApi.episodeList[0].getVideoLink()
-            Loged.wtf(link)
-            Loged.wtf("${episodeApi.description} + ${episodeApi.image}")
-        }
 
         fun getStuffAsync() = GlobalScope.launch {
             Loged.w("Starting to get the stuff from ${Source.RECENT_CARTOON.link}")

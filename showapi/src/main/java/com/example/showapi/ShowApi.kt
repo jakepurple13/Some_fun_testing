@@ -245,6 +245,7 @@ class EpisodeInfo(name: String, url: String) : ShowInfo(name, url) {
 
     /**
      * returns a url link to the episodes video
+     * # Use for anything but movies
      */
     fun getVideoLink(): String {
         if (url.contains("gogoanime")) {
@@ -271,6 +272,64 @@ class EpisodeInfo(name: String, url: String) : ShowInfo(name, url) {
             }
         }
         return ""
+    }
+
+    /**
+     * returns a url link to the episodes video
+     * # Use for movies
+     */
+    fun getVideoLinks(): ArrayList<String> {
+        if (url.contains("gogoanime")) {
+            val doc = Jsoup.connect(url).get()
+            return arrayListOf(doc.select("a[download^=http]").attr("abs:download"))
+        } else {
+            val htmld = getHtml(url)
+            val m = "<iframe src=\"([^\"]+)\"[^<]+<\\/iframe>".toRegex().toPattern().matcher(htmld)
+            var s = ""
+            val list = arrayListOf<String>()
+            while (m.find()) {
+                val g = m.group(1)
+                s += g + "\n"
+                list.add(g)
+            }
+
+            val regex =
+                "(http|https):\\/\\/([\\w+?\\.\\w+])+([a-zA-Z0-9\\~\\%\\&\\-\\_\\?\\.\\=\\/])+(part[0-9])+.(\\w*)"
+
+            val htmlc = if (regex.toRegex().toPattern().matcher(list[0]).find()) {
+                list
+            } else {
+                getHtml(list[0])
+            }
+
+            when (htmlc) {
+                is ArrayList<*> -> {
+                    val urlList = arrayListOf<String>()
+                    for (info in htmlc) {
+                        val reg = "var video_links = (\\{.*?\\});".toRegex().toPattern()
+                            .matcher(getHtml(info.toString()))
+                        while (reg.find()) {
+                            val d = reg.group(1)
+                            val g = Gson()
+                            val d1 = g.fromJson(d, NormalLink::class.java)
+                            urlList.add(d1.normal!!.storage!![0].link!!)
+
+                        }
+                    }
+                    return urlList
+                }
+                is String -> {
+                    val reg = "var video_links = (\\{.*?\\});".toRegex().toPattern().matcher(htmlc)
+                    while (reg.find()) {
+                        val d = reg.group(1)
+                        val g = Gson()
+                        val d1 = g.fromJson(d, NormalLink::class.java)
+                        return arrayListOf(d1.normal!!.storage!![0].link!!)
+                    }
+                }
+            }
+        }
+        return arrayListOf()
     }
 
     @Throws(IOException::class)
