@@ -58,7 +58,7 @@ enum class Direction(val value: Int) {
 }
 
 operator fun Int.plus(direction: Direction): Int {
-    return if(direction==Direction.NOTHING) {
+    return if(direction==NOTHING) {
         Direction.NOTHING.value
     } else {
         this + direction.value
