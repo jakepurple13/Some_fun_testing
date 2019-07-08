@@ -7,6 +7,7 @@ import android.text.Spannable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -50,22 +51,8 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                 val link = episodeApi.episodeList[0].getVideoLink()
                 Loged.wtf(link)
                 runOnUiThread {
-                    /*ImgAscii()
-                        .quality(AsciiQuality.BEST)
-                        //.color(true)
-                        .url(episodeApi.image)
-                        .convert(object : ImgAscii.Listener {
-                            override fun onProgress(percentage: Int) {
-                                println("$percentage")
-                            }
-
-                            override fun onResponse(response: Spannable?) {
-                                println("$response")
-                            }
-
-                        })*/
                     adapter = ShowAdapter(list, this@ShowDragSwipeActivity) {
-                        show_list.smoothScrollToPosition(adapter.itemCount-1)
+                        show_list.smoothScrollToPosition(adapter.itemCount - 1)
                     }
                     show_list.adapter = adapter
                     helper =
@@ -80,7 +67,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                                     direction: Int,
                                     dragSwipeAdapter: DragSwipeAdapter<ShowInfo, ViewHolder>
                                 ) {
-                                    listOfDeleted+=dragSwipeAdapter[viewHolder.adapterPosition]
+                                    listOfDeleted += dragSwipeAdapter[viewHolder.adapterPosition]
                                     super.onSwiped(viewHolder, direction, dragSwipeAdapter)
                                 }
                             }
@@ -104,7 +91,11 @@ class ShowDragSwipeActivity : AppCompatActivity() {
 
     }
 
-    class ShowAdapter(stuff: ArrayList<ShowInfo>, var context: Context, var scrollToEnd: () -> Unit) :
+    class ShowAdapter(
+        stuff: ArrayList<ShowInfo>,
+        var context: Context,
+        var scrollToEnd: () -> Unit
+    ) :
         DragSwipeAdapter<ShowInfo, ViewHolder>(stuff) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
@@ -124,7 +115,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.title.text = "$position: ${list[position].name}\n${list[position].url}"
             holder.description.text = ""
-            holder.title.setOnClickListener {
+            holder.buttonInfo.setOnClickListener {
                 GlobalScope.launch {
                     val episodeApi = EpisodeApi(list[position])
                     val link = episodeApi.episodeList[0].getVideoLink()
@@ -135,13 +126,13 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                     }
                 }
             }
-            holder.title.setOnLongClickListener {
+            holder.buttonInfo.setOnLongClickListener {
                 GlobalScope.launch {
                     val episodeApi = EpisodeApi(list[position])
                     GlobalScope.launch(Dispatchers.Main) {
                         ImgAscii()
                             .quality(AsciiQuality.WORST)
-                            .color(true)
+                            .color(false)
                             .url(episodeApi.image)
                             .convert(object : ImgAscii.Listener {
                                 override fun onProgress(percentage: Int) {
@@ -161,7 +152,6 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                 true
             }
 
-
         }
 
         override fun addItems(items: Collection<ShowInfo>, position: Int) {
@@ -174,6 +164,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.show_title!!
         val description: TextView = view.show_des!!
+        val buttonInfo: Button = view.show_info_button!!
     }
 
 }
