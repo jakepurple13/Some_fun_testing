@@ -161,7 +161,7 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
  * # Make your Adapter extend this!!!
  * This is the big kahuna, extending this allows your adapter to work with the rest of these Utils.
  *
- * This is a simple one that adds 4 different methods.
+ * This is a simple one that adds 5 different methods.
  *
  * [setListNotify],
  * [addItem],
@@ -226,7 +226,7 @@ abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: Array
 }
 
 /**
- * This class should never be created by you. This is to keep things in house.
+ * This class should **never** be created by you. This is to keep things in house.
  * Even though this class contains a single variable, its just so you, the developer, don't have to look at what is
  * really going on behind the scenes.
  */
