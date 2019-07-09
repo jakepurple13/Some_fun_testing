@@ -3,7 +3,6 @@ package com.example.myapplication
 import android.util.Log
 
 import java.util.ArrayList
-import java.util.Arrays
 
 /**
  * Created by Jacob on 10/3/17.
@@ -24,7 +23,7 @@ object Loged {
         //the stack trace
         val stackTraceElement = Thread.currentThread().stackTrace
 
-        val elements = Arrays.asList(*stackTraceElement)
+        val elements = listOf(*stackTraceElement)
         val wanted = ArrayList<StackTraceElement>()
 
         for (i in elements.indices) {
@@ -85,16 +84,20 @@ object Loged {
 
     //Console Log-------------------------------------------------
 
+    private fun chooseLog(msg: String, tag: String = TAG, showPretty: Boolean = SHOW_PRETTY, level: Int) {
+        when (showPretty) {
+            true -> prettyLog(tag, msg, level)
+            false -> log(tag, msg, level)
+        }
+    }
+
     /**
      * Error log
      *
      * @param msg the message to log
      */
     fun e(msg: String, tag: String = TAG, showPretty: Boolean = SHOW_PRETTY) {
-        when (showPretty) {
-            true -> prettyLog(tag, msg, Log.ERROR)
-            false -> log(tag, msg, Log.ERROR)
-        }
+        chooseLog(msg, tag, showPretty, Log.ERROR)
     }
 
     /**
@@ -103,10 +106,7 @@ object Loged {
      * @param msg the message to log
      */
     fun i(msg: String, tag: String = TAG, showPretty: Boolean = SHOW_PRETTY) {
-        when (showPretty) {
-            true -> prettyLog(tag, msg, Log.INFO)
-            false -> log(tag, msg, Log.INFO)
-        }
+        chooseLog(msg, tag, showPretty, Log.INFO)
     }
 
     /**
@@ -115,10 +115,7 @@ object Loged {
      * @param msg the message to log
      */
     fun a(msg: String, tag: String = TAG, showPretty: Boolean = SHOW_PRETTY) {
-        when (showPretty) {
-            true -> prettyLog(tag, msg, Log.ASSERT)
-            false -> log(tag, msg, Log.ASSERT)
-        }
+        chooseLog(msg, tag, showPretty, Log.ASSERT)
     }
 
     /**
@@ -127,10 +124,7 @@ object Loged {
      * @param msg the message to log
      */
     fun wtf(msg: String, tag: String = TAG, showPretty: Boolean = SHOW_PRETTY) {
-        when (showPretty) {
-            true -> prettyLog(tag, msg, Log.ASSERT)
-            false -> log(tag, msg, Log.ASSERT)
-        }
+        chooseLog(msg, tag, showPretty, Log.ASSERT)
     }
 
     /**
@@ -139,10 +133,7 @@ object Loged {
      * @param msg the message to log
      */
     fun w(msg: String, tag: String = TAG, showPretty: Boolean = SHOW_PRETTY) {
-        when (showPretty) {
-            true -> prettyLog(tag, msg, Log.WARN)
-            false -> log(tag, msg, Log.WARN)
-        }
+        chooseLog(msg, tag, showPretty, Log.WARN)
     }
 
     /**
@@ -151,10 +142,7 @@ object Loged {
      * @param msg the message to log
      */
     fun d(msg: String, tag: String = TAG, showPretty: Boolean = SHOW_PRETTY) {
-        when (showPretty) {
-            true -> prettyLog(tag, msg, Log.DEBUG)
-            false -> log(tag, msg, Log.DEBUG)
-        }
+        chooseLog(msg, tag, showPretty, Log.DEBUG)
     }
 
     /**
@@ -163,10 +151,7 @@ object Loged {
      * @param msg the message to log
      */
     fun v(msg: String, tag: String = TAG, showPretty: Boolean = SHOW_PRETTY) {
-        when (showPretty) {
-            true -> prettyLog(tag, msg, Log.VERBOSE)
-            false -> log(tag, msg, Log.VERBOSE)
-        }
+        chooseLog(msg, tag, showPretty, Log.VERBOSE)
     }
 
 }

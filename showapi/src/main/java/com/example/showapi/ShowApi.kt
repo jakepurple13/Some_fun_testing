@@ -348,7 +348,7 @@ class EpisodeInfo(name: String, url: String) : ShowInfo(name, url) {
                 regex.group(1)!!
             } else {
                 val segments = URI(url).path.split("/")
-                "${segments[2]} $name"
+                "${segments[2]} $name.mp4"
             }
             storage.source = url
             storage.quality = "Good"

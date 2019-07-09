@@ -1,8 +1,11 @@
 package com.example.myapplication
 
+import android.Manifest
+import android.Manifest.permission.INTERNET
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.os.Environment
 import android.text.Spannable
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +30,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
+import com.nabinbhandari.android.permissions.PermissionHandler
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.app.DownloadManager
+import com.nabinbhandari.android.permissions.Permissions
+import kotlinx.coroutines.async
+import java.io.File
+import java.io.FileOutputStream
+import java.net.URL
+import java.text.DecimalFormat
+
 
 class ShowDragSwipeActivity : AppCompatActivity() {
 
@@ -38,6 +51,20 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_drag_swipe)
 
+        val permissions =
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, INTERNET)
+        Permissions.check(
+            this/*context*/,
+            permissions,
+            null/*options*/,
+            null,
+            object : PermissionHandler() {
+                override fun onGranted() {
+                    // do your task.
+                    Loged.d("Granted!")
+                }
+            })/*rationale*/
+
         show_list.setHasFixedSize(true)
         show_list.layoutManager = LinearLayoutManager(this)
         show_list.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
@@ -45,7 +72,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         fun getStuffAsync() = GlobalScope.launch {
             Loged.w("Starting to get the stuff from ${Source.RECENT_CARTOON.link}")
             try {
-                val show = ShowApi(Source.RECENT_CARTOON)
+                val show = ShowApi(Source.RECENT_ANIME)
                 val list = show.showInfoList
                 Loged.i("$list")
                 val episodeApi = EpisodeApi(list[0])
@@ -140,9 +167,43 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                     }
                 }
             }
+
             holder.buttonInfo.setOnLongClickListener {
                 GlobalScope.launch {
                     val episodeApi = EpisodeApi(list[position])
+                    val ep = episodeApi.episodeList[0].getVideoInfo()[0]
+                    if (true)
+                        ep.link!!.saveTo(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).toString() + "/teststuff/${ep.filename})")
+                    else
+                        CustomDownloader(object : DownloadListener {
+                            override fun onFinished() {
+                                holder.title.text =
+                                    "Finished: ${list[position].name}\n${list[position].url}"
+                            }
+
+                            override fun onProgressUpdate(
+                                current: Long,
+                                length: Int,
+                                speed: Double,
+                                timeLeft: Long
+                            ) {
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    holder.title.text =
+                                        "${"${(current * 100.0) / length}".substring(
+                                            0,
+                                            4
+                                        )}% at ${CustomDownloader.getDownloadSpeedString(speed)}" +
+                                                " with ${CustomDownloader.getETAString(
+                                                    timeLeft,
+                                                    true
+                                                )}:" +
+                                                " ${list[position].name}\n${list[position].url}"
+                                }
+                            }
+                        }).downloadUrlAsync(
+                            ep.link!!,
+                            context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).toString() + "/teststuff/${ep.filename}"
+                        ).start()
                     GlobalScope.launch(Dispatchers.Main) {
                         ImgAscii()
                             .quality(AsciiQuality.WORST)
@@ -181,4 +242,14 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         val buttonInfo: Button = view.show_info_button!!
     }
 
+}
+
+fun String.saveTo(path: String) = GlobalScope.async {
+    Loged.i("Starting")
+    URL(this@saveTo).openStream().use { input ->
+        FileOutputStream(File(path)).use { output ->
+            input.copyTo(output)
+        }
+    }
+    Loged.i("Finished")
 }

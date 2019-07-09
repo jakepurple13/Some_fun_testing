@@ -240,4 +240,47 @@ class ExampleUnitTest {
 
     }
 
+    @Test
+    fun exTesting() {
+        class BaseClass {
+
+            fun printString() {
+                println("I am in BaseClass")
+            }
+        }
+
+        class OtherClass {
+
+            fun otherClassFunctionality() {
+                BaseClass().additionalFunctionality()
+            }
+
+            fun printString() {
+                println("I am in OtherClass")
+            }
+
+            fun BaseClass.additionalFunctionality() {
+                printString()
+                this@OtherClass.printString()
+            }
+
+            fun String.asdf() {
+                println(this)
+            }
+
+            fun vc() {
+                s.asdf()
+            }
+
+            var s = ""
+
+        }
+
+        OtherClass().otherClassFunctionality()
+        val otherClass = OtherClass()
+        otherClass.s = "asdf"
+        otherClass.vc()
+
+    }
+
 }

@@ -100,9 +100,9 @@ open class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return dragSwipeActions.getMovementFlags(recyclerView, viewHolder, this)
+        return dragSwipeActions.getMovementFlags(recyclerView, viewHolder)
+            ?: super.getMovementFlags(recyclerView, viewHolder)
     }
-
 }
 
 /**
@@ -148,13 +148,9 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
      */
     fun getMovementFlags(
         recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        callback: DragSwipeManageAdapter<T, VH>
-    ): Int {
-        return ItemTouchHelper.Callback.makeMovementFlags(
-            callback.getDragDirs(recyclerView, viewHolder),
-            callback.getSwipeDirs(recyclerView, viewHolder)
-        )
+        viewHolder: RecyclerView.ViewHolder
+    ): Int? {
+        return null
     }
 }
 

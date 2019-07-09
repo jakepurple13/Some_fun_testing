@@ -139,13 +139,12 @@ class NewFeatureTest : AppCompatActivity() {
 
                 override fun getMovementFlags(
                     recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    callback: DragSwipeManageAdapter<Card, ViewHolders>
-                ): Int {
+                    viewHolder: RecyclerView.ViewHolder
+                ): Int? {
                     return if (viewHolder.adapterPosition % 10 == 0)
                         Direction.NOTHING.value
                     else
-                        super.getMovementFlags(recyclerView, viewHolder, callback)
+                        super.getMovementFlags(recyclerView, viewHolder)
                 }
             })
 
