@@ -24,6 +24,10 @@ android {
     packagingOptions {
         exclude 'META-INF/library-core_release.kotlin_module'
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -34,6 +38,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation 'androidx.test:core:1.2.0'
+    // Optional -- Mockito framework
+    testImplementation 'org.mockito:mockito-core:2.23.4'
     implementation "org.koin:koin-android:2.0.1"
     implementation project(':deckofcards')
     implementation project(':dragswipe')

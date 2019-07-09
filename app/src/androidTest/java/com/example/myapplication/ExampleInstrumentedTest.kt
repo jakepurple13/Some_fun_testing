@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.text.Spannable
 import androidx.core.graphics.toColor
+import androidx.core.net.toUri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.funutilities.getComplimentaryColor
 import com.example.showapi.Source
@@ -75,6 +76,25 @@ class ExampleInstrumentedTest {
                 println(ep.episodeList[0].getVideoLinks())
             }
         }
+    }
+
+    @Test
+    fun neta() {
+        val show = com.example.showapi.ShowApi(com.example.showapi.Source.RECENT_ANIME)
+        val list = show.showInfoList
+        val ep = com.example.showapi.EpisodeApi(list[0])
+        println(ep.episodeList[0].getVideoLink())
+        println("name " + ep.episodeList[0].name + " and url " + ep.episodeList[0].url)
+
+        val url = "http://st7.anime1.com/[Erai-raws] Tensei shitara Slime Datta Ken - 25 (Special) [720p][Multiple Subtitle]_af.mp4?st=Q-07POJkaLBsbelZBTv1WQ&e=1562692048"
+        val regex = "^[^\\[]+(.*mp4)".toRegex().toPattern().matcher(url)
+        while(regex.find()) {
+            val s = regex.group(1)!!
+            println(s)
+        }
+
+        val url2 = ep.episodeList[0].url.toUri().pathSegments
+        println(url2)
     }
 
 }

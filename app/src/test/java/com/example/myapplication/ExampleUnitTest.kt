@@ -1,5 +1,7 @@
 package com.example.myapplication
 
+import android.net.Uri
+import androidx.core.net.toUri
 import com.example.cardutilities.*
 import com.example.funutilities.*
 import crestron.com.deckofcards.*
@@ -8,6 +10,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnitRunner
 import kotlin.random.Random
 import kotlin.reflect.KProperty
 
@@ -16,6 +21,7 @@ import kotlin.reflect.KProperty
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
+@RunWith(MockitoJUnitRunner::class)
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
@@ -208,6 +214,29 @@ class ExampleUnitTest {
 
         val oddLengths = composes(::isOdd, ::length, ::addStuff)
         println(strings.filter(oddLengths))
+
+    }
+
+    @Test
+    fun netr() {
+
+        val show = com.example.showapi.ShowApi(com.example.showapi.Source.RECENT_ANIME)
+        val list = show.showInfoList
+        val ep = com.example.showapi.EpisodeApi(list[0])
+        println(ep.episodeList[0].getVideoLink())
+        println("name " + ep.episodeList[0].name + " and url " + ep.episodeList[0].url)
+        println("asdf " + ep.episodeList[0].getVideoInfo()[0].filename!!)
+
+        /*val url = "http://st7.anime1.com/[Erai-raws] Tensei shitara Slime Datta Ken - 25 (Special) [720p][Multiple Subtitle]_af.mp4?st=Q-07POJkaLBsbelZBTv1WQ&e=1562692048"
+        val regex = "^[^\\[]+(.*mp4)".toRegex().toPattern().matcher(url)
+        while(regex.find()) {
+            val s = regex.group(1)!!
+            println(s)
+        }
+
+        val url2 = ep.episodeList[0].url.toUri().pathSegments
+        println(url2)*/
+
 
     }
 

@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.net.URI
 import java.net.URL
 
 enum class Source(val link: String, val recent: Boolean = false) {
@@ -288,7 +289,7 @@ class EpisodeInfo(name: String, url: String) : ShowInfo(name, url) {
             var s = ""
             val list = arrayListOf<String>()
             while (m.find()) {
-                val g = m.group(1)
+                val g = m.group(1)!!
                 s += g + "\n"
                 list.add(g)
             }
@@ -325,6 +326,77 @@ class EpisodeInfo(name: String, url: String) : ShowInfo(name, url) {
                         val g = Gson()
                         val d1 = g.fromJson(d, NormalLink::class.java)
                         return arrayListOf(d1.normal!!.storage!![0].link!!)
+                    }
+                }
+            }
+        }
+        return arrayListOf()
+    }
+
+    /**
+     * returns video information
+     * this includes link to video and filename
+     * # You can use this for anything. This just returns some extra information.
+     */
+    fun getVideoInfo(): ArrayList<Storage> {
+        if (url.contains("gogoanime")) {
+            val doc = Jsoup.connect(url).get()
+            val storage = Storage()
+            storage.link = doc.select("a[download^=http]").attr("abs:download")
+            val regex = "^[^\\[]+(.*mp4)".toRegex().toPattern().matcher(storage.link!!)
+            storage.filename = if(regex.find()) {
+                regex.group(1)!!
+            } else {
+                val segments = URI(url).path.split("/")
+                "${segments[2]} $name"
+            }
+            storage.source = url
+            storage.quality = "Good"
+            storage.sub = "Yes"
+            return arrayListOf(storage)
+        } else {
+            val htmld = getHtml(url)
+            val m = "<iframe src=\"([^\"]+)\"[^<]+<\\/iframe>".toRegex().toPattern().matcher(htmld)
+            var s = ""
+            val list = arrayListOf<String>()
+            while (m.find()) {
+                val g = m.group(1)!!
+                s += g + "\n"
+                list.add(g)
+            }
+
+            val regex =
+                "(http|https):\\/\\/([\\w+?\\.\\w+])+([a-zA-Z0-9\\~\\%\\&\\-\\_\\?\\.\\=\\/])+(part[0-9])+.(\\w*)"
+
+            val htmlc = if (regex.toRegex().toPattern().matcher(list[0]).find()) {
+                list
+            } else {
+                getHtml(list[0])
+            }
+
+            when (htmlc) {
+                is ArrayList<*> -> {
+                    val urlList = arrayListOf<Storage>()
+                    for (info in htmlc) {
+                        val reg = "var video_links = (\\{.*?\\});".toRegex().toPattern()
+                            .matcher(getHtml(info.toString()))
+                        while (reg.find()) {
+                            val d = reg.group(1)
+                            val g = Gson()
+                            val d1 = g.fromJson(d, NormalLink::class.java)
+                            urlList.add(d1.normal!!.storage!![0])
+
+                        }
+                    }
+                    return urlList
+                }
+                is String -> {
+                    val reg = "var video_links = (\\{.*?\\});".toRegex().toPattern().matcher(htmlc)
+                    while (reg.find()) {
+                        val d = reg.group(1)
+                        val g = Gson()
+                        val d1 = g.fromJson(d, NormalLink::class.java)
+                        return arrayListOf(d1.normal!!.storage!![0])
                     }
                 }
             }
@@ -375,16 +447,16 @@ internal class Normal {
     }
 }
 
-internal class Storage {
-    private var sub: String? = null
+class Storage {
+    var sub: String? = null
 
-    private var source: String? = null
+    var source: String? = null
 
     var link: String? = null
 
-    private var quality: String? = null
+    var quality: String? = null
 
-    private var filename: String? = null
+    var filename: String? = null
 
     override fun toString(): String {
         return "ClassPojo [sub = $sub, source = $source, link = $link, quality = $quality, filename = $filename]"

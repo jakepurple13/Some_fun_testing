@@ -2,7 +2,6 @@ package com.example.dragswipe
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dragswipe.Direction.NOTHING
 
 /**
  * these are the directions you can swipe/drag
@@ -142,6 +141,8 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
     /**
      * # Only modify this if you know what you are doing!
      * This is for when you want to control how certain elements are swiped/dragged
+     * If you want the default settings that you set at the beginning, call
+     * `super.getMovementFlags(recyclerView, viewHolder, callback)`
      *
      * @param viewHolder the viewholder that you are modifying
      */
