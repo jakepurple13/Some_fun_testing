@@ -27,9 +27,16 @@
                 android:id="@+id/show_info_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_toStartOf="@id/drag_image"
                 android:text="Info/Cover"
                 tools:ignore="HardcodedText" />
+
+        <ImageView
+                android:layout_alignParentEnd="true"
+                android:id="@+id/drag_image"
+                android:src="@android:drawable/ic_menu_info_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
     </RelativeLayout>
 

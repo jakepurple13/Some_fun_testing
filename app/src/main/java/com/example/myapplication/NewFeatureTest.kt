@@ -36,6 +36,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
+import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
+import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_IDLE
 
 
 class NewFeatureTest : AppCompatActivity() {
@@ -130,7 +132,7 @@ class NewFeatureTest : AppCompatActivity() {
                     super.onSwiped(viewHolder, direction, dragSwipeAdapter)
                     Loged.wtf("$direction")
 
-                    val dir = when(direction) {
+                    val dir = when (direction) {
                         Direction.START, Direction.LEFT -> "Left"
                         Direction.END, Direction.RIGHT -> "Right"
                         else -> direction.name

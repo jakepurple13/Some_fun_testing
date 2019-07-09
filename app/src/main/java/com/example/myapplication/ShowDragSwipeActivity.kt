@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -79,23 +80,41 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                         show_list.smoothScrollToPosition(adapter.itemCount - 1)
                     }
                     show_list.adapter = adapter
-                    helper =
-                        DragSwipeUtils.setDragSwipeUp(
-                            adapter,
-                            show_list,
-                            Direction.UP + Direction.DOWN,
-                            Direction.START + Direction.END,
-                            object : DragSwipeActions<ShowInfo, ViewHolder> {
-                                override fun onSwiped(
-                                    viewHolder: RecyclerView.ViewHolder,
-                                    direction: Direction,
-                                    dragSwipeAdapter: DragSwipeAdapter<ShowInfo, ViewHolder>
-                                ) {
-                                    listOfDeleted += dragSwipeAdapter[viewHolder.adapterPosition]
-                                    super.onSwiped(viewHolder, direction, dragSwipeAdapter)
-                                }
+                    helper = DragSwipeUtils.setDragSwipeUp(
+                        adapter,
+                        show_list,
+                        Direction.UP + Direction.DOWN,
+                        Direction.START + Direction.END,
+                        object : DragSwipeActions<ShowInfo, ViewHolder> {
+                            override fun onSwiped(
+                                viewHolder: RecyclerView.ViewHolder,
+                                direction: Direction,
+                                dragSwipeAdapter: DragSwipeAdapter<ShowInfo, ViewHolder>
+                            ) {
+                                listOfDeleted += dragSwipeAdapter[viewHolder.adapterPosition]
+                                super.onSwiped(viewHolder, direction, dragSwipeAdapter)
                             }
-                        )
+
+                            override fun isLongPressDragEnabled(): Boolean = false
+
+                            override fun isItemViewSwipeEnabled(): Boolean {
+                                return false
+                            }
+                        }
+                    )
+                    /*DragSwipeUtils.setDragSwipeUp(show_list, CustomDragSwipe(adapter, Direction.UP + Direction.DOWN,
+                Direction.START + Direction.END), object : DragSwipeActions<ShowInfo, ViewHolder> {
+                override fun onSwiped(
+                    viewHolder: RecyclerView.ViewHolder,
+                    direction: Direction,
+                    dragSwipeAdapter: DragSwipeAdapter<ShowInfo, ViewHolder>
+                ) {
+                    listOfDeleted += dragSwipeAdapter[viewHolder.adapterPosition]
+                    super.onSwiped(viewHolder, direction, dragSwipeAdapter)
+                }
+            })*/
+
+                    adapter.helper = helper
                 }
             } catch (e: SocketTimeoutException) {
                 Loged.e(e.localizedMessage!!)
@@ -133,6 +152,8 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         var scrollToEnd: () -> Unit
     ) : DragSwipeAdapter<ShowInfo, ViewHolder>(stuff) {
 
+        var helper: DragSwipeHelper? = null
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
                 LayoutInflater.from(context).inflate(
@@ -147,10 +168,10 @@ class ShowDragSwipeActivity : AppCompatActivity() {
             return list.size
         }
 
-        @SuppressLint("SetTextI18n")
+        @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.title.text = "$position: ${list[position].name}\n${list[position].url}"
-            holder.description.text = ""
+            holder.description.text = "Description will go here"
             holder.buttonInfo.setOnClickListener {
                 GlobalScope.launch {
                     val episodeApi = EpisodeApi(list[position])
@@ -162,6 +183,14 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                     }
                 }
             }
+            holder.dragImage.setOnTouchListener { _, _ ->
+                helper!!.startDrag(holder)
+                false
+            }
+            holder.title.setOnTouchListener { _, _ ->
+                helper!!.startSwipe(holder)
+                false
+            }
             fun nextBool(boolean: Boolean): Boolean {
                 return boolean
             }
@@ -169,9 +198,10 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                 GlobalScope.launch {
                     val episodeApi = EpisodeApi(list[position])
                     val ep = episodeApi.episodeList[0].getVideoInfo()[0]
-                    if (nextBool(false))
+                    if (nextBool(true)) {
+                        //ep.link!!.saveTo(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).toString() + "/teststuff/${ep.filename})")
+                    } else {
                         ep.link!!.saveTo(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).toString() + "/teststuff/${ep.filename})")
-                    else
                         CustomDownloader(object : DownloadListener {
                             override fun onFinished() {
                                 holder.title.text =
@@ -201,6 +231,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                             ep.link!!,
                             context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).toString() + "/teststuff/${ep.filename}"
                         ).start()
+                    }
                     GlobalScope.launch(Dispatchers.Main) {
                         ImgAscii()
                             .quality(AsciiQuality.WORST)
@@ -237,7 +268,16 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         val title: TextView = view.show_title!!
         val description: TextView = view.show_des!!
         val buttonInfo: Button = view.show_info_button!!
+        val dragImage: ImageView = view.drag_image!!
     }
+
+    /*class CustomDragSwipe(
+        dragSwipeAdapter: DragSwipeAdapter<ShowInfo, ViewHolder>,
+        dragDirs: Int,
+        swipeDirs: Int
+    ) : DragSwipeManageAdapter<ShowInfo, ViewHolder>(dragSwipeAdapter, dragDirs, swipeDirs) {
+
+    }*/
 
 }
 

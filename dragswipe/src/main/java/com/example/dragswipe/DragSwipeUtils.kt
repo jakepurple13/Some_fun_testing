@@ -20,7 +20,7 @@ enum class Direction(val value: Int) {
     /**
      * use this when you want to add more than one action (or use [plus])
      */
-    fun or(direction: Direction): Int {
+    infix fun or(direction: Direction): Int {
         return if (direction == NOTHING || this == NOTHING)
             NOTHING.value
         else
@@ -103,6 +103,14 @@ open class DragSwipeManageAdapter<T, VH : RecyclerView.ViewHolder>(
         return dragSwipeActions.getMovementFlags(recyclerView, viewHolder)
             ?: super.getMovementFlags(recyclerView, viewHolder)
     }
+
+    override fun isLongPressDragEnabled(): Boolean {
+        return dragSwipeActions.isLongPressDragEnabled()
+    }
+
+    override fun isItemViewSwipeEnabled(): Boolean {
+        return dragSwipeActions.isItemViewSwipeEnabled()
+    }
 }
 
 /**
@@ -159,6 +167,20 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
     ): Int? {
         return null
     }
+
+    /**
+     * make false if you want a custom view to control dragging
+     *
+     * @see ItemTouchHelper.Callback.isLongPressDragEnabled
+     */
+    fun isLongPressDragEnabled(): Boolean = true
+
+    /**
+     * make false if you want a custom view to control swiping
+     *
+     * @see ItemTouchHelper.Callback.isItemViewSwipeEnabled
+     */
+    fun isItemViewSwipeEnabled(): Boolean = true
 
 }
 
@@ -251,7 +273,15 @@ abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: Array
  * Even though this class contains a single variable, its just so you, the developer, don't have to look at what is
  * really going on behind the scenes.
  */
-class DragSwipeHelper internal constructor(internal var itemTouchHelper: ItemTouchHelper)
+class DragSwipeHelper internal constructor(internal var itemTouchHelper: ItemTouchHelper) {
+    fun startDrag(viewHolder: RecyclerView.ViewHolder) {
+        itemTouchHelper.startDrag(viewHolder)
+    }
+
+    fun startSwipe(viewHolder: RecyclerView.ViewHolder) {
+        itemTouchHelper.startSwipe(viewHolder)
+    }
+}
 
 /**
  * The actual utility

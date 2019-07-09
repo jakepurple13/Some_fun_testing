@@ -1,9 +1,8 @@
 package com.example.funutilities
 
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dragswipe.DragSwipeAdapter
-import com.example.dragswipe.DragSwipeHelper
-import com.example.dragswipe.DragSwipeUtils
+import com.example.dragswipe.*
 import java.util.*
 import kotlin.random.Random
 
@@ -27,6 +26,18 @@ fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.getMiddleItem(): T
 
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.getLastItem(): T {
     return list.last()
+}
+
+
+/**
+ * @see ItemTouchHelper.Callback.makeFlag
+ */
+@Suppress("unused")
+fun <T, VH : RecyclerView.ViewHolder> DragSwipeActions<T, VH>.makeFlag(
+    state: Int,
+    direction: Int
+): Int {
+    return ItemTouchHelper.Callback.makeFlag(state, direction)
 }
 
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.get(num: Int): T = list[num]
