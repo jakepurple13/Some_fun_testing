@@ -142,7 +142,14 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
      * # Only modify this if you know what you are doing!
      * This is for when you want to control how certain elements are swiped/dragged
      * If you want the default settings that you set at the beginning, call
+     *
      * `super.getMovementFlags(recyclerView, viewHolder, callback)`
+     *
+     * If you have both drag and swipe options, call
+     *
+     * `makeMovementFlags(dragDirs, swipeDirs)`
+     *
+     * @see ItemTouchHelper.Callback.getMovementFlags
      *
      * @param viewHolder the viewholder that you are modifying
      */
@@ -152,6 +159,19 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
     ): Int? {
         return null
     }
+
+}
+
+/**
+ * This will create the movement flags for you, setting up drag and swipe flags
+ * @see ItemTouchHelper.Callback.makeMovementFlags
+ */
+@Suppress("unused")
+fun <T, VH : RecyclerView.ViewHolder> DragSwipeActions<T, VH>.makeMovementFlags(
+    dragDirs: Int = Direction.NOTHING.value,
+    swipeDirs: Int = Direction.NOTHING.value
+): Int {
+    return ItemTouchHelper.Callback.makeMovementFlags(dragDirs, swipeDirs)
 }
 
 /**
@@ -169,6 +189,10 @@ interface DragSwipeActions<T, VH : RecyclerView.ViewHolder> {
  */
 abstract class DragSwipeAdapter<T, VH : RecyclerView.ViewHolder>(var list: ArrayList<T>) :
     RecyclerView.Adapter<VH>() {
+
+    override fun getItemCount(): Int {
+        return list.size
+    }
 
     /**
      * sets the list with new data and then notifies that the data changed

@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.Manifest
 import android.Manifest.permission.INTERNET
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
@@ -24,22 +25,17 @@ import com.example.showapi.EpisodeApi
 import com.example.showapi.ShowApi
 import com.example.showapi.ShowInfo
 import com.example.showapi.Source
+import com.nabinbhandari.android.permissions.PermissionHandler
+import com.nabinbhandari.android.permissions.Permissions
 import kotlinx.android.synthetic.main.activity_show_drag_swipe.*
 import kotlinx.android.synthetic.main.show_info_layout.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.net.SocketTimeoutException
-import com.nabinbhandari.android.permissions.PermissionHandler
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.DownloadManager
-import com.nabinbhandari.android.permissions.Permissions
-import kotlinx.coroutines.async
 import java.io.File
 import java.io.FileOutputStream
+import java.net.SocketTimeoutException
 import java.net.URL
-import java.text.DecimalFormat
-
 
 class ShowDragSwipeActivity : AppCompatActivity() {
 
@@ -135,8 +131,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
         stuff: ArrayList<ShowInfo>,
         var context: Context,
         var scrollToEnd: () -> Unit
-    ) :
-        DragSwipeAdapter<ShowInfo, ViewHolder>(stuff) {
+    ) : DragSwipeAdapter<ShowInfo, ViewHolder>(stuff) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
@@ -167,12 +162,14 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                     }
                 }
             }
-
+            fun nextBool(boolean: Boolean): Boolean {
+                return boolean
+            }
             holder.buttonInfo.setOnLongClickListener {
                 GlobalScope.launch {
                     val episodeApi = EpisodeApi(list[position])
                     val ep = episodeApi.episodeList[0].getVideoInfo()[0]
-                    if (true)
+                    if (nextBool(false))
                         ep.link!!.saveTo(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).toString() + "/teststuff/${ep.filename})")
                     else
                         CustomDownloader(object : DownloadListener {
@@ -244,7 +241,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
 
 }
 
-fun String.saveTo(path: String) = GlobalScope.async {
+fun String.saveTo(path: String) {
     Loged.i("Starting")
     URL(this@saveTo).openStream().use { input ->
         FileOutputStream(File(path)).use { output ->

@@ -130,11 +130,12 @@ class NewFeatureTest : AppCompatActivity() {
                     super.onSwiped(viewHolder, direction, dragSwipeAdapter)
                     Loged.wtf("$direction")
 
-                    if (direction == Direction.START) {
-                        Loged.i("Went left")
-                    } else if (direction == Direction.END) {
-                        Loged.i("Went right")
+                    val dir = when(direction) {
+                        Direction.START, Direction.LEFT -> "Left"
+                        Direction.END, Direction.RIGHT -> "Right"
+                        else -> direction.name
                     }
+                    Loged.i("Went $dir")
                 }
 
                 override fun getMovementFlags(
@@ -142,7 +143,7 @@ class NewFeatureTest : AppCompatActivity() {
                     viewHolder: RecyclerView.ViewHolder
                 ): Int? {
                     return if (viewHolder.adapterPosition % 10 == 0)
-                        Direction.NOTHING.value
+                        makeMovementFlags(swipeDirs = Direction.END + Direction.UP)
                     else
                         super.getMovementFlags(recyclerView, viewHolder)
                 }
