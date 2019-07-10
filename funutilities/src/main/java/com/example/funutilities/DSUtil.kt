@@ -6,6 +6,9 @@ import com.example.dragswipe.*
 import java.util.*
 import kotlin.random.Random
 
+/**
+ * Shuffles items in the adapter and notifies
+ */
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.shuffleItems() {
     for (i in list.indices) {
         val num = Random.nextInt(0, list.size - 1)
@@ -16,18 +19,26 @@ fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.shuffleItems() {
     }
 }
 
+/**
+ * gets the first item in [DragSwipeAdapter.list]
+ */
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.getFirstItem(): T {
     return list.first()
 }
 
+/**
+ * gets the middle item in [DragSwipeAdapter.list]
+ */
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.getMiddleItem(): T {
-    return list.middle()
+    return list[itemCount / 2]
 }
 
+/**
+ * gets the last item in [DragSwipeAdapter.list]
+ */
 fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.getLastItem(): T {
     return list.last()
 }
-
 
 /**
  * @see ItemTouchHelper.Callback.makeFlag
@@ -40,16 +51,28 @@ fun <T, VH : RecyclerView.ViewHolder> DragSwipeActions<T, VH>.makeFlag(
     return ItemTouchHelper.Callback.makeFlag(state, direction)
 }
 
+/**
+ * gets the [num] item from [DragSwipeAdapter.list]
+ */
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.get(num: Int): T = list[num]
 
+/**
+ * Gets the location of [element] in [DragSwipeAdapter.list]
+ */
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.get(element: T): Int =
     list.indexOf(element)
 
+/**
+ * sets the [num] location of [DragSwipeAdapter.list] to [element]
+ */
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.set(num: Int, element: T) {
     list[num] = element
     notifyItemChanged(num)
 }
 
+/**
+ * sets the [num] locations of [DragSwipeAdapter.list] to [element]
+ */
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.set(
     num: IntRange,
     element: List<T>
@@ -60,14 +83,23 @@ operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.set(
     notifyItemRangeChanged(num.first, num.count())
 }
 
+/**
+ * adds a list of [elements] to [DragSwipeAdapter.list]
+ */
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.plusAssign(elements: List<T>) {
     addItems(elements)
 }
 
+/**
+ * adds an [element] to [DragSwipeAdapter.list]
+ */
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.plusAssign(element: T) {
     addItem(element)
 }
 
+/**
+ * removes a list of [element] from [DragSwipeAdapter.list]
+ */
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.minusAssign(element: List<T>) {
     val intList = arrayListOf<Int>()
     for (i in list.withIndex())
@@ -77,16 +109,22 @@ operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.minusAssi
         removeItem(i)
 }
 
+/**
+ * removes [element] from [DragSwipeAdapter.list]
+ */
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.minusAssign(element: T) {
     removeItem(list.indexOf(element))
 }
 
+/**
+ * checks if [element] is in [DragSwipeAdapter.list]
+ */
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.contains(element: T): Boolean {
     return element in list
 }
 
 /**
- * allows iteration
+ * allows iteration of [DragSwipeAdapter.list]
  */
 operator fun <T, VH : RecyclerView.ViewHolder> DragSwipeAdapter<T, VH>.iterator() = list.iterator()
 
@@ -100,12 +138,26 @@ fun RecyclerView.attachDragSwipeHelper(dragSwipeHelper: DragSwipeHelper) {
 /**
  * @see [DragSwipeUtils.disableDragSwipe]
  */
+@Suppress("unused")
 fun RecyclerView.removeDragSwipeHelper(dragSwipeHelper: DragSwipeHelper) {
     DragSwipeUtils.disableDragSwipe(dragSwipeHelper)
 }
 
-class RecyclerViewDragSwipeManager(private val recyclerView: RecyclerView) {
-    var dragSwipeHelper: DragSwipeHelper? = null
+/**
+ * A nice little manager that will take care of enabling and disabling dragswipe actions dynamically
+ *
+ * @param recyclerView the recyclerView you want to be attached to
+ * @param dragSwipeHelper the helper you want to use on the [recyclerView]
+ */
+class RecyclerViewDragSwipeManager(
+    private val recyclerView: RecyclerView,
+    dragSwipeHelper: DragSwipeHelper? = null
+) {
+
+    /**
+     * The helper! Set this in order to use this this class well!
+     */
+    var dragSwipeHelper: DragSwipeHelper? = dragSwipeHelper
         set(value) {
             if (field != null) {
                 disableDragSwipe()
@@ -125,21 +177,19 @@ class RecyclerViewDragSwipeManager(private val recyclerView: RecyclerView) {
         }
 
     private fun setDragSwipe() {
-        when (dragSwipedEnabled) {
-            true -> enableDragSwipe()
-            false -> disableDragSwipe()
+        if (dragSwipeHelper != null) {
+            when (dragSwipedEnabled) {
+                true -> enableDragSwipe()
+                false -> disableDragSwipe()
+            }
         }
     }
 
     private fun disableDragSwipe() {
-        if (dragSwipeHelper != null) {
-            DragSwipeUtils.disableDragSwipe(dragSwipeHelper!!)
-        }
+        DragSwipeUtils.disableDragSwipe(dragSwipeHelper!!)
     }
 
     private fun enableDragSwipe() {
-        if (dragSwipeHelper != null) {
-            DragSwipeUtils.enableDragSwipe(dragSwipeHelper!!, recyclerView)
-        }
+        DragSwipeUtils.enableDragSwipe(dragSwipeHelper!!, recyclerView)
     }
 }

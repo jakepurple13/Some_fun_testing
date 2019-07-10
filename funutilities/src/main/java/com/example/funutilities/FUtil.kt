@@ -30,21 +30,21 @@ fun ImageView.setColor(
 }
 
 /**
- * @param list1 the first list
- * @param list2 the second list
+ * @param list the second list
  * @param predicate1 filter the second list
  * @param predicate2 filter the first list by what the second list has
  */
-fun <T, R> findSimilarities(
-    list1: List<T>,
-    list2: List<T>,
+fun <T, R> List<T>.findSimilarities(
+    list: List<T>,
     predicate1: (T) -> R,
     predicate2: (T) -> R
 ): List<T> {
-    val aColIds = list2.asSequence().map(predicate1).toSet()
-    list1.distinctBy { it }
-    return list1.filter { predicate2(it) in aColIds }
+    val aColIds = list.asSequence().map(predicate1).toSet()
+    this.distinctBy { it }
+    return this.filter { predicate2(it) in aColIds }
 }
+
+fun <T, U> List<T>.intersect(uList: List<U>, filterPredicate : (T, U) -> Boolean) = filter { m -> uList.any { filterPredicate(m, it)} }
 
 fun Color.getComplimentaryColor(): Int {
     val rgbMAX = 255
@@ -100,7 +100,7 @@ object RandomCharPool {
         (('a'..'z') + ('A'..'Z') + ('0'..'9')).toMutableList()
 
     private fun addToCharPool(char: MutableList<Char>) {
-        val lists = findSimilarities(char, charPool, { it }, { it })
+        val lists = char.findSimilarities(charPool, { it }, { it })
         char.removeAll(lists)
         charPool.addAll(char)
         charPool.sortBy { it }

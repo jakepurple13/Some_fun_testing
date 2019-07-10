@@ -124,7 +124,10 @@ class CardPlayActivity : AppCompatActivity() {
                             }
                         })
                 }
-                else -> Deck()
+                else -> {
+                    addToOther()
+                    Deck()
+                }
             }
 
             if (deck.deckListener == null)

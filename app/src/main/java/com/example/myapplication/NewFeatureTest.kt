@@ -36,8 +36,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
-import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE
-import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_IDLE
 
 
 class NewFeatureTest : AppCompatActivity() {
@@ -156,12 +154,8 @@ class NewFeatureTest : AppCompatActivity() {
         val helper = DragSwipeUtils.setDragSwipeUp(
             adapter,
             fun_recycler,
-            { _, _ ->
-                Direction.UP + Direction.DOWN + Direction.START + Direction.END
-            },
-            { _, _ ->
-                Direction.START + Direction.END
-            },
+            Direction.UP + Direction.DOWN + Direction.START + Direction.END,
+            Direction.START + Direction.END,
             object : DragSwipeActions<Card, ViewHolders> {
                 override fun onSwiped(
                     viewHolder: RecyclerView.ViewHolder,
@@ -232,7 +226,9 @@ class NewFeatureTest : AppCompatActivity() {
 
         cardprogress.setOnLongClickListener {
             cardprogress.animate().cancel()
-            cardprogress.card = Random.nextCard()
+            //cardprogress.card = Random.nextCard()
+            manager.dragSwipedEnabled = !manager.dragSwipedEnabled
+            //manager.dragSwipeHelper = null
             true
         }
     }

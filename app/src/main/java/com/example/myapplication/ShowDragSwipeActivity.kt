@@ -199,6 +199,7 @@ class ShowDragSwipeActivity : AppCompatActivity() {
                     val episodeApi = EpisodeApi(list[position])
                     val ep = episodeApi.episodeList[0].getVideoInfo()[0]
                     if (nextBool(true)) {
+                        Loged.v("Went through here")
                         //ep.link!!.saveTo(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).toString() + "/teststuff/${ep.filename})")
                     } else {
                         ep.link!!.saveTo(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES).toString() + "/teststuff/${ep.filename})")

@@ -341,28 +341,6 @@ object DragSwipeUtils {
         return DragSwipeHelper(helper)
     }
 
-    /**
-     * @see setDragSwipeUp
-     *
-     * @param dragDirs sets things up so you can only have certain elements draggable
-     * @param swipeDirs sets things up so you can only have certain elements swipable
-     */
-    fun <T, VH : RecyclerView.ViewHolder> setDragSwipeUp(
-        dragSwipeAdapter: DragSwipeAdapter<T, VH>,
-        recyclerView: RecyclerView,
-        dragDirs: (RecyclerView, DragSwipeAdapter<T, VH>) -> Int = { _, _ -> Direction.NOTHING.value },
-        swipeDirs: (RecyclerView, DragSwipeAdapter<T, VH>) -> Int = { _, _ -> Direction.NOTHING.value },
-        dragSwipeActions: DragSwipeActions<T, VH>? = null
-    ): DragSwipeHelper {
-        return setDragSwipeUp(
-            dragSwipeAdapter,
-            recyclerView,
-            dragDirs(recyclerView, dragSwipeAdapter),
-            swipeDirs(recyclerView, dragSwipeAdapter),
-            dragSwipeActions
-        )
-    }
-
     fun enableDragSwipe(helper: DragSwipeHelper, recyclerView: RecyclerView) {
         helper.itemTouchHelper.attachToRecyclerView(recyclerView)
     }

@@ -75,19 +75,19 @@ class ExampleUnitTest {
         deck.sortToReset()
         deck2.sortToReset()
 
-        val similarities = findSimilarities(deck.getDeck(), deck2.getDeck(), {
+        val similarities = deck.getDeck().findSimilarities(deck2.getDeck(), {
             it
         }, {
             it
         })
 
-        val similarities2 = findSimilarities(deck2.getDeck(), deck.getDeck(), {
+        val similarities2 = deck2.getDeck().findSimilarities(deck.getDeck(), {
             it
         }, {
             it
         })
 
-        val similarities3 = findSimilarities(deck.getDeck(), deck2.getDeck(), {
+        val similarities3 = deck.getDeck().findSimilarities(deck2.getDeck(), {
             it
         }, {
             it
@@ -113,7 +113,7 @@ class ExampleUnitTest {
         for (i in 50..150) {
             list1 += SimTest("$i", "${i * 100}")
         }
-        val sim4 = findSimilarities(list, list1, {
+        val sim4 = list.findSimilarities(list1, {
             it.link
         }, {
             it.url
@@ -124,6 +124,52 @@ class ExampleUnitTest {
         println("sim4 $sim4")
 
         sim4.middleOrNull()
+
+        val simList = list.intersect(list1)
+        println("simList $simList")
+
+        val simDeck = Deck()
+        simDeck.clear()
+        simDeck+=Card(Suit.SPADES, 1)
+        simDeck+=Card(Suit.SPADES, 2)
+        simDeck+=Card(Suit.SPADES, 3)
+        val simDeck2 = Deck()
+        simDeck2.clear()
+        simDeck2+=Card(Suit.SPADES, 1)
+        simDeck2+=Card(Suit.SPADES, 2)
+        simDeck2+=Card(Suit.SPADES, 4)
+
+        val simDeck3 = simDeck.getDeck().findSimilarities(simDeck2.getDeck(), {
+            it.value
+        }, {
+            it.value
+        })
+
+        println("simDeck3 $simDeck3")
+        println("simDeck2 ${simDeck2.toArrayPrettyString()}")
+        println("simDeck ${simDeck.toArrayPrettyString()}")
+
+        val g = list.intersect(list1) {
+            a, b -> a.url == b.link
+        }
+        println("g $g")
+
+        val simDeck4 = simDeck.getDeck().intersect(simDeck2.getDeck()) {
+            card1, card2 -> card1 == card2
+        }
+
+        println("simDeck4 $simDeck4")
+        println("simDeck3 $simDeck3")
+        println("simDeck2 ${simDeck2.toArrayPrettyString()}")
+        println("simDeck ${simDeck.toArrayPrettyString()}")
+
+        val list3 = arrayListOf(SimTest("A♠", "asdf"), SimTest("3♠", "asdf"))
+
+        val simDeck5 = simDeck.getDeck().intersect(list3) {
+                card1, card2 -> card1.toString() == card2.link
+        }
+
+        println("simDeck5 $simDeck5")
 
     }
 
